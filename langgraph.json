@@ -1,0 +1,7 @@
+{
+  "dependencies": [""],
+  "graphs": {
+      "chief_agent": "./AIRAGAgent/agent/react_agent.py:graph"
+  },
+  "env": ".env"
+}

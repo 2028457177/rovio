@@ -1,0 +1,12 @@
+2026-03-10 23:00:11,209 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-10 23:00:11,209 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,210 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,212 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,212 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,213 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,213 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-10 23:00:11,214 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,214 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,214 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,215 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-10 23:00:11,215 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过

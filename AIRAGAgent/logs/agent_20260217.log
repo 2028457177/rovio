@@ -1,0 +1,103 @@
+2026-02-17 21:55:00,040 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-17 21:55:00,043 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-17 21:55:00,046 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-17 21:55:00,049 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-17 21:55:00,051 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-17 21:55:00,054 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-17 21:55:35,456 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 21:55:35,457 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，该选哪种扫地机器人
+2026-02-17 21:55:39,965 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-17 21:55:39,965 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 21:55:41,094 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-17 21:55:41,193 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 21:55:41,193 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | Chengde
+2026-02-17 21:55:47,248 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-17 21:55:47,248 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': 'Chengde'}
+2026-02-17 21:55:47,250 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-17 21:55:47,875 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-17 21:55:47,876 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市Chengde天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-17 21:55:56,665 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-17 21:55:56,666 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '干燥低湿环境下扫地机器人选购指南'}
+2026-02-17 21:56:02,867 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-17 21:56:04,326 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-17 21:56:04,327 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 在干燥低湿环境下选购扫地机器人时，应优先考虑具备强效吸尘能力、防静电设计以及密封性良好的尘盒，以应对易扬尘的环境；同时建议选择带有HEPA高效过滤系统的机型，防止微尘二次扩散；电池续航和清扫路径规划能力也需兼顾，确保在干燥环境中高效完成清洁任务。
+2026-02-17 22:00:33,569 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-17 22:00:33,572 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-17 22:00:33,575 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-17 22:00:33,578 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-17 22:00:33,580 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-17 22:00:33,583 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-17 22:00:44,317 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:00:44,318 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，该选哪种扫地机器人
+2026-02-17 22:00:48,403 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-17 22:00:48,403 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:00:49,316 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-17 22:00:49,410 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:00:49,411 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | Chengde
+2026-02-17 22:00:54,899 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-17 22:00:54,899 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': 'Chengde'}
+2026-02-17 22:00:54,901 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-17 22:00:55,555 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-17 22:00:55,557 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市Chengde天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-17 22:01:02,620 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-17 22:01:02,621 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '干燥城市扫地机器人选购建议'}
+2026-02-17 22:01:08,549 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-17 22:01:10,174 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-17 22:01:10,175 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 在干燥城市选购扫地机器人时，应优先考虑具备强效吸尘能力、大容量尘盒和高效过滤系统（如HEPA滤网）的型号，以有效应对灰尘多、颗粒物细小的环境；同时建议选择配备湿拖功能的机型，辅助抑制扬尘；电池续航应充足，以覆盖较大清扫面积；避免仅依赖边刷设计，因其在干燥环境中易扬起灰尘。
+2026-02-17 22:01:40,662 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:01:40,663 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 现在是几月
+2026-02-17 22:01:45,091 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-02-17 22:01:45,091 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:01:45,093 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-02-17 22:01:45,130 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:01:45,131 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 02
+2026-02-17 22:03:32,442 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-17 22:03:32,445 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-17 22:03:32,448 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-17 22:03:32,451 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-17 22:03:32,454 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-17 22:03:32,457 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-17 22:03:48,784 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:03:48,785 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 现在是几月
+2026-02-17 22:03:51,576 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-02-17 22:03:51,577 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:03:51,578 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-02-17 22:03:51,675 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:03:51,676 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 2026-02
+2026-02-17 22:35:38,982 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-17 22:35:38,984 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-17 22:35:38,987 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-17 22:35:38,989 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-17 22:35:38,992 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-17 22:35:39,000 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-17 22:35:39,144 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:35:39,145 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 今天天气怎么样
+2026-02-17 22:35:43,900 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-17 22:35:43,901 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:35:44,912 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-17 22:35:45,011 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:35:45,013 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | Chengde
+2026-02-17 22:35:49,344 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-17 22:35:49,345 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': 'Chengde'}
+2026-02-17 22:35:49,346 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-17 22:35:50,003 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-17 22:35:50,004 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市Chengde天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-17 22:36:48,083 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:36:48,083 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 今天是什么日期
+2026-02-17 22:36:52,541 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-02-17 22:36:52,542 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:36:52,544 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-02-17 22:36:52,682 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:36:52,683 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 2026-02-17
+2026-02-17 22:37:04,160 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-17 22:37:04,161 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 今天天气怎么样
+2026-02-17 22:37:10,053 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-17 22:37:10,054 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-17 22:37:10,892 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-17 22:37:10,989 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-17 22:37:10,990 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | Chengde
+2026-02-17 22:37:15,698 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-17 22:37:15,700 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': 'Chengde'}
+2026-02-17 22:37:20,534 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-17 22:37:21,522 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-17 22:37:21,522 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 我目前无法直接获取实时天气信息。你可以查看最新的天气预报或使用相关的天气应用查看 Chengde 今天的天气情况。一般这些应用会提供温度、风速、湿度等详细信息。
