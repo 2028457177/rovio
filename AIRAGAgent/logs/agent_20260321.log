@@ -1,0 +1,50 @@
+2026-03-21 20:57:12,631 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-21 20:57:12,647 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-21 20:57:12,650 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-21 20:57:12,652 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-21 20:57:12,655 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-21 20:57:12,657 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-21 20:57:12,661 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-21 21:27:14,470 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-21 21:27:14,474 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-21 21:27:14,475 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-21 21:27:14,478 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-21 21:27:14,479 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-21 21:27:14,480 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-21 21:27:14,481 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过

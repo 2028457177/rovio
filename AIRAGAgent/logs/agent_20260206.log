@@ -1,0 +1,299 @@
+2026-02-06 16:23:04,997 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有0条消息。
+2026-02-06 16:30:50,949 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 16:30:50,949 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 扫地机器人在我所在的地区的气温下如何保养
+2026-02-06 16:30:53,908 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 16:30:53,908 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 16:30:53,909 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 16:30:53,909 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 16:30:53,909 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 杭州
+2026-02-06 16:30:59,053 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 16:30:59,053 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '杭州'}
+2026-02-06 16:30:59,057 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 16:30:59,059 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 16:30:59,059 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市杭州天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 16:31:03,122 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 16:31:03,123 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人在26摄氏度、50%湿度环境下的保养方法'}
+2026-02-06 16:31:05,638 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 16:31:05,640 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 16:31:05,640 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 参考资料中未提及扫地机器人在26摄氏度、50%湿度环境下的具体保养方法。
+2026-02-06 16:39:29,637 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 16:39:29,637 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 给我生成使用报告
+2026-02-06 16:39:32,354 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:fill_context_for_report
+2026-02-06 16:39:32,354 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 16:39:32,355 - agent - INFO - middleware.py:24 - [tool monitor]工具fill_context_for_report调用成功
+2026-02-06 16:39:32,355 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 16:39:32,355 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | fill_context_for_report己调用
+2026-02-06 16:39:34,326 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_id
+2026-02-06 16:39:34,326 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 16:39:34,326 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_id调用成功
+2026-02-06 16:39:34,327 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 16:39:34,327 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 1009
+2026-02-06 16:39:36,046 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-02-06 16:39:36,046 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 16:39:36,046 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-02-06 16:39:36,047 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 16:39:36,047 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 2025-02
+2026-02-06 16:39:38,626 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:fetch_external_data
+2026-02-06 16:39:38,626 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'user_id': '1009', 'month': '2025-02'}
+2026-02-06 16:39:38,627 - agent - INFO - middleware.py:24 - [tool monitor]工具fetch_external_data调用成功
+2026-02-06 16:39:38,628 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 16:39:38,628 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | {"特征": "80㎡两居 | 养宠 | 仿实木", "效率": "宠物毛发清理:86%\\n自动回充成功率:93%", "耗材": "胶刷缠绕:中度\\n滤网更换:剩余25天", "对比": "养宠家庭中清洁效率处于中上等水平"}
+2026-02-06 19:26:53,283 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:26:53,284 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人如何保养
+2026-02-06 19:26:57,910 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:26:57,911 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:26:57,912 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:26:57,914 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:26:57,914 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 合肥
+2026-02-06 19:27:01,816 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 19:27:01,817 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '合肥'}
+2026-02-06 19:27:01,819 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 19:27:01,822 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:27:01,823 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市合肥天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 19:27:07,272 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:27:07,273 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人保养'}
+2026-02-06 19:27:11,949 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:27:11,954 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:27:11,954 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:27:15,739 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:27:15,740 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常维护与保养指南'}
+2026-02-06 19:27:19,252 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:27:19,256 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:27:19,257 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:27:24,196 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:27:24,197 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人清洁与维护步骤'}
+2026-02-06 19:27:27,513 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:27:27,518 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-02-06 19:27:27,519 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:31:10,529 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:31:10,530 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人怎么保养
+2026-02-06 19:31:15,628 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:31:15,629 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:31:15,630 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:31:15,633 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:31:15,633 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 合肥
+2026-02-06 19:31:20,219 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 19:31:20,220 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '合肥'}
+2026-02-06 19:31:20,222 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 19:31:20,225 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:31:20,225 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市合肥天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 19:31:24,815 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:31:24,817 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养维护指南'}
+2026-02-06 19:31:28,636 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:31:28,640 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:31:28,640 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:31:32,151 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:31:32,153 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人保养维护方法'}
+2026-02-06 19:31:36,889 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:31:36,893 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:31:36,894 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:31:41,072 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:31:41,073 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人滤网清理 滚刷维护 电池保养'}
+2026-02-06 19:31:45,012 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:31:45,015 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-02-06 19:31:45,016 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:33:24,030 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:33:24,031 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市机器人怎么保养
+2026-02-06 19:33:29,383 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:33:29,384 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:33:29,385 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:33:29,420 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:33:29,421 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 合肥
+2026-02-06 19:33:37,761 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 19:33:37,761 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '合肥'}
+2026-02-06 19:33:37,763 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 19:33:38,365 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:33:38,368 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市合肥天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 19:33:45,230 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:33:45,230 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养维护指南'}
+2026-02-06 19:33:49,476 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:33:51,169 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:33:51,176 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:33:59,318 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:33:59,319 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人在湿度50%晴天环境下的保养方法'}
+2026-02-06 19:34:03,144 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:34:04,845 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:34:04,847 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:34:07,493 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:34:07,494 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人保养维护通用指南'}
+2026-02-06 19:34:11,151 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:34:12,877 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-02-06 19:34:12,879 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:34:50,310 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:34:50,311 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人怎么保养
+2026-02-06 19:34:54,703 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:34:54,704 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:34:54,706 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:34:54,743 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:34:54,745 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 杭州
+2026-02-06 19:34:59,981 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:34:59,982 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人在高湿度城市如杭州的保养方法'}
+2026-02-06 19:35:03,739 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:35:05,446 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:35:05,448 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:35:10,867 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:35:10,868 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人保养 高湿度环境 维护'}
+2026-02-06 19:35:14,390 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:35:16,095 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:35:16,097 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:35:21,408 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:35:21,408 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养维护方法'}
+2026-02-06 19:35:26,427 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:35:28,103 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:35:28,104 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:46:55,701 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:46:55,704 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人如何保养
+2026-02-06 19:47:00,368 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:47:00,369 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:47:00,370 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:47:00,411 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:47:00,414 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 杭州
+2026-02-06 19:47:06,793 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:47:06,794 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '潮湿地区扫地机器人保养方法'}
+2026-02-06 19:47:16,391 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:47:18,113 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:47:18,115 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:47:22,520 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:47:22,521 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '杭州潮湿气候下扫地机器人维护保养指南'}
+2026-02-06 19:47:26,463 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:47:28,119 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:47:28,120 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:47:33,917 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:47:33,917 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养维护方法'}
+2026-02-06 19:47:37,429 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:47:39,118 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:47:39,119 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:57:00,404 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容加载成功
+2026-02-06 19:57:04,063 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容加载成功
+2026-02-06 19:57:08,658 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容加载成功
+2026-02-06 19:57:16,494 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容加载成功
+2026-02-06 19:57:21,038 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容加载成功
+2026-02-06 19:57:25,089 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容加载成功
+2026-02-06 19:57:55,793 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 19:57:55,795 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人如何保养
+2026-02-06 19:58:02,319 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 19:58:02,319 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 19:58:02,322 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 19:58:02,357 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 19:58:02,359 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 杭州
+2026-02-06 19:58:08,095 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 19:58:08,096 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '杭州'}
+2026-02-06 19:58:08,099 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 19:58:08,737 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 19:58:08,738 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市杭州天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 19:58:16,292 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:58:16,292 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人在湿度50%、空气质量优的环境下如何保养'}
+2026-02-06 19:58:20,263 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:58:21,943 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 19:58:21,944 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:58:26,500 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:58:26,501 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养方法和注意事项'}
+2026-02-06 19:58:30,713 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:58:32,426 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 19:58:32,427 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 19:58:40,945 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 19:58:40,947 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人维护保养指南'}
+2026-02-06 19:58:44,616 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 19:58:46,345 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-02-06 19:58:46,348 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:00:38,903 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 20:00:38,907 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人怎么保养
+2026-02-06 20:00:43,269 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 20:00:43,270 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 20:00:43,271 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 20:00:43,306 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 20:00:43,307 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 杭州
+2026-02-06 20:00:48,816 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:00:48,817 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '高湿度地区扫地机器人保养方法'}
+2026-02-06 20:00:53,217 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:00:54,879 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 20:00:54,880 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:00:59,084 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:00:59,086 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养维护指南'}
+2026-02-06 20:01:03,600 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:01:05,286 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 20:01:05,289 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:01:10,013 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:01:10,017 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人保养方法 维护技巧'}
+2026-02-06 20:01:13,665 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:01:15,314 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 20:01:15,315 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:01:18,986 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:01:18,986 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人基本保养步骤'}
+2026-02-06 20:01:23,568 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:01:25,186 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-02-06 20:01:25,186 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:04:31,449 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-06 20:04:31,449 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-06 20:04:31,449 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-06 20:04:31,450 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-06 20:04:31,450 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-06 20:04:31,450 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-06 20:09:44,533 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 20:09:44,534 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市，扫地机器人怎么保养
+2026-02-06 20:09:49,151 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 20:09:49,151 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 20:09:49,153 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 20:09:49,190 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 20:09:49,192 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 深圳
+2026-02-06 20:09:56,173 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:09:56,174 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '高湿度沿海城市扫地机器人保养方法'}
+2026-02-06 20:10:00,122 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:10:01,842 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 20:10:01,843 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:10:06,077 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:10:06,078 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '潮湿环境下扫地机器人保养指南'}
+2026-02-06 20:10:09,742 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:10:11,392 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 20:10:11,394 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:11:41,470 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-06 20:11:41,471 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-06 20:11:41,471 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-06 20:11:41,472 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-06 20:11:41,473 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-06 20:11:41,473 - agent - INFO - vector_store.py:70 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-06 20:23:12,150 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 20:23:12,150 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市怎么保养扫地机器人
+2026-02-06 20:23:18,205 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 20:23:18,208 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 20:23:18,209 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 20:23:18,262 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 20:23:18,263 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 深圳
+2026-02-06 20:23:24,374 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:23:24,375 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '高湿度沿海城市扫地机器人保养建议'}
+2026-02-06 20:23:31,703 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:23:33,439 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 20:23:33,440 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:23:38,846 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:23:38,849 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '高湿度环境下扫地机器人如何保养'}
+2026-02-06 20:23:42,594 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:23:44,258 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 20:23:44,259 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:23:50,613 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:23:50,613 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人日常保养和维护指南'}
+2026-02-06 20:23:56,940 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:23:58,681 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-02-06 20:23:58,682 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | It seems like your message might be incomplete. Could you please clarify or provide more details about what you're asking? I'm here to help!
+2026-02-06 20:27:02,289 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-02-06 20:27:02,291 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-02-06 20:27:02,294 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-02-06 20:27:02,297 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-02-06 20:27:02,301 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-02-06 20:27:02,303 - agent - INFO - vector_store.py:73 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-02-06 20:27:13,201 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-02-06 20:27:13,202 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我所在的城市怎么保养扫地机器人
+2026-02-06 20:27:17,936 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-02-06 20:27:17,937 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-02-06 20:27:17,939 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-02-06 20:27:17,982 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-02-06 20:27:17,983 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 合肥
+2026-02-06 20:27:23,891 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-02-06 20:27:23,893 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '合肥'}
+2026-02-06 20:27:23,894 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-02-06 20:27:24,494 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-02-06 20:27:24,495 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 城市合肥天气为晴天，气温26摄氏度:空气湿度50%，南风1级，AQI21，最近6小时降雨概率极低。
+2026-02-06 20:27:31,766 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:rag_summarize
+2026-02-06 20:27:31,767 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'query': '扫地机器人在干燥晴天、中等湿度环境下的保养方法'}
+2026-02-06 20:27:37,349 - agent - INFO - middleware.py:24 - [tool monitor]工具rag_summarize调用成功
+2026-02-06 20:27:38,572 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-02-06 20:27:38,575 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 在干燥晴天、中等湿度环境下，扫地机器人应定期清理尘盒和滤网，避免灰尘堆积影响吸力；检查并清洁滚刷和边刷，防止毛发缠绕；保持充电座周围干燥通风，避免高温直晒；建议每月对传感器进行一次擦拭，确保导航精度。

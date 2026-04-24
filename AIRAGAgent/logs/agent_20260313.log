@@ -1,0 +1,14 @@
+2026-03-13 12:27:07,192 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载成功
+2026-03-13 12:27:09,650 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容加载成功
+2026-03-13 12:27:12,147 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容加载成功
+2026-03-13 12:27:15,308 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容加载成功
+2026-03-13 12:27:20,755 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容加载成功
+2026-03-13 12:27:24,005 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容加载成功
+2026-03-13 12:27:26,667 - agent - INFO - vector_store.py:97 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容加载成功
+2026-03-13 12:27:26,668 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-03-13 12:27:26,668 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-13 12:27:26,669 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-13 12:27:26,669 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-13 12:27:26,670 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-13 12:27:26,670 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-13 12:27:26,671 - agent - INFO - vector_store.py:75 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过

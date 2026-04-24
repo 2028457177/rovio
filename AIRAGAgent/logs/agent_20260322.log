@@ -1,0 +1,220 @@
+2026-03-22 18:24:50,915 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 18:24:50,923 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 18:24:50,925 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 18:24:50,926 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 18:24:50,927 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 18:24:50,928 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 18:24:50,929 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 18:28:19,218 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 18:28:19,219 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | "我有一个Word模板放在 "C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"，我的个人信息写在 "C:/Users/nxt/Desktop/新建 文本文档.txt" 里面。请你帮我自动填写这个Word文档，需要AI创作的部分请你根据我的基本信息自行发挥，写好后保存为 output.docx。"
+2026-03-22 18:28:44,936 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:read_user_info_file
+2026-03-22 18:28:44,937 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'file_path': 'C:/Users/nxt/Desktop/新建 文本文档.txt'}
+2026-03-22 18:28:44,938 - agent - INFO - middleware.py:24 - [tool monitor]工具read_user_info_file调用成功
+2026-03-22 18:31:32,238 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 18:31:32,244 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 18:31:32,246 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 18:31:32,248 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 18:31:32,250 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 18:31:32,251 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 18:31:32,253 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 18:31:44,824 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 18:31:44,824 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | "我有一个Word模板放在 "C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"，我的个人信息写在 "C:/Users/nxt/Desktop/新建 文本文档.txt" 里面。请你帮我自动填写这个Word文档，需要AI创作的部分请你根据我的基本信息自行发挥，写好后保存为 output.docx。"
+2026-03-22 18:31:55,120 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:read_user_info_file
+2026-03-22 18:31:55,121 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'file_path': 'C:/Users/nxt/Desktop/新建 文本文档.txt'}
+2026-03-22 18:31:55,122 - agent - INFO - middleware.py:24 - [tool monitor]工具read_user_info_file调用成功
+2026-03-22 18:31:55,752 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 18:31:55,753 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 成功读取文件内容，用户信息如下：
+学院：建筑学院
+班级：土木2401
+姓名：聂心通
+学号：20240033060
+2026-03-22 18:31:59,589 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:analyze_word_template
+2026-03-22 18:31:59,589 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx'}
+2026-03-22 18:31:59,603 - agent - INFO - middleware.py:24 - [tool monitor]工具analyze_word_template调用成功
+2026-03-22 18:31:59,933 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-03-22 18:31:59,934 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 分析完毕：模板中未找到任何 {{...}} 格式的占位符。
+2026-03-22 18:34:33,487 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 18:34:33,487 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | "我有一个Word模板放在 "C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"，我的个人信息写在 "C:/Users/nxt/Desktop/新建 文本文档.txt" 里面。请你帮我自动填写这个Word文档，需要AI创作的部分请你根据我的基本信息自行发挥，写好后保存为 output.docx。"
+2026-03-22 18:34:39,065 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:read_user_info_file
+2026-03-22 18:34:39,065 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'file_path': 'C:/Users/nxt/Desktop/新建 文本文档.txt'}
+2026-03-22 18:34:39,067 - agent - INFO - middleware.py:24 - [tool monitor]工具read_user_info_file调用成功
+2026-03-22 18:34:39,689 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 18:34:39,689 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 成功读取文件内容，用户信息如下：
+学院：建筑学院
+班级：土木2401
+姓名：聂心通
+学号：20240033060
+2026-03-22 18:34:42,239 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:analyze_word_template
+2026-03-22 18:34:42,240 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx'}
+2026-03-22 18:34:42,250 - agent - INFO - middleware.py:24 - [tool monitor]工具analyze_word_template调用成功
+2026-03-22 18:34:42,575 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-03-22 18:34:42,575 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 分析完毕：模板中未找到任何 {{...}} 格式的占位符。
+2026-03-22 18:34:59,427 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:fill_word_template
+2026-03-22 18:34:59,429 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx', 'data_dict': {'学院': '建筑学院', '班级': '土木2401', '姓名': '聂心通', '学号': '20240033060', '实践单位': 'XX建筑工程有限公司', '实践时间': '2025年7月1日-2025年8月31日', '实践内容': '在本次社会实践中，我主要参与了建筑工程现场的测量、材料检验和施工监督等工作。通过实践，我深入了解了土木工程项目的实际操作流程，掌握了水准仪、全站仪等测量仪器的使用方法，并学习了建筑材料的质量控制标准。同时，我还参与了施工现场的安全管理，了解了建筑工地的各项安全规范和应急预案。', '实践收获': '通过此次社会实践，我将课堂所学的理论知识与实际工作相结合，不仅巩固了专业知识，还提高了动手能力和解决问题的能力。我深刻认识到土木工程师肩负的重大责任，每一个细节都关系到工程质量和人民生命财产安全。这次实践经历让我对未来的职业发展有了更清晰的规划，也坚定了我学好专业知识、服务社会的决心。', '自我鉴定': '在实践期间，我严格遵守单位规章制度，工作认真负责，虚心向经验丰富的工程师和技术人员学习。能够吃苦耐劳，主动承担工作任务，与同事相处融洽，展现了良好的团队协作精神。通过两个月的实践锻炼，我的专业技能和综合素质都得到了显著提升。', '单位意见': '该生在实践期间表现优秀，工作态度端正，学习能力强，能够将理论知识灵活运用于实际工作中。具有良好的沟通能力和团队协作精神，深受同事好评。同意其社会实践成绩评定为优秀。', '指导教师意见': '同意实践单位意见，该生社会实践报告内容详实，收获丰富，达到了社会实践课程的要求。'}, 'output_path': 'output.docx'}
+2026-03-22 18:34:59,486 - agent - INFO - middleware.py:24 - [tool monitor]工具fill_word_template调用成功
+2026-03-22 18:34:59,850 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-03-22 18:34:59,850 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 成功：Word文档已自动填充并保存至 'output.docx'
+2026-03-22 18:44:29,042 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 18:44:29,045 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 18:44:29,046 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 18:44:29,047 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 18:44:29,049 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 18:44:29,050 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 18:44:29,051 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 18:45:44,461 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 18:45:44,465 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 18:45:44,466 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 18:45:44,467 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 18:45:44,468 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 18:45:44,469 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 18:45:44,470 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:44,148 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 18:46:44,152 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 18:46:44,153 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:44,154 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:44,155 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:44,156 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:44,157 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 18:46:45,975 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 18:46:45,975 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我有一个Word模板放在 "C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"，我的个人信息写在 "C:/Users/nxt/Desktop/新建 文本文档.txt" 里面。请你帮我自动填写这个Word文档，需要AI创作的部分请你根据我的基本信息自行发挥，写好后保存到桌面
+2026-03-22 18:46:48,656 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:auto_fill_word
+2026-03-22 18:46:48,656 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:/Users/nxt/Desktop/附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx', 'info_file_path': 'C:/Users/nxt/Desktop/新建 文本文档.txt'}
+2026-03-22 18:47:06,327 - agent - INFO - middleware.py:24 - [tool monitor]工具auto_fill_word调用成功
+2026-03-22 18:47:06,840 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 18:47:06,840 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 文件处理完成，已保存至桌面：C:\Users\nxt\Desktop\已填写的文档.docx
+2026-03-22 19:14:19,528 - agent - ERROR - vector_store.py:101 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载失败:No module named 'unstructured'
+Traceback (most recent call last):
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 80, in load_document
+    documents: list[Document] = get_file_doucuments(path)
+                                ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\rag\vector_store.py", line 65, in get_file_doucuments
+    return excel_loader(read_path)
+  File "C:\Users/nxt/PycharmProjects/PythonProject\AIRAGAgent\utils\file_handler.py", line 56, in excel_loader
+    return UnstructuredExcelLoader(filepath).load()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\excel.py", line 46, in __init__
+    validate_unstructured_version(min_unstructured_version="0.6.7")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 42, in validate_unstructured_version
+    if not satisfies_min_unstructured_version(min_unstructured_version):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\PythonProject\.venv\Lib\site-packages\langchain_community\document_loaders\unstructured.py", line 25, in satisfies_min_unstructured_version
+    from unstructured.__version__ import __version__ as __unstructured_version__
+ModuleNotFoundError: No module named 'unstructured'
+2026-03-22 19:14:19,531 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-03-22 19:14:19,533 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-03-22 19:14:19,534 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-03-22 19:14:19,535 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-03-22 19:14:19,536 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-03-22 19:14:19,537 - agent - INFO - vector_store.py:76 - [加载知识库]C:\Users\nxt\PycharmProjects\PythonProject\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-03-22 19:15:06,362 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 19:15:06,363 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我在"C:\Users\nxt\Desktop\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"有一个word文件，请你帮我填写信息
+2026-03-22 19:15:12,273 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:auto_fill_word
+2026-03-22 19:15:12,273 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:\\Users\\nxt\\Desktop\\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx'}
+2026-03-22 19:15:30,357 - agent - INFO - middleware.py:24 - [tool monitor]工具auto_fill_word调用成功
+2026-03-22 19:15:30,868 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 19:15:30,868 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 文件处理完成，已保存至桌面：C:\Users\nxt\Desktop\已填写的文档.docx
+2026-03-22 19:17:25,335 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 19:17:25,335 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我在"C:\Users\nxt\Desktop\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"有一个word文件，请你帮我填写信息
+2026-03-22 19:17:27,482 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:auto_fill_word
+2026-03-22 19:17:27,482 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:\\Users\\nxt\\Desktop\\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx'}
+2026-03-22 19:17:41,351 - agent - INFO - middleware.py:24 - [tool monitor]工具auto_fill_word调用成功
+2026-03-22 19:17:41,865 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 19:17:41,866 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 文件处理完成，已保存至桌面：C:\Users\nxt\Desktop\已填写的文档.docx
+2026-03-22 19:21:17,049 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-03-22 19:21:17,050 - agent - DEBUG - middleware.py:42 - [log_before_model]HumanMessage | 我在"C:\Users\nxt\Desktop\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx"有一个word文件，请你帮我填写信息
+2026-03-22 19:21:19,513 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:auto_fill_word
+2026-03-22 19:21:19,513 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'template_path': 'C:\\Users\\nxt\\Desktop\\附件10.燕京理工学院社会实践课程鉴定报告模板(1).docx'}
+2026-03-22 19:21:46,085 - agent - INFO - middleware.py:24 - [tool monitor]工具auto_fill_word调用成功
+2026-03-22 19:21:46,596 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-03-22 19:21:46,597 - agent - DEBUG - middleware.py:42 - [log_before_model]ToolMessage | 文件处理完成，已保存至桌面：C:\Users\nxt\Desktop\已填写的文档.docx
