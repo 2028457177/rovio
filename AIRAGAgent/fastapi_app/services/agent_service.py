@@ -5,11 +5,11 @@ import sys
 import os
 from typing import Dict, Any, AsyncGenerator
 
-# 将项目根目录添加到 Python 路径
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 将 AIRAGAgent 目录添加到 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from agent.react_agent import ReactAgent
-from utils.logger_handler import logger
+from AIRAGAgent.agent.react_agent import ReactAgent
+from AIRAGAgent.utils.logger_handler import logger
 
 
 class AgentService:

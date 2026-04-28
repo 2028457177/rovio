@@ -5,12 +5,12 @@ import sys
 import os
 from typing import List, Dict, Any
 
-# 将项目根目录添加到 Python 路径
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 将 AIRAGAgent 目录添加到 Python 路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from rag.rag_service import RagSummarizeService
-from rag.vector_store import VectorStoreService
-from utils.logger_handler import logger
+from AIRAGAgent.rag.rag_service import RagSummarizeService
+from AIRAGAgent.rag.vector_store import VectorStoreService
+from AIRAGAgent.utils.logger_handler import logger
 
 
 class RagService:

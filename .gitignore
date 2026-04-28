@@ -22,6 +22,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# LangGraph runtime
+.langgraph_api/
+
 # OS
 .DS_Store
 Thumbs.db

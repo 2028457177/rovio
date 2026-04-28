@@ -29,7 +29,7 @@ def rag_summarize(query: str) -> str:
     return rag.rag_summarize(query)
 
 
-@tool(description="将传入的城市名称转换成城市编码，获取指定城市的天气信息")
+@tool(description="将城市名以城市编码的形式传入，获取指定城市的天气信息")
 def get_weather(code: str) -> dict[str, Any]:
     """
     获取未来几天的天气预报
