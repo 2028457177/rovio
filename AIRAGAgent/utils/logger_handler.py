@@ -1,8 +1,9 @@
 import os
+import re
 
 import logging
 from coloredlogs import DEFAULT_LOG_FORMAT
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from AIRAGAgent.utils.path_tool import get_abs_path
 
@@ -11,6 +12,42 @@ L0G_R00T = get_abs_path("logs")
 
 # 确保日志目录存在
 os.makedirs(L0G_R00T, exist_ok=True)
+
+# 日志保留天数
+LOG_RETENTION_DAYS = 7
+
+
+def cleanup_old_logs(retention_days: int = LOG_RETENTION_DAYS):
+    """
+    清理超过 retention_days 天的旧日志文件。
+    日志文件名格式: {name}_YYYYMMDD.log
+    """
+    if not os.path.isdir(L0G_R00T):
+        return
+
+    cutoff_date = datetime.now() - timedelta(days=retention_days)
+    log_pattern = re.compile(r"^.+_(\d{8})\.log$")
+
+    for filename in os.listdir(L0G_R00T):
+        match = log_pattern.match(filename)
+        if not match:
+            continue
+
+        try:
+            file_date = datetime.strptime(match.group(1), "%Y%m%d")
+        except ValueError:
+            continue
+
+        if file_date < cutoff_date:
+            filepath = os.path.join(L0G_R00T, filename)
+            try:
+                os.remove(filepath)
+                logging.getLogger(__name__).info(f"已清理过期日志: {filename}")
+            except OSError:
+                logging.getLogger(__name__).warning(f"无法删除日志文件: {filename}")
+
+
+cleanup_old_logs()
 
 #日志的格式配置 error info debug
 DEFAULT_LOG_FORMAT = logging.Formatter(
