@@ -22,8 +22,8 @@ def initialize_vector_database():
     retriever = vs.get_retriever()
     
     # 使用一个简单的查询进行测试
-    test_results = retriever.invoke("扫地机器人的使用方法")
-    
+    test_results = retriever.invoke("Word文档如何自动填充")
+
     if test_results:
         print(f"找到 {len(test_results)} 个相关文档片段:")
         for i, doc in enumerate(test_results):
