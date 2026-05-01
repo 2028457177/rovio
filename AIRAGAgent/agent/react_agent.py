@@ -12,6 +12,7 @@ from AIRAGAgent.utils.prompt_loader import load_system_prompts
 from AIRAGAgent.agent.tools.agent_tools import (rag_summarize, get_weather, get_user_location, get_user_id,
                                                 get_current_month, fetch_external_data, fill_context_for_report,
                                                 get_schedule)
+from AIRAGAgent.agent.tools.agent_tools import _get_rag
 from AIRAGAgent.agent.tools.file_tools import (auto_fill_word)
 from AIRAGAgent.agent.tools.search_tools import (search)
 from AIRAGAgent.agent.tools.middleware import monitor_tool,log_before_model,report_prompt_switch
@@ -60,6 +61,7 @@ class ReactAgent:
     def __init__(self):
         self.agent = agent
         self.graph = graph
+        _get_rag()
     
     # 执行智能体的流式输出
     def execute_stream(self, query: str):
