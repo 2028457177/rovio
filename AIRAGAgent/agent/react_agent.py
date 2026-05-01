@@ -1,4 +1,5 @@
 from langchain.agents import create_agent
+from langchain.agents.middleware.tool_call_limit import ToolCallLimitMiddleware
 from prompt_toolkit.shortcuts import input_dialog
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated, Sequence
@@ -20,6 +21,8 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
 
 
+tool_call_limiter = ToolCallLimitMiddleware(run_limit=15, exit_behavior="end")
+
 # 创建智能体
 agent = create_agent(
     model=local_chat_model,
@@ -27,14 +30,18 @@ agent = create_agent(
     tools=[rag_summarize,get_weather,get_user_location,get_user_id,
            get_current_month,fetch_external_data,fill_context_for_report,get_schedule,
            auto_fill_word,search],
-    middleware=[monitor_tool,log_before_model,report_prompt_switch],
+    middleware=[tool_call_limiter, monitor_tool, log_before_model, report_prompt_switch],
 )
 
 
 def call_agent(state: AgentState):
     """调用智能体并返回结果"""
     input_dict = {"messages": state["messages"]}
-    result = agent.invoke(input_dict, context={"report": False})
+    result = agent.invoke(
+        input_dict,
+        config={"recursion_limit": 30},
+        context={"report": False},
+    )
     return {"messages": result["messages"]}
 
 

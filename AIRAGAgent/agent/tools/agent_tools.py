@@ -15,7 +15,13 @@ from AIRAGAgent.rag.rag_service import RagSummarizeService
 from AIRAGAgent.utils.config_handler import agent_conf
 from AIRAGAgent.utils.path_tool import get_abs_path
 
-rag = RagSummarizeService()
+_rag_instance = None
+
+def _get_rag():
+    global _rag_instance
+    if _rag_instance is None:
+        _rag_instance = RagSummarizeService()
+    return _rag_instance
 
 user_ids = ["1001","1002","1003","1004","1005","1006","1007","1008","1009","1010",]
 
@@ -26,7 +32,7 @@ external_data = {}
 
 @tool(description="从向量存储中检索参考资料")
 def rag_summarize(query: str) -> str:
-    return rag.rag_summarize(query)
+    return _get_rag().rag_summarize(query)
 
 
 @tool(description="将城市名以城市编码的形式传入，获取指定城市的天气信息")
@@ -42,7 +48,7 @@ def get_weather(code: str) -> dict[str, Any]:
     # 使用extensions=all获取预报天气
     url = f"https://restapi.amap.com/v3/weather/weatherInfo?key={key}&city={city_code}&extensions=all"
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10)
 
     if response.status_code == 200:
         result = response.json()

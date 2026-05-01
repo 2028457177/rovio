@@ -2,14 +2,11 @@
 import sys
 import os
 
-# 将项目根目录添加到 Python 路径
-sys.path.append(os.path.dirname("C:/Users/nxt/PycharmProjects/PythonProject/AIRAGAgent"))
-import time
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
-from agent.react_agent import ReactAgent
+from AIRAGAgent.agent.react_agent import ReactAgent
 
-# 标题
 st.title("自动化办公助手")
 st.divider()
 
@@ -22,7 +19,6 @@ if "message" not in st.session_state:
 for message in st.session_state["message"]:
     st.chat_message(message["role"]).write(message["content"])
 
-# 用户输入提示词
 prompt = st.chat_input()
 
 if prompt:
@@ -34,14 +30,10 @@ if prompt:
         res_stream = st.session_state["agent"].execute_stream(prompt)
 
         def capture(generator, cache_list):
-
             for chunk in generator:
                 cache_list.append(chunk)
-
                 for char in chunk:
-                    time.sleep(0.01)
                     yield char
 
         st.chat_message("assistant").write_stream(capture(res_stream, response_messages))
-        st.session_state["message"].append({"role": "assistant", "content": response_messages[-1]})
-        st.rerun()
+    st.session_state["message"].append({"role": "assistant", "content": "".join(response_messages)})
