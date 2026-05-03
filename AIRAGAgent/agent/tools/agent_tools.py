@@ -115,6 +115,37 @@ def get_user_location()-> Any | None:
         return "获取失败"
 
 
+@tool(description="将城市名称（如'杭州市'）转换为高德地图城市编码（adcode），供get_weather使用")
+def get_city_code(city_name: str) -> str:
+    """
+    将城市名称转换为高德地图城市编码
+
+    Args:
+        city_name: get_user_location返回的城市名称，格式如"浙江省杭州市"
+
+    Returns:
+        城市编码字符串（adcode），如"330100"
+    """
+    try:
+        key = rag_conf["gaode_api_key"]
+        url = f"https://restapi.amap.com/v3/config/district?key={key}&keywords={city_name}&subdistrict=0"
+
+        response = requests.get(url, timeout=5)
+        data = response.json()
+
+        if data.get('status') == '1' and data.get('districts'):
+            district = data['districts'][0]
+            adcode = district.get('adcode', '')
+            name = district.get('name', '')
+            if adcode:
+                return adcode
+            return f"未找到'{city_name}'的城市编码"
+        else:
+            return f"查询'{city_name}'的城市编码失败：{data.get('info', '未知错误')}"
+
+    except Exception as e:
+        return f"获取城市编码失败：{str(e)}"
+
 
 @tool(description="获取用户的ID，以纯字符串形式返回")
 def get_user_id()->str:

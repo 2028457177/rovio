@@ -26,14 +26,29 @@ if prompt:
     st.session_state["message"].append({"role": "user", "content": prompt})
 
     response_messages = []
+    thinking_placeholder = st.empty()
+    output_placeholder = st.empty()
+
     with st.spinner("思考中..."):
         res_stream = st.session_state["agent"].execute_stream(prompt)
 
-        def capture(generator, cache_list):
-            for chunk in generator:
-                cache_list.append(chunk)
-                for char in chunk:
-                    yield char
+        thinking_lines = []
+        output_lines = []
 
-        st.chat_message("assistant").write_stream(capture(res_stream, response_messages))
-    st.session_state["message"].append({"role": "assistant", "content": "".join(response_messages)})
+        for chunk in res_stream:
+            if isinstance(chunk, dict):
+                if chunk["type"] == "thinking":
+                    thinking_lines.append(chunk["content"])
+                    thinking_placeholder.text("\n".join(thinking_lines))
+                elif chunk["type"] == "thinking_end":
+                    thinking_placeholder.empty()
+                elif chunk["type"] == "output":
+                    output_lines.append(chunk["content"])
+                    output_placeholder.markdown("".join(output_lines))
+            else:
+                output_lines.append(chunk)
+                output_placeholder.markdown("".join(output_lines))
+
+    thinking_placeholder.empty()
+    final_output = "".join(output_lines)
+    st.session_state["message"].append({"role": "assistant", "content": final_output})

@@ -98,12 +98,13 @@ class AgentService:
         try:
             logger.debug(f"[Agent 服务] 开始流式输出，消息：{message[:30]}...")
             
-            # 执行 Agent 并获取流式输出
             for chunk in self.agent.execute_stream(message):
-                # 清理和格式化输出
-                content = chunk.strip()
-                if content:
-                    yield content
+                if isinstance(chunk, dict):
+                    yield chunk
+                else:
+                    content = chunk.strip()
+                    if content:
+                        yield content
                     
         except Exception as e:
             logger.error(f"[Agent 服务] 流式响应失败：{str(e)}", exc_info=True)
