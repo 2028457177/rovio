@@ -1,0 +1,507 @@
+2026-04-27 15:32:24,463 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 15:32:24,464 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 15:32:28,867 - agent - ERROR - vector_store.py:117 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容加载失败:Collection expecting embedding with dimension of 1024, got 768
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\vector_store.py", line 109, in load_document
+    self.vector_store.add_documents(split_document)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 651, in add_texts
+    self._collection.upsert(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        metadatas=metadatas,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        ids=ids_with_metadata,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+    ~~~~~~~~~~~~~~~~~~~~^
+        collection_id=self.id,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database=self.database,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ~~~~~~~~~~~~~~~~~~~~^
+        str(collection_id),
+        ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database,
+        ^^^^^^^^^
+    )
+    ^
+chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 1024, got 768
+2026-04-27 15:32:29,707 - agent - ERROR - vector_store.py:117 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容加载失败:Collection expecting embedding with dimension of 1024, got 768
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\vector_store.py", line 109, in load_document
+    self.vector_store.add_documents(split_document)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 651, in add_texts
+    self._collection.upsert(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        metadatas=metadatas,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        ids=ids_with_metadata,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+    ~~~~~~~~~~~~~~~~~~~~^
+        collection_id=self.id,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database=self.database,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ~~~~~~~~~~~~~~~~~~~~^
+        str(collection_id),
+        ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database,
+        ^^^^^^^^^
+    )
+    ^
+chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 1024, got 768
+2026-04-27 15:32:31,247 - agent - ERROR - vector_store.py:117 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容加载失败:Collection expecting embedding with dimension of 1024, got 768
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\vector_store.py", line 109, in load_document
+    self.vector_store.add_documents(split_document)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 651, in add_texts
+    self._collection.upsert(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        metadatas=metadatas,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        ids=ids_with_metadata,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+    ~~~~~~~~~~~~~~~~~~~~^
+        collection_id=self.id,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database=self.database,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ~~~~~~~~~~~~~~~~~~~~^
+        str(collection_id),
+        ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database,
+        ^^^^^^^^^
+    )
+    ^
+chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 1024, got 768
+2026-04-27 15:32:32,289 - agent - ERROR - vector_store.py:117 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容加载失败:Collection expecting embedding with dimension of 1024, got 768
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\vector_store.py", line 109, in load_document
+    self.vector_store.add_documents(split_document)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 651, in add_texts
+    self._collection.upsert(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        metadatas=metadatas,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        ids=ids_with_metadata,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+    ~~~~~~~~~~~~~~~~~~~~^
+        collection_id=self.id,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database=self.database,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ~~~~~~~~~~~~~~~~~~~~^
+        str(collection_id),
+        ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database,
+        ^^^^^^^^^
+    )
+    ^
+chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 1024, got 768
+2026-04-27 15:32:33,137 - agent - ERROR - vector_store.py:117 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容加载失败:Collection expecting embedding with dimension of 1024, got 768
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\vector_store.py", line 109, in load_document
+    self.vector_store.add_documents(split_document)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 258, in add_documents
+    return self.add_texts(texts, metadatas, **kwargs)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 651, in add_texts
+    self._collection.upsert(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        metadatas=metadatas,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        ids=ids_with_metadata,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\models\Collection.py", line 530, in upsert
+    self._client._upsert(
+    ~~~~~~~~~~~~~~~~~~~~^
+        collection_id=self.id,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database=self.database,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\chromadb\api\rust.py", line 541, in _upsert
+    return self.bindings.upsert(
+           ~~~~~~~~~~~~~~~~~~~~^
+        str(collection_id),
+        ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        database,
+        ^^^^^^^^^
+    )
+    ^
+chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 1024, got 768
+2026-04-27 16:19:05,458 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:05,460 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:10,014 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容加载成功
+2026-04-27 16:19:11,038 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容加载成功
+2026-04-27 16:19:12,480 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容加载成功
+2026-04-27 16:19:13,620 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容加载成功
+2026-04-27 16:19:14,577 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容加载成功
+2026-04-27 16:19:14,649 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:14,651 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:14,653 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,654 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,656 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,657 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,659 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,668 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:14,670 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:14,671 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,672 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,674 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,675 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:14,677 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,243 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:20,245 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:20,246 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,246 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,247 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,248 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,249 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,303 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:20,304 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:20,306 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,307 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,308 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,309 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,310 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,317 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:20,319 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:20,320 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,321 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,322 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,323 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,324 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,568 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:20,570 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:20,571 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,572 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,573 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,574 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,576 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,584 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:19:20,585 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:19:20,586 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,587 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,589 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,590 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:19:20,591 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:08,531 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:42:08,533 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:42:08,534 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:08,535 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:08,536 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:08,538 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:08,539 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:15,371 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:42:15,373 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:42:15,374 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:15,375 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:15,377 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:15,379 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:15,380 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:19,620 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:42:19,622 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:42:19,623 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:19,623 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:19,625 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:19,626 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:42:19,627 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:36,892 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:45:36,893 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:45:36,893 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:36,894 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:36,894 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:36,895 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:36,895 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:45:46,116 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 16:45:46,116 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 帮我查询今天的天气
+2026-04-27 16:45:55,688 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-04-27 16:45:55,688 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-04-27 16:45:56,117 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-04-27 16:45:56,119 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 16:45:56,119 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-04-27 16:46:00,209 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-04-27 16:46:00,210 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '河北省廊坊市'}
+2026-04-27 16:46:00,215 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-04-27 16:46:00,217 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 16:46:00,218 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | Error invoking tool 'get_weather' with kwargs {'city': '河北省廊坊市'} with error:
+ code: Field required
+ Please fix the error and try again.
+2026-04-27 16:46:11,325 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-04-27 16:46:11,326 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '廊坊市'}
+2026-04-27 16:46:11,327 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-04-27 16:46:11,329 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-04-27 16:46:11,329 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | Error invoking tool 'get_weather' with kwargs {'city': '廊坊市'} with error:
+ code: Field required
+ Please fix the error and try again.
+2026-04-27 16:46:18,956 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-04-27 16:46:18,957 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '廊坊'}
+2026-04-27 16:46:18,958 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-04-27 16:46:18,960 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有9条消息。
+2026-04-27 16:46:18,960 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | Error invoking tool 'get_weather' with kwargs {'city': '廊坊'} with error:
+ code: Field required
+ Please fix the error and try again.
+2026-04-27 16:46:47,937 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-04-27 16:46:47,937 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city': '廊坊'}
+2026-04-27 16:46:47,939 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-04-27 16:46:47,941 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有11条消息。
+2026-04-27 16:46:47,941 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | Error invoking tool 'get_weather' with kwargs {'city': '廊坊'} with error:
+ code: Field required
+ Please fix the error and try again.
+2026-04-27 16:47:06,775 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 16:47:06,775 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 16:47:35,158 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 16:47:35,158 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1, 'code': 1}
+2026-04-27 16:47:35,159 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 16:47:35,162 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 16:47:35,162 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 16:47:39,943 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 16:47:39,943 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期二'}
+2026-04-27 16:47:39,949 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 16:47:39,950 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 16:47:39,951 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-04-27 16:56:30,734 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:56:30,735 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:56:30,736 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:30,736 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:30,737 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:30,738 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:30,738 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,065 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:56:32,067 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:56:32,068 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,069 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,071 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,072 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,073 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,208 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:56:32,210 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:56:32,212 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,213 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,214 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,216 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:56:32,217 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:44,616 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:58:44,618 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:58:44,619 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:44,619 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:44,620 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:44,621 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:44,621 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,220 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:58:46,222 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:58:46,224 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,225 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,227 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,228 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,229 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,345 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:58:46,347 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:58:46,349 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,350 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,352 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,353 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:58:46,354 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:27,050 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 16:59:27,051 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 16:59:27,052 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:27,052 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:27,053 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:27,054 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:27,054 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 16:59:33,892 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 16:59:33,893 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 帮我查询今天的天气
+2026-04-27 17:00:04,907 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-04-27 17:00:04,907 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-04-27 17:00:05,338 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-04-27 17:00:05,341 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:00:05,341 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-04-27 17:00:31,968 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:search
+2026-04-27 17:00:31,968 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'content': '河北省廊坊市 城市编码'}
+2026-04-27 17:00:38,810 - agent - INFO - middleware.py:24 - [tool monitor]工具search调用成功
+2026-04-27 17:00:38,812 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:00:38,812 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"title": "中华人民共和国行政区划代码-廊坊市", "url": "http://tool.huiruisoft.com/district/131000.html", "content": "| |  |  |  |  | | --- | --- | --- | --- | | 中文名称 | 廊坊市 | 区划代码 | 131000 | | 外文名称 | Langfang | 人口数量 | 549.53 万 | | 电话区号 | 0316 | 区划面积 | 6429.00 km² | | 邮政编码 | 065000 | 政府驻地 | 广阳区广阳道230号 | | 廊坊市，河北省辖地级市，位于河北省中部偏东，北临北京市，东交天津市，南接沧州市，西连保定市，地处京津冀城市群核心地带、环渤海腹地。截至2022年10月，全市辖2个区、6个县，代管2个县级市，总面积6429平方千米 。截至2022年底，廊坊市常住人口为549.53万人。   廊坊市位于华北平原中东部，北起燕山南麓丘陵地区，南抵黑龙港流域，大部分为凹陷地区。廊坊市地处中纬度地带，属暖温带大陆性季风气候，四季分明。廊坊市地处海河流域中下游，素有“九河下梢”之称。廊坊地处北京、天津和雄安新区“黄金三角”核心腹地，是以北京为核心的世界级城市群重要节点城市，素有“京津走廊明珠”之称。主城区距北京城区40千米、距天津城区60千米、距雄安新区80千米，距首都国际机场和天津滨海国际机场70千米，距天津港100千米，紧邻北京大兴国际机场，是一小时车距内坐拥有三个国际机场、一个特大港口资源的城市。 廊坊地域曾涌现出西晋文学家张华、唐代诗人王之涣、北宋名相吕端、宋代文学家苏洵、元代名相史天泽、明代农民起义领袖刘六、刘七等人物。   2022年，廊坊市实现地区生产总值3565.3亿元，同比增长2.1%。 | |. | | 区划代码 | 中文名称 | 电话区号 | 邮政编码 | 面积(km²) | 政府驻地 | | --- | --- | --- | --- | --- | --- | | 131002 | 安次区 | 0316 | 065000 | 578.40 | 广阳区金光道14号 | | 131003 | 广阳区 | 0316 | 065000 | 464.73 | 解放道街道 | | 131022 | 固安县 | 0316 | 065500 | 696.00 | 新中街188号 | | 131023 | 永清县 | 0316 | 065600 | 776.00 | 永清镇 | | 131024 | 香河县 | 0316 | 065400 | 448.00 | 淑阳镇 | | 131025 | 大城县 | 0316 | 065900 | 904.00 | 平舒镇永定大街9号 | | 131026 | 文安县 | 0316 | 065800 | 1037.00 | 文安镇 | | 131028 | 大厂回族自治县 | 0316 | 065300 | 176.30 | 大安东街3号 | | 131081 | 霸州市 | 0316 | 065700 | 801.00 | 霸州镇 | | 131082 | 三河市 | 0316 | 065200 | 643.00 | 鼎盛东大街5号 | |.", "score": 0.9161773}]
+2026-04-27 17:00:44,876 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-04-27 17:00:44,876 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '131000'}
+2026-04-27 17:00:45,290 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-04-27 17:00:45,292 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-04-27 17:00:45,292 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-04-27", "白天天气": "多云", "夜晚天气": "多云", "白天温度": 23.0, "夜晚温度": 9.0, "白天风向": "北", "夜晚风向": "北", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-04-28", "白天天气": "阴", "夜晚天气": "晴", "白天温度": 21.0, "夜晚温度": 7.0, "白天风向": "北", "夜晚风向": "北", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-04-29", "白天天气": "晴", "夜晚天气": "晴", "白天温度": 22.0, "夜晚温度": 13.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-04-30", "白天天气": "晴", "夜晚天气": "晴", "白天温度": 26.0, "夜晚温度": 13.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-04-27 17:03:09,225 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:03:09,226 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天天气怎么样
+2026-04-27 17:03:34,185 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-04-27 17:03:34,185 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-04-27 17:03:34,607 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-04-27 17:03:34,609 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:03:34,609 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-04-27 17:05:32,823 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:05:32,823 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:07:10,948 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:07:10,948 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-04-27 17:07:52,594 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:07:52,594 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你都可以干什么
+2026-04-27 17:13:14,961 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:13:14,961 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-04-27 17:13:32,205 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:13:32,206 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你能干什么
+2026-04-27 17:14:27,665 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:14:27,666 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:14:50,696 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 17:14:50,696 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1}
+2026-04-27 17:14:50,700 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 17:14:50,706 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:14:50,706 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 17:14:55,991 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 17:14:55,992 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期二'}
+2026-04-27 17:14:56,003 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 17:14:56,008 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:14:56,008 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-04-27 17:16:13,082 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:16:13,082 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:16:30,690 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 17:16:30,691 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1}
+2026-04-27 17:16:30,695 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 17:16:30,703 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:16:30,705 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 17:16:37,077 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 17:16:37,078 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期二'}
+2026-04-27 17:16:37,097 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 17:16:37,103 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:16:37,104 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-04-27 17:18:40,400 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:18:40,401 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:19:04,217 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 17:19:04,220 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '1', 'wantday': 1}
+2026-04-27 17:19:04,223 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 17:19:04,231 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:19:04,233 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 17:19:09,571 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 17:19:09,572 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期二'}
+2026-04-27 17:19:09,593 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 17:19:09,604 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:19:09,607 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-04-27 17:24:39,505 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 17:24:39,507 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 17:24:39,509 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:39,510 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:39,512 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:39,513 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:39,514 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:40,919 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 17:24:40,921 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 17:24:40,923 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:40,924 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:40,925 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:40,927 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:40,928 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:41,043 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 17:24:41,045 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 17:24:41,046 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:41,047 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:41,049 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:41,050 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 17:24:41,051 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 17:26:52,549 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-04-27 17:26:52,551 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问.pdf内容已经存在知识库内，跳过
+2026-04-27 17:26:52,552 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫地机器人100问2.txt内容已经存在知识库内，跳过
+2026-04-27 17:26:52,553 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\扫拖一体机器人100问.txt内容已经存在知识库内，跳过
+2026-04-27 17:26:52,554 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\故障排除.txt内容已经存在知识库内，跳过
+2026-04-27 17:26:52,555 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\维护保养.txt内容已经存在知识库内，跳过
+2026-04-27 17:26:52,557 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\选购指南.txt内容已经存在知识库内，跳过
+2026-04-27 17:31:23,873 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:31:23,875 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:31:53,770 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 17:31:53,770 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': 1, 'wantday': 1}
+2026-04-27 17:31:53,771 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 17:31:53,773 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:31:53,773 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 17:32:01,639 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 17:32:01,640 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'day': '星期二', 'week': 8}
+2026-04-27 17:32:03,647 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 17:32:03,655 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:32:03,655 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"时间段": "第二大节（上午）", "课程名": "概率论与数理统计", "节次": "3-4节", "地点": "D202", "属性": ["40", "必修"], "原始信息": "概率论与数理统计[40][必修]◇1-8,10-16(周)[03-04节]◇D202"}, {"时间段": "第四大节（下午）", "课程名": "毛泽东思想和中国特色社会主义理论体系概论", "节次": "7-8节", "地点": "K2-514", "属性": ["48", "必修"], "原始信息": "毛泽东思想和中国特色社会主义理论体系概论[48][必修]◇1-8,10-16(周)[07-08节]◇K2-514"}, {"时间段": "第五大节（晚上）", "课程名": "Python程序设计与应用", "节次": "9-10节", "地点": "M203", "属性": ["16", "通识限选"], "原始信息": "Python程序设计与应用[16][通识限选]◇1-8(周)[09-10节]◇M203"}]
+2026-04-27 17:36:32,616 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:36:32,616 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-04-27 17:36:47,970 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:36:47,970 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-04-27 17:37:17,975 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:37:17,975 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你都有什么功能
+2026-04-27 17:38:16,855 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:38:16,855 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-04-27 17:59:02,984 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-04-27 17:59:02,985 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-04-27 17:59:23,161 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-04-27 17:59:23,162 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1}
+2026-04-27 17:59:23,168 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-04-27 17:59:23,177 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-04-27 17:59:23,178 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-04-28", "week": 8, "day": "星期二"}
+2026-04-27 17:59:26,964 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-04-27 17:59:26,965 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期二'}
+2026-04-27 17:59:27,072 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-04-27 17:59:27,078 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-04-27 17:59:27,079 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"时间段": "第二大节（上午）", "课程名": "概率论与数理统计", "节次": "3-4节", "地点": "D202", "属性": ["40", "必修"], "原始信息": "概率论与数理统计[40][必修]◇1-8,10-16(周)[03-04节]◇D202"}, {"时间段": "第四大节（下午）", "课程名": "毛泽东思想和中国特色社会主义理论体系概论", "节次": "7-8节", "地点": "K2-514", "属性": ["48", "必修"], "原始信息": "毛泽东思想和中国特色社会主义理论体系概论[48][必修]◇1-8,10-16(周)[07-08节]◇K2-514"}, {"时间段": "第五大节（晚上）", "课程名": "Python程序设计与应用", "节次": "9-10节", "地点": "M203", "属性": ["16", "通识限选"], "原始信息": "Python程序设计与应用[16][通识限选]◇1-8(周)[09-10节]◇M203"}]

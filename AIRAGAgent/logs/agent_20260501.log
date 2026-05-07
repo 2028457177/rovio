@@ -1,0 +1,18 @@
+2026-05-01 19:55:34,945 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-01 19:55:34,945 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 明天有什么课
+2026-05-01 19:55:54,198 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-05-01 19:55:54,198 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': 1, 'wantday': 1}
+2026-05-01 19:55:54,199 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-05-01 19:55:54,205 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-01 19:55:54,205 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-05-02", "week": 8, "day": "星期六"}
+2026-05-01 19:56:03,626 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-05-01 19:56:03,627 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 8, 'day': '星期六'}
+2026-05-01 19:56:03,925 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-05-01 19:56:03,926 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-01 19:56:03,926 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-05-01 20:09:03,662 - agent - INFO - vector_store.py:114 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容加载成功
+2026-05-01 20:17:25,916 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-01 20:17:35,042 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-01 20:17:35,043 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好，你是谁
+2026-05-01 20:26:27,806 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-01 21:11:36,087 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
