@@ -1,5 +1,5 @@
 from typing import Callable
-from AIRAGAgent.utils.prompt_loader import load_system_prompts,load_report_prompts
+from AIRAGAgent.utils.prompt_loader import load_identity_prompts, load_report_prompts, load_tool_details
 from langchain.agents import AgentState
 from langchain.agents.middleware import wrap_tool_call, before_model, dynamic_prompt, ModelRequest
 from langchain.tools.tool_node import ToolCallRequest
@@ -58,9 +58,26 @@ def log_before_model(
     return None
 
 @dynamic_prompt
-def report_prompt_switch(request:ModelRequest):     #每一次在生成提示词之前，调用此函数
+def smart_prompt_switch(request: ModelRequest):
     is_report = request.runtime.context.get("report", False)
-    if is_report:       # 是报告生成场景，返回报告生成提示词内容
+    if is_report:
         return load_report_prompts()
 
-    return load_system_prompts()
+    identity = load_identity_prompts()
+
+    state = request.state
+    messages = state.get("messages", [])
+
+    called_tools = set()
+    for msg in messages:
+        if hasattr(msg, 'tool_calls') and msg.tool_calls:
+            for tc in msg.tool_calls:
+                name = tc.get("name", "")
+                if name:
+                    called_tools.add(name)
+
+    if called_tools:
+        tool_details = load_tool_details(list(called_tools))
+        return identity + "\n\n### 已调用工具的详细使用指南\n" + tool_details
+
+    return identity

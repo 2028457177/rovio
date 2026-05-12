@@ -8,7 +8,7 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMe
 
 from AIRAGAgent.model.local_factory import local_chat_model
 from AIRAGAgent.model.factory import chat_model
-from AIRAGAgent.utils.prompt_loader import load_system_prompts
+from AIRAGAgent.utils.prompt_loader import load_identity_prompts
 from AIRAGAgent.agent.tools.agent_tools import (rag_summarize, get_weather, get_user_location, get_user_id,
                                                 get_current_month, fetch_external_data, fill_context_for_report,
                                                 get_schedule, get_city_code)
@@ -16,7 +16,7 @@ from AIRAGAgent.agent.tools.agent_tools import _get_rag
 from AIRAGAgent.agent.tools.file_tools import (auto_fill_word)
 from AIRAGAgent.agent.tools.search_tools import (search)
 from AIRAGAgent.agent.tools.wx_tools import (send_wx_message)
-from AIRAGAgent.agent.tools.middleware import monitor_tool,log_before_model,report_prompt_switch
+from AIRAGAgent.agent.tools.middleware import monitor_tool,log_before_model,smart_prompt_switch
 
 
 class AgentState(TypedDict):
@@ -28,11 +28,11 @@ tool_call_limiter = ToolCallLimitMiddleware(run_limit=15, exit_behavior="end")
 # 创建智能体
 agent = create_agent(
     model=local_chat_model,
-    system_prompt=load_system_prompts(),
+    system_prompt=load_identity_prompts(),
     tools=[rag_summarize,get_weather,get_user_location,get_city_code,get_user_id,
            get_current_month,fetch_external_data,fill_context_for_report,get_schedule,
            auto_fill_word,search,send_wx_message],
-    middleware=[tool_call_limiter, monitor_tool, log_before_model, report_prompt_switch],
+    middleware=[tool_call_limiter, monitor_tool, log_before_model, smart_prompt_switch],
 )
 
 
