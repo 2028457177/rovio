@@ -4,7 +4,7 @@ from prompt_toolkit.shortcuts import input_dialog
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated, Sequence
 import operator
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, AIMessageChunk, ToolMessage
 
 from AIRAGAgent.model.local_factory import local_chat_model
 from AIRAGAgent.model.factory import chat_model
@@ -64,68 +64,65 @@ class ReactAgent:
         self.graph = graph
         _get_rag()
     
-    # 执行智能体的流式输出
     def execute_stream(self, query: str):
         """
         Args:
             query: 用户的查询
 
         Yields:
-            dict: {"type": "thinking"|"output", "content": str}
+            dict: {"type": "thinking"|"thinking_end"|"output", "content": str}
         """
         input_dict = {
             "messages": [
                 HumanMessage(content=query),
             ]
         }
-        seen_message_ids = set()
+        seen_tool_ids = set()
+        reported_tool_results = set()
         has_entered_tool_phase = False
 
-        for chunk in self.agent.stream(input_dict, stream_mode="values", context={"report": False}):
-            latest_message = chunk['messages'][-1]
-            msg_id = id(latest_message)
+        for msg, metadata in self.agent.stream(
+            input_dict,
+            stream_mode="messages",
+            subgraphs=False,
+            context={"report": False},
+        ):
+            if isinstance(msg, AIMessageChunk):
+                has_tool_calls = bool(msg.tool_calls) if hasattr(msg, 'tool_calls') else False
 
-            if msg_id in seen_message_ids:
-                continue
-            seen_message_ids.add(msg_id)
+                if has_tool_calls:
+                    for tc in msg.tool_calls:
+                        tc_id = tc.get("id", "")
+                        tc_name = tc.get("name", "")
+                        if tc_id and tc_name and tc_id not in seen_tool_ids:
+                            seen_tool_ids.add(tc_id)
+                            has_entered_tool_phase = True
+                            yield {
+                                "type": "thinking",
+                                "content": f"正在调用工具: {tc_name}"
+                            }
 
-            has_tool_calls = (
-                isinstance(latest_message, AIMessage)
-                and latest_message.tool_calls
-            )
-            is_tool = isinstance(latest_message, ToolMessage)
-
-            if has_tool_calls:
-                has_entered_tool_phase = True
-                content = latest_message.content or ""
-                if latest_message.tool_calls:
-                    tool_names = [tc.get("name", "未知工具") for tc in latest_message.tool_calls]
-                    tool_info = f"正在调用工具: {', '.join(tool_names)}"
-                    if content:
-                        content = f"{content}\n{tool_info}"
-                    else:
-                        content = tool_info
-                yield {
-                    "type": "thinking",
-                    "content": content.strip()
-                }
-            elif is_tool:
-                tool_name = getattr(latest_message, 'name', '未知工具')
-                result_preview = _truncate_content(str(latest_message.content))
-                yield {
-                    "type": "thinking",
-                    "content": f"工具 [{tool_name}] 执行完成\n{result_preview}"
-                }
-            elif isinstance(latest_message, AIMessage) and latest_message.content:
-                if has_entered_tool_phase:
+                if msg.content:
+                    if has_entered_tool_phase:
+                        yield {
+                            "type": "thinking_end",
+                            "content": ""
+                        }
+                        has_entered_tool_phase = False
                     yield {
-                        "type": "thinking_end",
-                        "content": ""
+                        "type": "output",
+                        "content": msg.content
                     }
-                yield {
-                    "type": "output",
-                    "content": latest_message.content.strip()
-                }
+
+            elif isinstance(msg, ToolMessage):
+                tool_name = getattr(msg, 'name', '未知工具')
+                if tool_name not in reported_tool_results:
+                    reported_tool_results.add(tool_name)
+                    result_preview = _truncate_content(str(msg.content))
+                    yield {
+                        "type": "thinking",
+                        "content": f"工具 [{tool_name}] 执行完成\n{result_preview}"
+                    }
 
 
 def _truncate_content(content: str, max_len: int = 200) -> str:

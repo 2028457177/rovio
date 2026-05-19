@@ -8,7 +8,7 @@ from typing import Dict, Any, AsyncGenerator
 # 将 AIRAGAgent 目录添加到 Python 路径
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from AIRAGAgent.agent.react_agent import ReactAgent
+from AIRAGAgent.agent.supervisor_agent import SupervisorAgent
 from AIRAGAgent.utils.logger_handler import logger
 
 
@@ -17,7 +17,7 @@ class AgentService:
     
     def __init__(self):
         """初始化 Agent"""
-        self.agent = ReactAgent()
+        self.agent = SupervisorAgent()
         # 会话存储（生产环境应该使用 Redis 等）
         self.sessions: Dict[str, list] = {}
     

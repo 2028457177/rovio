@@ -27,17 +27,32 @@
       </button>
 
       <div class="sidebar-section-title">历史对话</div>
-      <ul class="sidebar-chat-list">
+      <ul class="sidebar-chat-list" v-if="conversations.length > 0">
         <li
           class="sidebar-chat-item"
-          :class="{ active: index === 0 }"
-          v-for="(_, index) in 3"
-          :key="index"
+          :class="{ active: conv.id === currentConversationId }"
+          v-for="conv in conversations"
+          :key="conv.id"
+          @click="onSwitchConversation(conv.id)"
         >
           <span class="chat-item-icon">💬</span>
-          <span class="chat-item-text">对话 {{ index + 1 }}</span>
+          <span class="chat-item-text" :title="conv.title">{{ conv.title }}</span>
+          <span class="chat-item-time">{{ conv.time }}</span>
+          <button
+            class="chat-item-delete"
+            @click.stop="onRemoveConversation(conv.id)"
+            title="删除对话"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </li>
       </ul>
+      <div v-else class="sidebar-empty-hint">
+        暂无对话记录
+      </div>
 
       <div class="sidebar-footer">
         <span class="status-dot"></span>
@@ -49,7 +64,7 @@
       <header class="chat-header">
         <span class="chat-header-title">
           <span class="header-glow"></span>
-          AI 对话
+          {{ currentConversation ? currentConversation.title : 'AI 对话' }}
         </span>
         <div class="chat-header-actions">
           <button class="chat-header-btn" @click="onClearChat">
@@ -136,7 +151,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, onMounted } from 'vue'
 import { useChat } from '@/composables/useChat.js'
 import WelcomeScreen from '@/components/WelcomeScreen.vue'
 import MessageBubble from '@/components/MessageBubble.vue'
@@ -152,11 +167,21 @@ const {
   thinkingLines,
   isThinking,
   showWelcome,
+  conversations,
+  currentConversationId,
+  currentConversation,
   sendMessage,
   newChat,
+  loadConversations,
+  switchToConversation,
+  removeConversation,
   clearChat,
   dismissError
 } = useChat()
+
+onMounted(() => {
+  loadConversations()
+})
 
 const chatContainer = ref(null)
 
@@ -181,6 +206,14 @@ function onSendMessage(message) {
 
 function onNewChat() {
   newChat()
+}
+
+function onSwitchConversation(conversationId) {
+  switchToConversation(conversationId)
+}
+
+function onRemoveConversation(conversationId) {
+  removeConversation(conversationId)
 }
 
 function onClearChat() {
@@ -340,6 +373,43 @@ function onDismissError() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+}
+
+.chat-item-time {
+  font-size: 11px;
+  color: #5c6280;
+  flex-shrink: 0;
+}
+
+.chat-item-delete {
+  background: none;
+  border: none;
+  color: #5c6280;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.sidebar-chat-item:hover .chat-item-delete {
+  opacity: 1;
+}
+
+.chat-item-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.sidebar-empty-hint {
+  font-size: 12px;
+  color: #5c6280;
+  text-align: center;
+  padding: 20px 0;
 }
 
 .sidebar-footer {

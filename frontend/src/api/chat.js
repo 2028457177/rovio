@@ -36,13 +36,15 @@ export async function sendChatMessage(message, sessionId, onThinking, onOutput, 
 
           try {
             const parsed = JSON.parse(data)
-            if (parsed.type === 'thinking' && parsed.content) {
+            if ((parsed.type === 'thinking' || parsed.type === 'supervisor_thinking') && parsed.content) {
               onThinking(parsed.content)
             } else if (parsed.type === 'thinking_end') {
               onThinkingEnd()
+            } else if (parsed.type === 'supervisor_action' && parsed.content) {
+              onThinking(parsed.content)
             } else if (parsed.type === 'output' && parsed.content) {
               fullOutput += parsed.content
-              onOutput(fullOutput)
+              onOutput(parsed.content, fullOutput)
             }
 
             if (parsed.error) {
@@ -51,7 +53,7 @@ export async function sendChatMessage(message, sessionId, onThinking, onOutput, 
           } catch {
             if (data) {
               fullOutput += data
-              onOutput(fullOutput)
+              onOutput(data, fullOutput)
             }
           }
         }
@@ -68,4 +70,25 @@ export async function sendChatMessage(message, sessionId, onThinking, onOutput, 
 
 export function generateSessionId() {
   return 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9)
+}
+
+export async function loadConversationsApi() {
+  const response = await fetch(`${API_BASE}/conversations`)
+  if (!response.ok) throw new Error(`加载对话失败: ${response.status}`)
+  const data = await response.json()
+  return data.conversations || []
+}
+
+export async function saveConversationApi(conversation) {
+  await fetch(`${API_BASE}/conversations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(conversation)
+  })
+}
+
+export async function deleteConversationApi(conversationId) {
+  await fetch(`${API_BASE}/conversations/${conversationId}`, {
+    method: 'DELETE'
+  })
 }

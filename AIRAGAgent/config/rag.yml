@@ -1,4 +1,4 @@
-chat_model_name : qwen3.5-flash
+chat_model_name : deepseek-v4-flash
 api_key : ***REMOVED***
 embedding_model_name : text-embedding-v4
 https_proxy : http://ip-api.com/json/

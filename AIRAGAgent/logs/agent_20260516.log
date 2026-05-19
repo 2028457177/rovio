@@ -1,0 +1,153 @@
+2026-05-16 14:39:48,066 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 14:40:02,691 - agent - DEBUG - agent_service.py:177 - [Agent 服务] 开始流式输出，消息：你好...
+2026-05-16 14:40:02,691 - agent - INFO - agent_service.py:58 - [Agent 服务] 创建新对话 80f43cf2-8034-499c-a681-41de1bcccb84
+2026-05-16 14:40:02,795 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 14:40:02,795 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-05-16 14:42:30,908 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 14:49:15,984 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 14:52:14,329 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 14:52:29,219 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 14:56:50,158 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 14:56:50,158 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-05-16 15:13:16,485 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:13:16,485 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 您好
+2026-05-16 15:34:20,816 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:35:36,091 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:35:36,092 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-05-16 15:38:29,597 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:38:37,080 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:38:37,365 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:38:37,365 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 说hello
+2026-05-16 15:38:57,025 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:39:27,591 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:39:37,183 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:39:37,507 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:39:37,507 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 说hello
+2026-05-16 15:40:25,541 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:40:40,241 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:40:49,533 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:40:49,830 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:40:49,831 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 说hello
+2026-05-16 15:41:46,154 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:42:22,825 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:42:49,894 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:42:49,895 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好
+2026-05-16 15:43:19,714 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_id
+2026-05-16 15:43:19,714 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-16 15:43:19,715 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_id调用成功
+2026-05-16 15:43:19,717 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 15:43:19,717 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 1006
+2026-05-16 15:44:36,736 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:44:59,131 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:44:59,131 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好，你能干什么事
+2026-05-16 15:49:03,743 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:49:44,376 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:49:59,550 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 15:51:23,044 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 15:51:23,045 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好，你能帮我做什么
+2026-05-16 15:51:57,129 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 16:00:17,007 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 16:00:17,007 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好，你能干什么
+2026-05-16 16:08:34,435 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 16:12:26,732 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 16:13:02,933 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 16:16:41,090 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 16:16:41,090 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你好，你能干什么
+2026-05-16 21:51:56,040 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 21:52:48,898 - agent - INFO - supervisor_agent.py:121 - [Supervisor] 收到用户任务: 帮我查询今天的天气...
+2026-05-16 21:53:12,718 - agent - INFO - supervisor_agent.py:121 - [Supervisor] 收到用户任务: 你好...
+2026-05-16 21:58:54,518 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 22:00:20,692 - agent - INFO - supervisor_agent.py:121 - [Supervisor] 收到用户任务: 帮我查询今天的天气...
+2026-05-16 22:00:24,781 - agent - INFO - supervisor_agent.py:108 - [Supervisor] 决策内容: TASK: 查询今天（当前日期）的天气信息。由于用户未指定地点，请默认使用北京作为地点，返回今天的天气情况（包括天气状况、气温、风力等关键信息）。如果无法获取，请说明原因并提供替代方案。...
+2026-05-16 22:00:24,784 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:00:24,785 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 查询今天（当前日期）的天气信息。由于用户未指定地点，请默认使用北京作为地点，返回今天的天气情况（包括天气状况、气温、风力等关键信息）。如果无法获取，请说明原因并提供替代方案。
+2026-05-16 22:00:35,821 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-16 22:00:35,821 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '北京'}
+2026-05-16 22:00:36,294 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-16 22:00:36,296 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 22:00:36,296 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 110000
+2026-05-16 22:00:39,867 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-16 22:00:39,867 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '110000'}
+2026-05-16 22:00:40,306 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-16 22:00:40,307 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-16 22:00:40,308 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-16", "白天天气": "小雨", "夜晚天气": "小雨", "白天温度": 24.0, "夜晚温度": 18.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-17", "白天天气": "大雨", "夜晚天气": "中雨", "白天温度": 20.0, "夜晚温度": 17.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-18", "白天天气": "阴", "夜晚天气": "阴", "白天温度": 25.0, "夜晚温度": 18.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-19", "白天天气": "多云", "夜晚天气": "阴", "白天温度": 25.0, "夜晚温度": 16.0, "白天风向": "东南", "夜晚风向": "东南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-16 22:00:53,937 - agent - INFO - supervisor_agent.py:108 - [Supervisor] 决策内容: RETRY: 用户未指定查询地点，请确认用户所在城市或获取用户位置后重新查询天气信息，并给出对应的天气数据。...
+2026-05-16 22:00:53,938 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:00:53,939 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 用户未指定查询地点，请确认用户所在城市或获取用户位置后重新查询天气信息，并给出对应的天气数据。
+2026-05-16 22:01:03,019 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-05-16 22:01:03,019 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-16 22:01:03,466 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-05-16 22:01:03,468 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 22:01:03,468 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-05-16 22:01:16,728 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-16 22:01:16,728 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '廊坊市'}
+2026-05-16 22:01:17,171 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-16 22:01:17,173 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-16 22:01:17,173 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 131000
+2026-05-16 22:01:21,771 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-16 22:01:21,771 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '131000'}
+2026-05-16 22:01:22,199 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-16 22:01:22,201 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-05-16 22:01:22,201 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-16", "白天天气": "雷阵雨", "夜晚天气": "小雨", "白天温度": 26.0, "夜晚温度": 19.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-17", "白天天气": "大雨", "夜晚天气": "大雨", "白天温度": 20.0, "夜晚温度": 18.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-18", "白天天气": "多云", "夜晚天气": "晴", "白天温度": 22.0, "夜晚温度": 16.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-19", "白天天气": "晴", "夜晚天气": "阴", "白天温度": 23.0, "夜晚温度": 17.0, "白天风向": "东", "夜晚风向": "东", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-16 22:01:38,752 - agent - INFO - supervisor_agent.py:108 - [Supervisor] 决策内容: ACCEPT: 根据您的位置（河北省廊坊市），今天的天气（2026年5月16日）为**雷阵雨**，白天最高气温26℃，夜间转小雨降至19℃，东风1-3级。当前时段降雨较多，建议携带雨具，注意出行安全。另附未来三天预报供参考：17日有大雨，18日多云转晴，19日晴转阴。请根据天气合理安排活动。...
+2026-05-16 22:03:42,915 - agent - INFO - supervisor_agent.py:121 - [Supervisor] 收到用户任务: 下周1有什么课...
+2026-05-16 22:03:46,040 - agent - INFO - supervisor_agent.py:108 - [Supervisor] 决策内容: TASK: 请获取当前日期，计算下周一的日期，然后根据课程表列出下周一的全部课程信息（包括课程名称、时间、地点等）。如果没有课程表数据，请说明情况。...
+2026-05-16 22:03:46,042 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:03:46,043 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请获取当前日期，计算下周一的日期，然后根据课程表列出下周一的全部课程信息（包括课程名称、时间、地点等）。如果没有课程表数据，请说明情况。
+2026-05-16 22:04:18,401 - agent - INFO - supervisor_agent.py:108 - [Supervisor] 决策内容: TASK: 请查询并列出下周一（即下周星期一）的所有课程信息，包括课程名称、上课时间、地点等。如果无法获取具体数据，请给出相应说明。...
+2026-05-16 22:08:58,605 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 22:09:29,195 - agent - INFO - supervisor_agent.py:137 - [Supervisor] 收到用户任务: 下周一有什么课...
+2026-05-16 22:09:31,113 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: TASK: 请查询并列出下周一的课程安排，包括课程名称、时间、地点等信息。...
+2026-05-16 22:09:31,115 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:09:31,116 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请查询并列出下周一的课程安排，包括课程名称、时间、地点等信息。
+2026-05-16 22:10:04,880 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: RETRY: 用户询问“下周一有什么课”，你的回答为空，未提供任何课程信息。请查询并返回下周一的具体课程安排，包括课程名称、时间、地点等。...
+2026-05-16 22:10:04,882 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:10:04,883 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 用户询问“下周一有什么课”，你的回答为空，未提供任何课程信息。请查询并返回下周一的具体课程安排，包括课程名称、时间、地点等。
+2026-05-16 22:10:39,642 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: ACCEPT: 很抱歉，我无法获取下周一的具体课程信息。请检查您的课程表或联系教务系统获取准确安排。...
+2026-05-16 22:11:16,173 - agent - INFO - supervisor_agent.py:137 - [Supervisor] 收到用户任务: 明天有什么可...
+2026-05-16 22:11:21,374 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: TASK: 请查询明天（相对于当前日期）的用户日程安排、当地活动、天气或任何可做的事情，并整理成清晰列表，包含时间、地点和简要描述。如果无法获取具体信息，请给出常见建议（如户外运动、文化活动等）。...
+2026-05-16 22:11:21,376 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:11:21,376 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请查询明天（相对于当前日期）的用户日程安排、当地活动、天气或任何可做的事情，并整理成清晰列表，包含时间、地点和简要描述。如果无法获取具体信息，请给出常见建议（如户外运动、文化活动等）。
+2026-05-16 22:11:31,834 - agent - INFO - supervisor_agent.py:137 - [Supervisor] 收到用户任务: 明天有什么课...
+2026-05-16 22:11:33,950 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: TASK: 请查询明天（即当前日期的下一天）的课程安排，包括课程名称、时间、地点（如有），并以清晰列表形式返回结果。...
+2026-05-16 22:11:33,952 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:11:33,952 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请查询明天（即当前日期的下一天）的课程安排，包括课程名称、时间、地点（如有），并以清晰列表形式返回结果。
+2026-05-16 22:11:48,165 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: RETRY: 你只调用了获取位置的函数，但尚未给出用户问题的回答。用户的原始需求不完整（“明天有什么可”），请先补全意图（例如“明天有什么可做的活动”），然后根据获取到的位置信息，查询并返回明天当地的具体活动或建议。...
+2026-05-16 22:11:48,167 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:11:48,168 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 你只调用了获取位置的函数，但尚未给出用户问题的回答。用户的原始需求不完整（“明天有什么可”），请先补全意图（例如“明天有什么可做的活动”），然后根据获取到的位置信息，查询并返回明天当地的具体活动或建议。
+2026-05-16 22:11:52,258 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-05-16 22:11:52,258 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1}
+2026-05-16 22:11:52,259 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-05-16 22:11:52,260 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 22:11:52,260 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-05-17", "week": 10, "day": "星期天"}
+2026-05-16 22:12:11,386 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-05-16 22:12:11,386 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-16 22:12:11,831 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-05-16 22:12:11,833 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 22:12:11,833 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-05-16 22:12:38,039 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-05-16 22:12:38,040 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'day': '星期天', 'week': 7}
+2026-05-16 22:12:38,498 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-05-16 22:12:38,500 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-16 22:12:38,500 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-05-16 22:12:49,717 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:search
+2026-05-16 22:12:49,718 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'content': '河北省廊坊市 明天 有什么活动推荐'}
+2026-05-16 22:12:53,295 - agent - INFO - middleware.py:24 - [tool monitor]工具search调用成功
+2026-05-16 22:12:53,297 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-16 22:12:53,297 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"title": "廊坊周末去哪玩_廊坊同城活动_廊坊近期活动-廊坊本地宝", "url": "https://lf.bendibao.com/xiuxian/huodong/list9.htm", "content": "本地宝廊坊周末去哪玩栏目主要为你提供廊坊周末同城活动，廊坊演唱会，廊坊音乐会，廊坊戏剧，廊坊户外活动，廊坊车展，廊坊同城交友聚会活动等信息。", "score": 0.99942964}]
+2026-05-16 22:13:20,612 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-16 22:13:31,279 - agent - INFO - supervisor_agent.py:137 - [Supervisor] 收到用户任务: 明天有什么课...
+2026-05-16 22:13:33,309 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: TASK: 请查询当前日期（系统日期）的明天是星期几，然后提供明天的课程安排，包括课程名称、时间、地点等信息。如果无课程，请明确告知。...
+2026-05-16 22:13:33,312 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-16 22:13:33,312 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请查询当前日期（系统日期）的明天是星期几，然后提供明天的课程安排，包括课程名称、时间、地点等信息。如果无课程，请明确告知。
+2026-05-16 22:13:51,836 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-05-16 22:13:51,836 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 1}
+2026-05-16 22:13:51,837 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-05-16 22:13:51,839 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-16 22:13:51,839 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-05-17", "week": 10, "day": "星期天"}
+2026-05-16 22:14:08,220 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-05-16 22:14:08,220 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 7, 'day': '星期天'}
+2026-05-16 22:14:08,476 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-05-16 22:14:08,478 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-16 22:14:08,479 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | []
+2026-05-16 22:14:28,806 - agent - INFO - supervisor_agent.py:124 - [Supervisor] 决策内容: ACCEPT: 根据课程表查询，明天是星期天，当前没有课程安排。您可以好好休息。...
