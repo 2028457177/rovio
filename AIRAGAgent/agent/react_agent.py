@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.agents.middleware.tool_call_limit import ToolCallLimitMiddleware
 from prompt_toolkit.shortcuts import input_dialog
 from langgraph.graph import StateGraph, END
-from typing import TypedDict, Annotated, Sequence
+from typing import TypedDict, Annotated, Sequence, Optional, List, Dict
 import operator
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, AIMessageChunk, ToolMessage
 
@@ -64,19 +64,33 @@ class ReactAgent:
         self.graph = graph
         _get_rag()
     
-    def execute_stream(self, query: str):
+    @staticmethod
+    def _history_to_messages(chat_history: Optional[List[Dict[str, str]]]) -> list:
+        """将聊天历史转换为LangChain消息列表"""
+        if not chat_history:
+            return []
+        messages = []
+        for entry in chat_history:
+            role = entry.get("role", "")
+            content = entry.get("content", "")
+            if role == "user":
+                messages.append(HumanMessage(content=content))
+            elif role == "assistant":
+                messages.append(AIMessage(content=content))
+        return messages
+
+    def execute_stream(self, query: str, chat_history: Optional[List[Dict[str, str]]] = None):
         """
         Args:
             query: 用户的查询
+            chat_history: 历史对话记录，格式为 [{"role": "user"/"assistant", "content": "..."}]
 
         Yields:
             dict: {"type": "thinking"|"thinking_end"|"output", "content": str}
         """
-        input_dict = {
-            "messages": [
-                HumanMessage(content=query),
-            ]
-        }
+        history_messages = self._history_to_messages(chat_history)
+        input_messages = history_messages + [HumanMessage(content=query)]
+        input_dict = {"messages": input_messages}
         seen_tool_ids = set()
         reported_tool_results = set()
         has_entered_tool_phase = False

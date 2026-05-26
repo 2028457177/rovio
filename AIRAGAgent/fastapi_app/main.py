@@ -19,6 +19,10 @@ from typing import List, Optional
 
 from services.agent_service import AgentService
 from AIRAGAgent.utils.logger_handler import logger
+from AIRAGAgent.database import init_db, close_pool
+from AIRAGAgent.infrastructure.rate_limiter import get_chat_rate_limiter
+from AIRAGAgent.infrastructure.task_queue import register_default_handlers
+from AIRAGAgent.infrastructure.redis_client import close_redis
 
 
 async def _warm_up_models():
@@ -45,9 +49,15 @@ async def _warm_up_models():
 async def lifespan(app: FastAPI):
     logger.info("项目启动中，开始加载本地模型...")
     await _warm_up_models()
-    logger.info("所有模型加载完毕，服务就绪")
+    logger.info("正在初始化MySQL数据库...")
+    await asyncio.get_event_loop().run_in_executor(None, init_db)
+    logger.info("正在注册任务队列处理器...")
+    await asyncio.get_event_loop().run_in_executor(None, register_default_handlers)
+    logger.info("数据库初始化完成，服务就绪")
     yield
     logger.info("项目关闭")
+    close_pool()
+    close_redis()
 
 STATIC_DIR = Path(__file__).resolve().parent.parent.parent / "static"
 
@@ -63,8 +73,6 @@ app.add_middleware(
 
 agent_service = AgentService()
 
-conversations_store: List[dict] = []
-
 
 class ChatRequest(BaseModel):
     message: str
@@ -79,8 +87,8 @@ class ConversationSaveRequest(BaseModel):
     time: str = ""
 
 
-def generate_sse_stream(message: str, session_id: str = None):
-    for chunk in agent_service.agent.execute_stream(message):
+async def generate_sse_stream(message: str, session_id: str = None):
+    async for chunk in agent_service._stream_response(message, session_id):
         if isinstance(chunk, dict):
             yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
         else:
@@ -91,20 +99,31 @@ def generate_sse_stream(message: str, session_id: str = None):
 
 
 @app.post("/api/chat")
-async def chat(request: ChatRequest):
-    if request.stream:
+async def chat(chat_req: ChatRequest, req: Request):
+    client_ip = req.client.host if req.client else "unknown"
+    limiter = get_chat_rate_limiter()
+    allowed, remaining = limiter.is_allowed(client_ip)
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"error": "请求过于频繁，请稍后再试", "detail": f"每 {limiter.window_seconds} 秒最多 {limiter.max_requests} 次请求"},
+        )
+
+    if chat_req.stream:
         return StreamingResponse(
-            generate_sse_stream(request.message, request.session_id),
+            generate_sse_stream(chat_req.message, chat_req.session_id),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no",
+                "X-RateLimit-Limit": str(limiter.max_requests),
+                "X-RateLimit-Remaining": str(remaining),
             },
         )
 
     response_chunks = []
-    for chunk in agent_service.agent.execute_stream(request.message):
+    async for chunk in agent_service._stream_response(chat_req.message, chat_req.session_id):
         if isinstance(chunk, dict):
             if chunk["type"] == "output":
                 response_chunks.append(chunk["content"])
@@ -115,41 +134,47 @@ async def chat(request: ChatRequest):
 
     return JSONResponse(content={
         "content": "".join(response_chunks),
-        "session_id": request.session_id,
+        "session_id": chat_req.session_id,
     })
 
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "service": "自动化办公助手"}
+    from AIRAGAgent.infrastructure.redis_client import is_redis_available
+    redis_status = "connected" if is_redis_available() else "disconnected"
+    return {"status": "ok", "service": "自动化办公助手", "redis": redis_status}
+
+
+@app.get("/api/tasks/{task_id}")
+async def get_task_status(task_id: str):
+    from AIRAGAgent.infrastructure.task_queue import get_task_status as queue_get_status
+    result = await asyncio.get_event_loop().run_in_executor(None, queue_get_status, task_id)
+    if result is None:
+        return JSONResponse(status_code=404, content={"error": "任务未找到"})
+    return JSONResponse(content=result)
 
 
 @app.get("/api/conversations")
 async def get_conversations():
-    return JSONResponse(content={"conversations": conversations_store})
+    from AIRAGAgent.database import get_conversations as db_get_conversations
+    conversations = await asyncio.get_event_loop().run_in_executor(None, db_get_conversations)
+    return JSONResponse(content={"conversations": conversations})
 
 
 @app.post("/api/conversations")
 async def save_conversation(request: ConversationSaveRequest):
-    existing = next((c for c in conversations_store if c["id"] == request.id), None)
-    if existing:
-        existing["title"] = request.title
-        existing["messages"] = request.messages
-        existing["time"] = request.time
-    else:
-        conversations_store.insert(0, {
-            "id": request.id,
-            "title": request.title,
-            "messages": request.messages,
-            "time": request.time
-        })
+    from AIRAGAgent.database import save_conversation_full as db_save_conversation_full
+
+    def _save():
+        db_save_conversation_full(request.id, request.title, request.messages)
+    await asyncio.get_event_loop().run_in_executor(None, _save)
     return JSONResponse(content={"status": "ok"})
 
 
 @app.delete("/api/conversations/{conversation_id}")
 async def delete_conversation(conversation_id: str):
-    global conversations_store
-    conversations_store = [c for c in conversations_store if c["id"] != conversation_id]
+    from AIRAGAgent.database import delete_conversation as db_delete_conversation
+    await asyncio.get_event_loop().run_in_executor(None, db_delete_conversation, conversation_id)
     return JSONResponse(content={"status": "ok"})
 
 

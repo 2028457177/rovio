@@ -8,6 +8,7 @@ from AIRAGAgent.utils.prompt_loader import load_rag_prompts
 from langchain_core.prompts import PromptTemplate
 from AIRAGAgent.model.factory import chat_model
 from AIRAGAgent.model.local_factory import local_chat_model
+from AIRAGAgent.infrastructure.rag_cache import get_cached_rag_result, cache_rag_result
 # 打印提示词
 def print_prompt(prompt):
     print("="*50)
@@ -28,8 +29,25 @@ class RagSummarizeService(object):
         chian = self.prompt_template | print_prompt | self.model |StrOutputParser()
         return chian
     # 检索文档
-    def retrieve_doce(self,query:str) -> list[Document]:
-        return self.retriever.invoke(query)
+    def retrieve_doce(self, query: str) -> list[Document]:
+        cached = get_cached_rag_result(query)
+        if cached is not None:
+            docs = []
+            for item in cached:
+                doc = Document(page_content=item.get("content", ""), metadata=item.get("metadata", {}))
+                docs.append(doc)
+            return docs
+
+        docs = self.retriever.invoke(query)
+
+        cache_data = []
+        for doc in docs:
+            cache_data.append({
+                "content": doc.page_content,
+                "metadata": doc.metadata,
+            })
+        cache_rag_result(query, cache_data)
+        return docs
     # 总结回复
     def rag_summarize(self,query:str) -> str:
         context_docs = self.retrieve_doce(query)

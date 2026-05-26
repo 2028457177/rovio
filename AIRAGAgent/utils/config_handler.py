@@ -23,10 +23,24 @@ def load_agent_config(config_path: str = get_abs_path("config/agent.yml"), encod
         return yaml.load(f, Loader=yaml.FullLoader)
 
 
+# 加载MySQL配置文件
+def load_mysql_config(config_path: str = get_abs_path("config/mysql.yml"), encoding: str = "utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+
+# 加载Redis配置文件
+def load_redis_config(config_path: str = get_abs_path("config/redis.yml"), encoding: str = "utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+
 rag_conf = load_rag_config()
 chroma_conf = load_chroma_config()
 prompts_conf = load_prompts_config()
 agent_conf = load_agent_config()
+mysql_conf = load_mysql_config()
+redis_conf = load_redis_config()
 
 if __name__ == '__main__':
     print(rag_conf["chat_model_name"])

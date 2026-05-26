@@ -1,0 +1,27 @@
+host: localhost
+port: 6379
+password: ""
+db: 0
+decode_responses: true
+socket_timeout: 5
+socket_connect_timeout: 5
+max_connections: 20
+
+session_cache:
+  ttl: 3600
+
+rag_cache:
+  ttl: 1800
+
+task_queue:
+  name: agent_task_queue
+  max_retries: 3
+  retry_delay: 60
+
+rate_limit:
+  chat:
+    max_requests: 30
+    window_seconds: 60
+  tool:
+    max_requests: 20
+    window_seconds: 60

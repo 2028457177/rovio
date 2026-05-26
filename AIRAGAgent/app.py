@@ -29,7 +29,8 @@ if prompt:
     output_placeholder = st.empty()
 
     with st.spinner("思考中..."):
-        res_stream = st.session_state["agent"].execute_stream(prompt)
+        chat_history = st.session_state["message"][:-1]
+        res_stream = st.session_state["agent"].execute_stream(prompt, chat_history)
 
         thinking_lines = []
         output_lines = []

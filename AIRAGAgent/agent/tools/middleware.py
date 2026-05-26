@@ -7,22 +7,31 @@ from langchain_core.messages import ToolMessage
 from langgraph.runtime import Runtime
 from langgraph.types import Command
 from AIRAGAgent.utils.logger_handler import logger
+from AIRAGAgent.infrastructure.rate_limiter import get_tool_rate_limiter
 
 
 @wrap_tool_call
 def monitor_tool(
-        #请求的数据封装
         request: ToolCallRequest,
-        #调用的函数
-        handler: Callable[[ToolCallRequest], ToolMessage |  Command]
+        handler: Callable[[ToolCallRequest], ToolMessage | Command]
 ) -> ToolMessage | Command:
-    logger.info(f"[tool monitor]执行工具:{request.tool_call['name']}")
+    tool_name = request.tool_call['name']
+    limiter = get_tool_rate_limiter()
+    allowed, remaining = limiter.is_allowed(tool_name)
+    if not allowed:
+        logger.warning(f"[tool monitor] 工具 {tool_name} 被限流")
+        return ToolMessage(
+            content=f"工具调用过于频繁（{limiter.max_requests}次/{limiter.window_seconds}秒），请稍后再试",
+            tool_call_id=request.tool_call["id"],
+        )
+
+    logger.info(f"[tool monitor]执行工具:{tool_name}")
     logger.info(f"[tool monitor]工具参数:{request.tool_call['args']}")
 
     try:
         result = handler(request)
         logger.info(f"[tool monitor]工具{request.tool_call['name']}调用成功")
-        return  result
+        return result
     except Exception as e:
         logger.error(f"工具{request.tool_call['name']}调用失败，原因:{str(e)}")
         if request.tool_call['name'] == "fill_context_for_report":

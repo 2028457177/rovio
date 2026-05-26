@@ -1,0 +1,148 @@
+2026-05-21 12:24:08,257 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-21 12:24:08,261 - agent - INFO - main.py:47 - 项目启动中，开始加载本地模型...
+2026-05-21 12:24:08,261 - agent - INFO - main.py:29 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-05-21 12:24:13,615 - agent - INFO - main.py:35 - 本地聊天模型预热完成
+2026-05-21 12:24:13,615 - agent - INFO - main.py:37 - 正在预热本地嵌入模型 (nomic-embed-text)...
+2026-05-21 12:24:16,613 - agent - INFO - main.py:42 - 本地嵌入模型预热完成
+2026-05-21 12:24:16,613 - agent - INFO - main.py:49 - 正在初始化MySQL数据库...
+2026-05-21 12:24:16,681 - agent - INFO - main.py:51 - 数据库初始化完成，服务就绪
+2026-05-21 12:24:28,404 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 帮我查询今天的天气...
+2026-05-21 12:24:33,311 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 请查询今天（当前日期）的天气情况，包括：天气状况（晴/雨/阴等）、温度范围、风力及空气质量等信息。如果无法获取用户所在位置，默认以北京为例进行查询。...
+2026-05-21 12:24:33,315 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:24:33,315 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请查询今天（当前日期）的天气情况，包括：天气状况（晴/雨/阴等）、温度范围、风力及空气质量等信息。如果无法获取用户所在位置，默认以北京为例进行查询。
+2026-05-21 12:24:39,914 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-05-21 12:24:39,914 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-21 12:24:40,379 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-05-21 12:24:40,382 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-21 12:24:40,382 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-05-21 12:24:45,968 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-21 12:24:45,968 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '廊坊市'}
+2026-05-21 12:24:46,450 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-21 12:24:46,452 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-21 12:24:46,453 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 131000
+2026-05-21 12:24:50,608 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-21 12:24:50,608 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '131000'}
+2026-05-21 12:24:51,079 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-21 12:24:51,082 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-05-21 12:24:51,082 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-21", "白天天气": "多云", "夜晚天气": "雷阵雨", "白天温度": 24.0, "夜晚温度": 18.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-22", "白天天气": "大雨", "夜晚天气": "多云", "白天温度": 21.0, "夜晚温度": 18.0, "白天风向": "东南", "夜晚风向": "东南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-23", "白天天气": "晴", "夜晚天气": "晴", "白天温度": 26.0, "夜晚温度": 19.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-24", "白天天气": "多云", "夜晚天气": "多云", "白天温度": 29.0, "夜晚温度": 19.0, "白天风向": "南", "夜晚风向": "南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-21 12:25:05,699 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: RETRY: 用户需求是查询今天的天气，但未指定具体地点。你默认使用了河北省廊坊市，这可能导致信息不准确。请先向用户确认所在地点（例如询问用户所在城市或使用IP定位），然后重新查询该地点的今日天气。...
+2026-05-21 12:25:05,701 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:25:05,701 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 用户需求是查询今天的天气，但未指定具体地点。你默认使用了河北省廊坊市，这可能导致信息不准确。请先向用户确认所在地点（例如询问用户所在城市或使用IP定位），然后重新查询该地点的今日天气。
+2026-05-21 12:25:09,219 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-05-21 12:25:09,220 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-21 12:25:10,469 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-05-21 12:25:10,476 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-21 12:25:10,478 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-05-21 12:25:27,461 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-21 12:25:27,461 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '廊坊市'}
+2026-05-21 12:25:27,886 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-21 12:25:27,888 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-21 12:25:27,888 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 131000
+2026-05-21 12:25:32,561 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-21 12:25:32,562 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '131000'}
+2026-05-21 12:25:33,019 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-21 12:25:33,022 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-05-21 12:25:33,023 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-21", "白天天气": "多云", "夜晚天气": "雷阵雨", "白天温度": 24.0, "夜晚温度": 18.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-22", "白天天气": "大雨", "夜晚天气": "多云", "白天温度": 21.0, "夜晚温度": 18.0, "白天风向": "东南", "夜晚风向": "东南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-23", "白天天气": "晴", "夜晚天气": "晴", "白天温度": 26.0, "夜晚温度": 19.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-24", "白天天气": "多云", "夜晚天气": "多云", "白天温度": 29.0, "夜晚温度": 19.0, "白天风向": "南", "夜晚风向": "南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-21 12:25:42,972 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 根据您的当前位置（河北省廊坊市），今日（2026年5月21日）天气情况如下：  
+- **白天**：多云，气温24℃，西南风1-3级；  
+- **夜间**：雷阵雨，气温18℃，西南风1-3级。  
+
+建议您关注夜间降雨，出门携带雨具。如有其他城市天气查询需求，欢迎随时告知。...
+2026-05-21 12:33:43,523 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 明天什么天气...
+2026-05-21 12:33:48,155 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 回答用户关于“明天什么天气”的问题。由于未指定具体地点，请先假设一个常见地点（如北京）给出明天的天气预报概要（包括天气状况、气温范围等），并在回答中说明此假设；如果无法获取实时数据，可基于常识或一般性知识给出合理的描述，并注明信息来源的局限性。...
+2026-05-21 12:33:48,175 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:33:48,177 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 回答用户关于“明天什么天气”的问题。由于未指定具体地点，请先假设一个常见地点（如北京）给出明天的天气预报概要（包括天气状况、气温范围等），并在回答中说明此假设；如果无法获取实时数据，可基于常识或一般性知识给出合理的描述，并注明信息来源的局限性。
+2026-05-21 12:34:01,595 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-21 12:34:01,596 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '北京'}
+2026-05-21 12:34:03,284 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-21 12:34:03,290 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-21 12:34:03,294 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 110000
+2026-05-21 12:34:13,759 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-21 12:34:13,760 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '110000'}
+2026-05-21 12:34:15,321 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-21 12:34:15,328 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-21 12:34:15,330 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-21", "白天天气": "多云", "夜晚天气": "小雨", "白天温度": 25.0, "夜晚温度": 17.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-22", "白天天气": "中雨", "夜晚天气": "小雨", "白天温度": 22.0, "夜晚温度": 17.0, "白天风向": "东南", "夜晚风向": "东南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-23", "白天天气": "多云", "夜晚天气": "多云", "白天温度": 28.0, "夜晚温度": 19.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-24", "白天天气": "多云", "夜晚天气": "阴", "白天温度": 28.0, "夜晚温度": 18.0, "白天风向": "南", "夜晚风向": "南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-21 12:34:34,195 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: RETRY: 用户没有指定城市，默认使用北京可能不准确。请先通过`get_user_location`获取用户实际所在城市，或者直接向用户询问所在城市，然后再查询天气并回复。确保回复中包含具体的城市名称和详细的天气信息。...
+2026-05-21 12:34:34,206 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:34:34,210 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 用户没有指定城市，默认使用北京可能不准确。请先通过`get_user_location`获取用户实际所在城市，或者直接向用户询问所在城市，然后再查询天气并回复。确保回复中包含具体的城市名称和详细的天气信息。
+2026-05-21 12:34:41,751 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_user_location
+2026-05-21 12:34:41,752 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{}
+2026-05-21 12:34:43,202 - agent - INFO - middleware.py:24 - [tool monitor]工具get_user_location调用成功
+2026-05-21 12:34:43,211 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-21 12:34:43,212 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-05-21 12:34:55,911 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_city_code
+2026-05-21 12:34:55,912 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'city_name': '廊坊市'}
+2026-05-21 12:34:56,467 - agent - INFO - middleware.py:24 - [tool monitor]工具get_city_code调用成功
+2026-05-21 12:34:56,469 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-21 12:34:56,470 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | 131000
+2026-05-21 12:35:01,181 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_weather
+2026-05-21 12:35:01,182 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'code': '131000'}
+2026-05-21 12:35:02,109 - agent - INFO - middleware.py:24 - [tool monitor]工具get_weather调用成功
+2026-05-21 12:35:02,112 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有7条消息。
+2026-05-21 12:35:02,113 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"日期": "2026-05-21", "白天天气": "多云", "夜晚天气": "雷阵雨", "白天温度": 24.0, "夜晚温度": 18.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-22", "白天天气": "大雨", "夜晚天气": "多云", "白天温度": 21.0, "夜晚温度": 18.0, "白天风向": "东南", "夜晚风向": "东南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-23", "白天天气": "晴", "夜晚天气": "晴", "白天温度": 26.0, "夜晚温度": 19.0, "白天风向": "西南", "夜晚风向": "西南", "白天风力": "1-3", "夜晚风力": "1-3"}, {"日期": "2026-05-24", "白天天气": "多云", "夜晚天气": "多云", "白天温度": 29.0, "夜晚温度": 19.0, "白天风向": "南", "夜晚风向": "南", "白天风力": "1-3", "夜晚风力": "1-3"}]
+2026-05-21 12:35:15,361 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 根据您当前所在位置（河北省廊坊市），明天的天气预报如下：
+
+**2026年5月21日（明天）**
+- 白天：多云，24℃，西南风1-3级
+- 夜间：雷阵雨，18℃，西南风1-3级
+
+建议您白天出行注意防晒，夜间外出记得携带雨具。...
+2026-05-21 12:37:56,955 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-21 12:37:56,959 - agent - INFO - main.py:47 - 项目启动中，开始加载本地模型...
+2026-05-21 12:37:56,959 - agent - INFO - main.py:29 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-05-21 12:38:00,251 - agent - INFO - main.py:35 - 本地聊天模型预热完成
+2026-05-21 12:38:00,251 - agent - INFO - main.py:37 - 正在预热本地嵌入模型 (nomic-embed-text)...
+2026-05-21 12:38:00,645 - agent - INFO - main.py:42 - 本地嵌入模型预热完成
+2026-05-21 12:38:00,645 - agent - INFO - main.py:49 - 正在初始化MySQL数据库...
+2026-05-21 12:38:00,689 - agent - INFO - main.py:51 - 数据库初始化完成，服务就绪
+2026-05-21 12:38:17,162 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 今天有什么课...
+2026-05-21 12:38:19,370 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 请获取当前的日期和时间（包括星期几），然后查询今天的课程安排，列出课程名称、上课时间、地点等详细信息。...
+2026-05-21 12:38:19,374 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:38:19,374 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请获取当前的日期和时间（包括星期几），然后查询今天的课程安排，列出课程名称、上课时间、地点等详细信息。
+2026-05-21 12:38:34,644 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_current_month
+2026-05-21 12:38:34,644 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'wantday': 0}
+2026-05-21 12:38:34,646 - agent - INFO - middleware.py:24 - [tool monitor]工具get_current_month调用成功
+2026-05-21 12:38:34,648 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有3条消息。
+2026-05-21 12:38:34,648 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | {"date": "2026-05-21", "week": 11, "day": "星期四"}
+2026-05-21 12:38:48,701 - agent - INFO - middleware.py:19 - [tool monitor]执行工具:get_schedule
+2026-05-21 12:38:48,702 - agent - INFO - middleware.py:20 - [tool monitor]工具参数:{'week': 11, 'day': '星期四'}
+2026-05-21 12:38:49,068 - agent - INFO - middleware.py:24 - [tool monitor]工具get_schedule调用成功
+2026-05-21 12:38:49,071 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有5条消息。
+2026-05-21 12:38:49,071 - agent - DEBUG - middleware.py:54 - [log_before_model]ToolMessage | [{"时间段": "第一大节（上午）", "课程名": "体育Ⅳ", "节次": "1-2节", "地点": "乒乓球馆", "属性": ["36", "必修"], "原始信息": "体育Ⅳ[36][必修]◇1-16(周)[01-02节]◇乒乓球馆"}, {"时间段": "第二大节（上午）", "课程名": "混凝土结构设计原理", "节次": "3-4节", "地点": "图208（智慧教室）", "属性": ["56", "必修"], "原始信息": "混凝土结构设计原理[56][必修]◇1-16(周)[03-04节]◇图208（智慧教室）"}, {"时间段": "第三大节（下午）", "课程名": "大学英语AIV", "节次": "5-6节", "地点": "D106", "属性": ["48", "必修"], "原始信息": "大学英语AIV[48][必修]◇1-16(周)[05-06节]◇D106"}, {"时间段": "第四大节（下午）", "课程名": "结构力学", "节次": "7-8节", "地点": "K1-404", "属性": ["72", "必修"], "原始信息": "结构力学[72][必修]◇1-16(周)[07-08节]◇K1-404"}, {"时间段": "第五大节（晚上）", "课程名": "党史", "节次": "9-10节", "地点": "A301", "属性": ["16", "通识限选"], "原始信息": "党史[16][通识限选]◇9-16(周)[09-10节]◇A301◇"}]
+2026-05-21 12:39:02,695 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 您好！根据您今天（2026年5月21日，星期四，第11周）的课表，课程安排如下：
+
+1. **体育Ⅳ** — 上午第一大节（1-2节） @ 乒乓球馆  
+2. **混凝土结构设计原理** — 上午第二大节（3-4节） @ 图208（智慧教室）  
+3. **大学英语AIV** — 下午第三大节（5-6节） @ D106  
+4. **结构力学** — 下午第四大节（7-8节） @ ...
+2026-05-21 12:43:26,720 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 你好，你能帮我做什么...
+2026-05-21 12:43:28,555 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 请生成一段简洁友好的介绍，说明你可以为用户提供哪些帮助和服务，例如信息查询、问题解答、任务执行、建议提供等。语气要热情专业，让用户了解你的能力范围。...
+2026-05-21 12:43:28,578 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:43:28,580 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请生成一段简洁友好的介绍，说明你可以为用户提供哪些帮助和服务，例如信息查询、问题解答、任务执行、建议提供等。语气要热情专业，让用户了解你的能力范围。
+2026-05-21 12:43:38,621 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 您好！我是您的智能办公助手，专注于高效办公场景的支持。我可以帮您快速查询信息、解答工作问题、自动化执行任务（如生成报告、安排日程），并提供专业建议。无论是处理日常事务还是优化工作流程，我都会以简洁、友好的方式为您提供帮助。有什么需求，随时告诉我！...
+2026-05-21 12:54:35,540 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 你好，你能帮我做什么...
+2026-05-21 12:54:37,395 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 向用户全面介绍你的能力和服务范围，包括但不限于：回答各类知识问题、提供创意建议、协助写作、编程帮助、学习辅导、日常咨询等，以友好热情的语气让用户了解你可以如何协助他。...
+2026-05-21 12:54:37,415 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:54:37,417 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 向用户全面介绍你的能力和服务范围，包括但不限于：回答各类知识问题、提供创意建议、协助写作、编程帮助、学习辅导、日常咨询等，以友好热情的语气让用户了解你可以如何协助他。
+2026-05-21 12:54:47,357 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 您好！我是一名专注于办公场景的自动化助手，可以帮您完成以下事情：
+
+✅ **精准解答办公问题**（如流程规范、系统操作）
+✅ **提供创意解决方案**（会议方案、活动策划、效率优化）
+✅ **协助撰写专业文档**（周报、方案、邮件模板）
+✅ **编程辅助**（Python/SQL等办公场景代码）
+✅ **个性化学习辅导**（时间管理、效率技巧）
+✅ **智能日常咨询**（天气、交通...
+2026-05-21 12:56:46,411 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-05-21 12:56:46,416 - agent - INFO - main.py:47 - 项目启动中，开始加载本地模型...
+2026-05-21 12:56:46,416 - agent - INFO - main.py:29 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-05-21 12:56:49,093 - agent - INFO - main.py:35 - 本地聊天模型预热完成
+2026-05-21 12:56:49,093 - agent - INFO - main.py:37 - 正在预热本地嵌入模型 (nomic-embed-text)...
+2026-05-21 12:56:49,403 - agent - INFO - main.py:42 - 本地嵌入模型预热完成
+2026-05-21 12:56:49,403 - agent - INFO - main.py:49 - 正在初始化MySQL数据库...
+2026-05-21 12:56:49,450 - agent - INFO - main.py:51 - 数据库初始化完成，服务就绪
+2026-05-21 12:57:03,837 - agent - DEBUG - agent_service.py:100 - [Agent 服务] 开始流式输出，消息：你好，你能帮我做什么...
+2026-05-21 12:57:03,970 - agent - INFO - supervisor_agent.py:156 - [Supervisor] 收到用户任务: 你好，你能帮我做什么...
+2026-05-21 12:57:05,986 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: TASK: 请以友好、专业的口吻向用户介绍你作为AI助手可以提供的各种服务，包括但不限于回答问题、写作、编程、翻译、数据分析、学习辅导、创意生成等，让用户了解你的能力范围，并鼓励用户提出具体需求。回复要清晰、简洁、有吸引力。...
+2026-05-21 12:57:05,989 - agent - INFO - middleware.py:40 - [log_before_model]即将调用模型，带有1条消息。
+2026-05-21 12:57:05,990 - agent - DEBUG - middleware.py:54 - [log_before_model]HumanMessage | 请以友好、专业的口吻向用户介绍你作为AI助手可以提供的各种服务，包括但不限于回答问题、写作、编程、翻译、数据分析、学习辅导、创意生成等，让用户了解你的能力范围，并鼓励用户提出具体需求。回复要清晰、简洁、有吸引力。
+2026-05-21 12:57:17,460 - agent - INFO - supervisor_agent.py:143 - [Supervisor] 决策内容: ACCEPT: 你好！我是你的智能办公助手，专注于高效解决办公场景中的各类需求。无论是快速回答专业问题、撰写报告、编程调试、多语言翻译、数据分析，还是提供学习辅导和创意灵感，我都能帮你轻松实现。只需一句简单的描述，我将为你定制解决方案。现在，告诉我你的具体需求吧！...
