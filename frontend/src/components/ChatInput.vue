@@ -2,7 +2,7 @@
   <div class="chat-input-area">
     <div class="input-glow" :class="{ active: isFocused }"></div>
     <div class="chat-input-wrapper">
-      <div class="chat-input-box" :class="{ focused: isFocused }">
+      <div class="chat-input-box glass" :class="{ focused: isFocused }">
         <textarea
           ref="inputRef"
           v-model="inputText"
@@ -82,9 +82,10 @@ function handleSend() {
 <style scoped>
 .chat-input-area {
   padding: 16px 24px 20px;
-  background: rgba(15, 15, 40, 0.7);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid var(--glass-border);
   flex-shrink: 0;
   position: relative;
 }
@@ -115,17 +116,16 @@ function handleSend() {
 .chat-input-box {
   flex: 1;
   position: relative;
-  background: var(--bg-input);
   border-radius: var(--radius);
-  border: 1px solid var(--border);
   transition: var(--transition);
   display: flex;
   align-items: flex-end;
+  border: 1px solid var(--glass-border);
 }
 
 .chat-input-box.focused {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1), 0 0 20px rgba(108, 92, 231, 0.1);
+  border-color: rgba(124, 111, 247, 0.4);
+  box-shadow: 0 0 0 3px rgba(124, 111, 247, 0.08), 0 0 24px rgba(124, 111, 247, 0.1);
 }
 
 .chat-input-box textarea {
@@ -144,7 +144,7 @@ function handleSend() {
 }
 
 .chat-input-box textarea::placeholder {
-  color: #5c6280;
+  color: var(--text-muted);
 }
 
 .chat-input-box textarea:disabled {
@@ -156,25 +156,26 @@ function handleSend() {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #a855f7);
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
   color: #fff;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+  transition: transform var(--spring), box-shadow var(--spring), opacity var(--transition);
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 16px rgba(124, 111, 247, 0.35);
 }
 
 .send-btn:hover:not(.disabled) {
-  transform: scale(1.08);
-  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.5);
+  transform: scale(1.12);
+  box-shadow: 0 6px 28px rgba(124, 111, 247, 0.5);
 }
 
 .send-btn.disabled {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   box-shadow: none;
   cursor: not-allowed;
   opacity: 0.4;
@@ -188,7 +189,7 @@ function handleSend() {
 .input-tip {
   text-align: center;
   font-size: 11px;
-  color: #5c6280;
+  color: var(--text-muted);
   margin-top: 8px;
   max-width: 820px;
   margin-left: auto;

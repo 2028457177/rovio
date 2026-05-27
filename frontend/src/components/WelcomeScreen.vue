@@ -1,19 +1,19 @@
 <template>
   <div class="welcome-container">
-    <div class="welcome-card">
+    <div class="welcome-card glass-strong">
       <div class="welcome-icon-wrapper">
         <div class="welcome-icon-ring"></div>
         <div class="welcome-icon">🤖</div>
       </div>
       <h1 class="welcome-title">自动化办公助手</h1>
       <p class="welcome-desc">
-        基于大语言模型的智能办公伴侣，帮你处理文档、搜索知识库、查询信息、生成报告。请在下⽅输入你的需求。
+        基于大语言模型的智能办公伴侣，帮你处理文档、搜索知识库、查询信息、生成报告。请在下方输入你的需求。
       </p>
       <div class="welcome-suggestions">
         <button
           v-for="item in suggestions"
           :key="item.prompt"
-          class="suggestion-card"
+          class="suggestion-card glass"
           @click="$emit('send', item.prompt)"
         >
           <span class="suggestion-icon">{{ item.icon }}</span>
@@ -47,7 +47,8 @@ const suggestions = [
 
 .welcome-card {
   text-align: center;
-  max-width: 520px;
+  max-width: 540px;
+  padding: 48px 40px;
   animation: welcome-fade 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -65,22 +66,22 @@ const suggestions = [
 .welcome-icon-wrapper {
   position: relative;
   display: inline-block;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .welcome-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, var(--accent), #a855f7);
-  border-radius: 24px;
+  width: 88px;
+  height: 88px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  border-radius: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 40px;
   color: #fff;
   position: relative;
   z-index: 1;
-  box-shadow: 0 8px 32px rgba(108, 92, 231, 0.4);
+  box-shadow: 0 12px 40px rgba(124, 111, 247, 0.4);
   animation: icon-float 3s ease-in-out infinite;
 }
 
@@ -91,9 +92,9 @@ const suggestions = [
 
 .welcome-icon-ring {
   position: absolute;
-  inset: -10px;
-  border-radius: 34px;
-  border: 2px solid rgba(108, 92, 231, 0.3);
+  inset: -12px;
+  border-radius: 38px;
+  border: 2px solid rgba(124, 111, 247, 0.25);
   animation: ring-rotate 8s linear infinite;
 }
 
@@ -103,10 +104,10 @@ const suggestions = [
 }
 
 .welcome-title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 800;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #e8e8f0 0%, #a78bfa 50%, #c4b5fd 100%);
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, #e8eaf6 0%, #a78bfa 50%, #c4b5fd 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -117,7 +118,7 @@ const suggestions = [
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.8;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 .welcome-suggestions {
@@ -132,22 +133,19 @@ const suggestions = [
   align-items: center;
   gap: 8px;
   padding: 12px 18px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 13px;
   color: var(--text-primary);
-  transition: var(--transition);
+  transition: transform var(--spring), box-shadow var(--spring), background var(--transition), border-color var(--transition);
   font-family: inherit;
-  backdrop-filter: blur(10px);
 }
 
 .suggestion-card:hover {
-  border-color: var(--accent);
-  background: var(--accent-light);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.15);
+  border-color: rgba(124, 111, 247, 0.4);
+  background: rgba(124, 111, 247, 0.15);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(124, 111, 247, 0.2);
 }
 
 .suggestion-card:hover .suggestion-arrow {

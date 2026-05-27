@@ -66,6 +66,20 @@ def load_tool_details(tool_names: list[str]) -> str:
 
     return "\n\n".join(result_parts)
 
+
+def load_all_tool_details() -> str:
+    raw_text = _load_tools_prompt_raw()
+    sections = {}
+    pattern = r'### (\w+)\n(.*?)(?=\n### \w+\n|\Z)'
+    for match in re.finditer(pattern, raw_text, re.DOTALL):
+        sections[match.group(1)] = match.group(2).strip()
+
+    result_parts = []
+    for name, desc in sections.items():
+        result_parts.append(f"### {name}\n{desc}")
+
+    return "\n\n".join(result_parts)
+
 # 加载RAG总结提示词
 def load_rag_prompts():
     try:

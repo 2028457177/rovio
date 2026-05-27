@@ -4,9 +4,10 @@
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
       <div class="orb orb-3"></div>
+      <div class="orb orb-4"></div>
     </div>
 
-    <aside class="sidebar">
+    <aside class="sidebar glass-strong">
       <div class="sidebar-header">
         <div class="sidebar-logo">
           <span class="logo-icon">🤖</span>
@@ -61,7 +62,7 @@
     </aside>
 
     <main class="main-content">
-      <header class="chat-header">
+      <header class="chat-header glass">
         <span class="chat-header-title">
           <span class="header-glow"></span>
           {{ currentConversation ? currentConversation.title : 'AI 对话' }}
@@ -102,7 +103,7 @@
         </TransitionGroup>
 
         <div v-if="isThinking && thinkingLines.length > 0 && !streamingContent" class="thinking-panel">
-          <details open>
+          <details open class="glass">
             <summary class="thinking-summary">
               <span class="thinking-spinner"></span>
               正在思考中...
@@ -236,14 +237,13 @@ function onDismissError() {
 
 .sidebar {
   width: 280px;
-  background: rgba(13, 13, 36, 0.85);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: 20px;
   z-index: 10;
+  border-radius: 0;
+  border-right: 1px solid var(--glass-border-strong);
 }
 
 .sidebar-header {
@@ -251,36 +251,37 @@ function onDismissError() {
   align-items: center;
   gap: 12px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
   margin-bottom: 16px;
 }
 
 .sidebar-logo {
   position: relative;
-  width: 40px;
-  height: 40px;
-  background: var(--accent);
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   color: #fff;
+  box-shadow: 0 8px 24px rgba(124, 111, 247, 0.35);
 }
 
 .logo-glow {
   position: absolute;
-  inset: -4px;
-  border-radius: 16px;
+  inset: -5px;
+  border-radius: 19px;
   background: var(--accent-glow);
-  filter: blur(10px);
+  filter: blur(12px);
   z-index: -1;
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.12); }
 }
 
 .logo-icon {
@@ -297,7 +298,7 @@ function onDismissError() {
 
 .sidebar-subtitle {
   font-size: 12px;
-  color: #7c82a0;
+  color: var(--text-secondary);
   margin-top: 2px;
 }
 
@@ -306,31 +307,33 @@ function onDismissError() {
   align-items: center;
   gap: 8px;
   padding: 11px 16px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   color: #c4b5fd;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: var(--transition);
+  transition: transform var(--spring), box-shadow var(--spring), background var(--transition), color var(--transition), border-color var(--transition);
   margin-bottom: 24px;
   width: 100%;
+  font-family: inherit;
 }
 
 .sidebar-new-chat:hover {
-  background: rgba(108, 92, 231, 0.2);
-  border-color: rgba(108, 92, 231, 0.4);
+  background: var(--accent-light);
+  border-color: rgba(124, 111, 247, 0.4);
   color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.2);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(124, 111, 247, 0.2);
 }
 
 .sidebar-section-title {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: #5c6280;
+  color: var(--text-muted);
   margin-bottom: 10px;
   font-weight: 600;
 }
@@ -347,22 +350,24 @@ function onDismissError() {
   cursor: pointer;
   font-size: 13px;
   margin-bottom: 4px;
-  transition: var(--transition);
+  transition: transform var(--spring), background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--text-sidebar);
+  color: #a0a8d0;
 }
 
 .sidebar-chat-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
   color: #fff;
+  transform: translateX(3px) scale(1.01);
 }
 
 .sidebar-chat-item.active {
-  background: var(--accent-light);
+  background: var(--glass-bg-strong);
   color: #c4b5fd;
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  border: 1px solid var(--glass-border-strong);
+  box-shadow: 0 4px 12px rgba(124, 111, 247, 0.15);
 }
 
 .chat-item-icon {
@@ -378,14 +383,14 @@ function onDismissError() {
 
 .chat-item-time {
   font-size: 11px;
-  color: #5c6280;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .chat-item-delete {
   background: none;
   border: none;
-  color: #5c6280;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 4px;
@@ -401,22 +406,22 @@ function onDismissError() {
 }
 
 .chat-item-delete:hover {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.2);
   color: #f87171;
 }
 
 .sidebar-empty-hint {
   font-size: 12px;
-  color: #5c6280;
+  color: var(--text-muted);
   text-align: center;
   padding: 20px 0;
 }
 
 .sidebar-footer {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--glass-border);
   padding-top: 14px;
   font-size: 12px;
-  color: #5c6280;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -427,13 +432,13 @@ function onDismissError() {
   height: 8px;
   background: #22c55e;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
   animation: status-pulse 2s ease-in-out infinite;
 }
 
 @keyframes status-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.4; }
 }
 
 .main-content {
@@ -446,14 +451,16 @@ function onDismissError() {
 
 .chat-header {
   padding: 14px 24px;
-  background: rgba(15, 15, 40, 0.7);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
   z-index: 5;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .chat-header-title {
@@ -470,7 +477,7 @@ function onDismissError() {
   height: 8px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--accent-glow);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .chat-header-actions {
@@ -480,13 +487,14 @@ function onDismissError() {
 
 .chat-header-btn {
   padding: 8px 14px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(8px);
   cursor: pointer;
   font-size: 13px;
   color: var(--text-secondary);
-  transition: var(--transition);
+  transition: transform var(--spring), box-shadow var(--spring), background var(--transition), color var(--transition), border-color var(--transition);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -494,9 +502,10 @@ function onDismissError() {
 }
 
 .chat-header-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--glass-bg);
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--glass-border-strong);
+  transform: scale(1.04);
 }
 
 .chat-messages {
@@ -536,8 +545,9 @@ function onDismissError() {
 }
 
 .assistant-avatar {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border-strong);
 }
 
 .avatar-pulse {
@@ -616,10 +626,8 @@ function onDismissError() {
 }
 
 .thinking-panel details {
-  background: rgba(108, 92, 231, 0.05);
-  border: 1px solid rgba(108, 92, 231, 0.15);
-  border-radius: var(--radius-sm);
   overflow: hidden;
+  border-radius: var(--radius-sm);
 }
 
 .thinking-summary {
@@ -640,7 +648,7 @@ function onDismissError() {
 .thinking-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(108, 92, 231, 0.2);
+  border: 2px solid rgba(124, 111, 247, 0.2);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: think-spin 0.8s linear infinite;
@@ -652,15 +660,15 @@ function onDismissError() {
 
 .thinking-content {
   padding: 0 16px 12px;
-  border-top: 1px solid rgba(108, 92, 231, 0.1);
+  border-top: 1px solid var(--glass-border);
 }
 
 .thinking-line {
   font-size: 12.5px;
-  color: #8b8fb0;
+  color: var(--text-secondary);
   line-height: 1.6;
   padding: 4px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .thinking-line:last-child {

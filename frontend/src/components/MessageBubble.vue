@@ -5,7 +5,9 @@
     </div>
     <div class="message-body">
       <div class="message-role">{{ message.role === 'user' ? '你' : '办公助手' }}</div>
-      <div class="message-text" v-html="renderMarkdown(message.content)"></div>
+      <div class="message-bubble" :class="`bubble-${message.role}`">
+        <div class="message-text" v-html="renderMarkdown(message.content)"></div>
+      </div>
       <div class="message-time">{{ message.time }}</div>
     </div>
   </div>
@@ -43,14 +45,16 @@ defineProps({
 }
 
 .avatar-user {
-  background: linear-gradient(135deg, #6c5ce7, #a855f7);
+  background: linear-gradient(135deg, #7c6ff7, #a78bfa);
   color: #fff;
-  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 16px rgba(124, 111, 247, 0.35);
 }
 
 .avatar-assistant {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border-strong);
   color: #a78bfa;
 }
 
@@ -62,8 +66,30 @@ defineProps({
 .message-role {
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: var(--text-secondary);
+}
+
+.message-bubble {
+  border-radius: 0 18px 18px 18px;
+  overflow: hidden;
+}
+
+.bubble-assistant {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.bubble-user {
+  background: linear-gradient(135deg, rgba(124, 111, 247, 0.2), rgba(167, 139, 250, 0.15));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(124, 111, 247, 0.25);
+  border-radius: 18px 0 18px 18px;
+  box-shadow: 0 4px 20px rgba(124, 111, 247, 0.12);
 }
 
 .message-text {
@@ -71,16 +97,7 @@ defineProps({
   line-height: 1.75;
   color: var(--text-primary);
   word-wrap: break-word;
-  background: var(--assistant-bubble);
   padding: 14px 18px;
-  border-radius: 0 14px 14px 14px;
-  border: 1px solid var(--border);
-}
-
-.user .message-text {
-  background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(168, 85, 247, 0.1));
-  border: 1px solid rgba(108, 92, 231, 0.2);
-  border-radius: 14px 0 14px 14px;
 }
 
 .message-text :deep(p) {
@@ -92,23 +109,23 @@ defineProps({
 }
 
 .message-text :deep(code) {
-  background: rgba(108, 92, 231, 0.15);
+  background: rgba(124, 111, 247, 0.15);
   padding: 2px 8px;
-  border-radius: 5px;
+  border-radius: 6px;
   font-size: 13px;
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   color: #c4b5fd;
 }
 
 .message-text :deep(pre) {
-  background: #0d0d24;
-  color: #e8e8f0;
+  background: rgba(0, 0, 0, 0.25);
+  color: #e8eaf6;
   padding: 16px 20px;
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   overflow-x: auto;
   margin: 10px 0;
   font-size: 13px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
 }
 
 .message-text :deep(pre code) {
@@ -134,7 +151,7 @@ defineProps({
 
 .message-time {
   font-size: 11px;
-  color: #5c6280;
+  color: var(--text-muted);
   margin-top: 6px;
   padding-left: 4px;
 }

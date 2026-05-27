@@ -4,7 +4,12 @@
       <span class="error-icon">⚠️</span>
       <span class="error-text">{{ message }}</span>
     </div>
-    <button class="error-close" @click="$emit('dismiss')">✕</button>
+    <button class="error-close" @click="$emit('dismiss')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -21,15 +26,15 @@ defineEmits(['dismiss'])
 
 <style scoped>
 .error-banner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 0;
+  background: rgba(239, 68, 68, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.2);
   padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  backdrop-filter: blur(10px);
 }
 
 .error-content {
@@ -44,20 +49,25 @@ defineEmits(['dismiss'])
   font-size: 15px;
 }
 
+.error-text {
+  font-weight: 500;
+}
+
 .error-close {
   background: none;
   border: none;
   color: #fca5a5;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: var(--transition);
-  font-family: inherit;
+  padding: 6px;
+  border-radius: 8px;
+  transition: transform var(--spring-fast), background var(--transition), color var(--transition);
+  display: flex;
+  align-items: center;
 }
 
 .error-close:hover {
   background: rgba(239, 68, 68, 0.2);
   color: #fff;
+  transform: scale(1.15);
 }
 </style>
