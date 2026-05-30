@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-input-area">
+  <div class="chat-input-area" :class="{ 'center-mode': centerMode }">
     <div class="input-glow" :class="{ active: isFocused }"></div>
     <div class="chat-input-wrapper">
       <div class="chat-input-box glass" :class="{ focused: isFocused }">
@@ -14,21 +14,21 @@
           @focus="isFocused = true"
           @blur="isFocused = false"
         ></textarea>
+        <button
+          class="send-btn"
+          :class="{ disabled: disabled || !inputText.trim() }"
+          :disabled="disabled || !inputText.trim()"
+          @click="handleSend"
+          title="发送消息"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
       </div>
-      <button
-        class="send-btn"
-        :class="{ disabled: disabled || !inputText.trim() }"
-        :disabled="disabled || !inputText.trim()"
-        @click="handleSend"
-        title="发送消息"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
     </div>
-    <div class="input-tip">自动化办公助手可能存在错误，请核实重要信息。</div>
+    <div class="input-tip" v-if="!centerMode">自动化办公助手可能存在错误，请核实重要信息。</div>
   </div>
 </template>
 
@@ -37,6 +37,10 @@ import { ref, nextTick } from 'vue'
 
 const props = defineProps({
   disabled: {
+    type: Boolean,
+    default: false
+  },
+  centerMode: {
     type: Boolean,
     default: false
   }
@@ -52,7 +56,8 @@ function autoResize() {
   nextTick(() => {
     const el = inputRef.value
     if (el) {
-      el.style.height = '48px'
+      const baseHeight = props.centerMode ? 80 : 48
+      el.style.height = baseHeight + 'px'
       el.style.height = Math.min(el.scrollHeight, 200) + 'px'
     }
   })
@@ -73,7 +78,8 @@ function handleSend() {
   inputText.value = ''
   nextTick(() => {
     if (inputRef.value) {
-      inputRef.value.style.height = '48px'
+      const baseHeight = props.centerMode ? 80 : 48
+      inputRef.value.style.height = baseHeight + 'px'
     }
   })
 }
@@ -82,10 +88,10 @@ function handleSend() {
 <style scoped>
 .chat-input-area {
   padding: 16px 24px 20px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-top: 1px solid var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-top: 1px solid var(--border-light);
   flex-shrink: 0;
   position: relative;
 }
@@ -120,24 +126,26 @@ function handleSend() {
   transition: var(--transition);
   display: flex;
   align-items: flex-end;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 4px 18px var(--shadow-sm);
 }
 
 .chat-input-box.focused {
-  border-color: rgba(124, 111, 247, 0.4);
-  box-shadow: 0 0 0 3px rgba(124, 111, 247, 0.08), 0 0 24px rgba(124, 111, 247, 0.1);
+  border-color: rgba(8, 9, 11, 0.35);
+  box-shadow: 0 4px 24px var(--shadow);
 }
 
 .chat-input-box textarea {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 14px 18px;
+  padding: 14px 52px 14px 18px;
   font-size: 14px;
   font-family: inherit;
   resize: none;
   outline: none;
-  color: var(--text-primary);
+  color: var(--text);
   line-height: 1.5;
   min-height: 48px;
   max-height: 200px;
@@ -153,37 +161,42 @@ function handleSend() {
 }
 
 .send-btn {
-  width: 44px;
-  height: 44px;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #a78bfa);
   color: #fff;
+  background: linear-gradient(180deg, #1f2329, var(--accent));
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--spring), box-shadow var(--spring), opacity var(--transition);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(124, 111, 247, 0.35);
+  box-shadow: 0 3px 12px rgba(8, 10, 14, 0.2);
+  z-index: 2;
 }
 
 .send-btn:hover:not(.disabled) {
-  transform: scale(1.12);
-  box-shadow: 0 6px 28px rgba(124, 111, 247, 0.5);
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 8px 28px rgba(8, 10, 14, 0.32);
 }
 
 .send-btn.disabled {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: none;
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px var(--shadow-sm);
   cursor: not-allowed;
   opacity: 0.4;
+  color: var(--text-muted);
 }
 
 .send-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .input-tip {
@@ -194,5 +207,25 @@ function handleSend() {
   max-width: 820px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.chat-input-area.center-mode {
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-top: none;
+}
+
+.chat-input-area.center-mode .chat-input-box {
+  box-shadow: 0 6px 28px var(--shadow);
+}
+
+.chat-input-area.center-mode .chat-input-box textarea {
+  min-height: 80px;
+}
+
+.chat-input-area.center-mode .chat-input-box.focused {
+  box-shadow: 0 8px 38px var(--shadow);
 }
 </style>

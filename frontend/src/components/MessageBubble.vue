@@ -1,14 +1,17 @@
 <template>
-  <div class="message-wrapper" :class="message.role">
-    <div class="message-avatar" :class="`avatar-${message.role}`">
-      {{ message.role === 'user' ? '👤' : '🤖' }}
-    </div>
-    <div class="message-body">
-      <div class="message-role">{{ message.role === 'user' ? '你' : '办公助手' }}</div>
-      <div class="message-bubble" :class="`bubble-${message.role}`">
-        <div class="message-text" v-html="renderMarkdown(message.content)"></div>
+  <div class="message-row" :class="message.role">
+    <div class="message-wrapper" :class="message.role">
+      <div class="message-avatar" :class="`avatar-${message.role}`">
+        <img v-if="message.role === 'assistant'" src="/agent-avatar.jpg" alt="助手" class="avatar-img" />
+        <span v-else>👤</span>
       </div>
-      <div class="message-time">{{ message.time }}</div>
+      <div class="message-body">
+        <div class="message-role">{{ message.role === 'user' ? '你' : '办公助手' }}</div>
+        <div class="message-bubble" :class="`bubble-${message.role}`">
+          <div class="message-text" v-html="renderMarkdown(message.content)"></div>
+        </div>
+        <div class="message-time">{{ message.time }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -25,12 +28,26 @@ defineProps({
 </script>
 
 <style scoped>
+.message-row {
+  display: flex;
+  width: 100%;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
 .message-wrapper {
   display: flex;
   gap: 14px;
-  max-width: 820px;
-  width: 100%;
-  margin: 0 auto;
+  max-width: 520px;
+  width: fit-content;
+}
+
+.message-wrapper.user {
+  flex-direction: row-reverse;
+  width: fit-content;
+  max-width: 520px;
 }
 
 .message-avatar {
@@ -45,58 +62,73 @@ defineProps({
 }
 
 .avatar-user {
-  background: linear-gradient(135deg, #7c6ff7, #a78bfa);
+  background: linear-gradient(180deg, var(--accent), #1f2329);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(124, 111, 247, 0.35);
+  box-shadow: 0 4px 14px rgba(8, 10, 14, 0.18);
 }
 
 .avatar-assistant {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border-strong);
-  color: #a78bfa;
+  background: var(--glass);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .message-body {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
+}
+
+.message-wrapper.user .message-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 1 auto;
 }
 
 .message-role {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 6px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .message-bubble {
-  border-radius: 0 18px 18px 18px;
   overflow: hidden;
+  width: 100%;
 }
 
 .bubble-assistant {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 0 1.2rem 1.2rem 1.2rem;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(240, 243, 247, 0.8)),
+    var(--glass);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(8, 10, 14, 0.08);
+  width: fit-content;
 }
 
 .bubble-user {
-  background: linear-gradient(135deg, rgba(124, 111, 247, 0.2), rgba(167, 139, 250, 0.15));
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(124, 111, 247, 0.25);
-  border-radius: 18px 0 18px 18px;
-  box-shadow: 0 4px 20px rgba(124, 111, 247, 0.12);
+  border-radius: 1.2rem 0 1.2rem 1.2rem;
+  background:
+    linear-gradient(145deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 8px 28px var(--shadow);
+  width: fit-content;
 }
 
 .message-text {
   font-size: 14px;
   line-height: 1.75;
-  color: var(--text-primary);
+  color: var(--text);
   word-wrap: break-word;
+  overflow-wrap: break-word;
   padding: 14px 18px;
 }
 
@@ -109,23 +141,23 @@ defineProps({
 }
 
 .message-text :deep(code) {
-  background: rgba(124, 111, 247, 0.15);
+  background: var(--accent-light);
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 13px;
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  color: #c4b5fd;
+  color: var(--text-secondary);
 }
 
 .message-text :deep(pre) {
-  background: rgba(0, 0, 0, 0.25);
-  color: #e8eaf6;
+  background: rgba(8, 9, 11, 0.04);
+  color: var(--text);
   padding: 16px 20px;
   border-radius: 12px;
   overflow-x: auto;
   margin: 10px 0;
   font-size: 13px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-light);
 }
 
 .message-text :deep(pre code) {
@@ -146,13 +178,13 @@ defineProps({
 
 .message-text :deep(strong) {
   font-weight: 700;
-  color: #c4b5fd;
+  color: var(--text);
 }
 
 .message-time {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 6px;
-  padding-left: 4px;
+  padding: 0 4px;
 }
 </style>

@@ -47,9 +47,10 @@ const suggestions = [
 
 .welcome-card {
   text-align: center;
-  max-width: 540px;
-  padding: 48px 40px;
+  max-width: 560px;
+  padding: 48px 44px;
   animation: welcome-fade 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-lg);
 }
 
 @keyframes welcome-fade {
@@ -72,16 +73,19 @@ const suggestions = [
 .welcome-icon {
   width: 88px;
   height: 88px;
-  background: linear-gradient(135deg, var(--accent), #a78bfa);
-  border-radius: 26px;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.96), transparent 16%),
+    radial-gradient(circle at 50% 50%, #f9fafb, #c5cbd4 68%, #8f98a4 100%);
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  color: #fff;
   position: relative;
   z-index: 1;
-  box-shadow: 0 12px 40px rgba(124, 111, 247, 0.4);
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.02),
+    0 12px 28px rgba(8, 10, 14, 0.15);
   animation: icon-float 3s ease-in-out infinite;
 }
 
@@ -92,10 +96,10 @@ const suggestions = [
 
 .welcome-icon-ring {
   position: absolute;
-  inset: -12px;
-  border-radius: 38px;
-  border: 2px solid rgba(124, 111, 247, 0.25);
-  animation: ring-rotate 8s linear infinite;
+  inset: -10px;
+  border-radius: 34px;
+  border: 1px dashed rgba(8, 9, 11, 0.15);
+  animation: ring-rotate 12s linear infinite;
 }
 
 @keyframes ring-rotate {
@@ -105,19 +109,19 @@ const suggestions = [
 
 .welcome-title {
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 620;
   margin-bottom: 14px;
-  background: linear-gradient(135deg, #e8eaf6 0%, #a78bfa 50%, #c4b5fd 100%);
+  background: linear-gradient(135deg, #1f2329, #2c313a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: 1px;
+  letter-spacing: -0.3px;
 }
 
 .welcome-desc {
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.75;
   margin-bottom: 36px;
 }
 
@@ -133,19 +137,22 @@ const suggestions = [
   align-items: center;
   gap: 8px;
   padding: 12px 18px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border);
   transition: transform var(--spring), box-shadow var(--spring), background var(--transition), border-color var(--transition);
   font-family: inherit;
+  box-shadow: 0 4px 14px var(--shadow-sm);
 }
 
 .suggestion-card:hover {
-  border-color: rgba(124, 111, 247, 0.4);
-  background: rgba(124, 111, 247, 0.15);
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(124, 111, 247, 0.2);
+  border-color: rgba(8, 9, 11, 0.3);
+  background: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px var(--shadow);
 }
 
 .suggestion-card:hover .suggestion-arrow {
@@ -165,7 +172,7 @@ const suggestions = [
   opacity: 0;
   transform: translateX(-8px);
   transition: var(--transition);
-  color: var(--accent);
+  color: var(--text-muted);
   font-size: 14px;
 }
 </style>

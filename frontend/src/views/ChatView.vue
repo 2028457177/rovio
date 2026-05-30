@@ -56,8 +56,22 @@
       </div>
 
       <div class="sidebar-footer">
-        <span class="status-dot"></span>
-        服务就绪 · 随时为您效劳
+        <div class="sidebar-user" v-if="user">
+          <img v-if="user.avatar" :src="user.avatar" class="user-avatar" />
+          <span v-else class="user-avatar-placeholder">👤</span>
+          <span class="user-name">{{ user.nickname || '微信用户' }}</span>
+          <button class="user-logout-btn" @click="onLogout" title="退出登录">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="sidebar-status">
+          <span class="status-dot"></span>
+          服务就绪 · 随时为您效劳
+        </div>
       </div>
     </aside>
 
@@ -169,11 +183,16 @@
 
 <script setup>
 import { ref, nextTick, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useChat } from '@/composables/useChat.js'
+import { useAuth } from '@/composables/useAuth.js'
 import MessageBubble from '@/components/MessageBubble.vue'
 import ChatInput from '@/components/ChatInput.vue'
 import ErrorBanner from '@/components/ErrorBanner.vue'
 import { renderMarkdown } from '@/utils/markdown.js'
+
+const router = useRouter()
+const { user, isLoggedIn, checkAuth, logout } = useAuth()
 
 const {
   messages,
@@ -195,9 +214,19 @@ const {
   dismissError
 } = useChat()
 
-onMounted(() => {
+onMounted(async () => {
+  const ok = await checkAuth()
+  if (!ok) {
+    router.replace('/login')
+    return
+  }
   loadConversations()
 })
+
+function onLogout() {
+  logout()
+  router.replace('/login')
+}
 
 const chatContainer = ref(null)
 
@@ -449,6 +478,63 @@ function onDismissError() {
   padding-top: 14px;
   font-size: 12px;
   color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+.user-avatar-placeholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--glass-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.user-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.user-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.sidebar-status {
   display: flex;
   align-items: center;
   gap: 8px;

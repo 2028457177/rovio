@@ -102,7 +102,12 @@ export function useChat() {
       messages: JSON.parse(JSON.stringify(messages.value)),
       time: formatTime()
     }
-    conversations.value.unshift(conv)
+    const existingIndex = conversations.value.findIndex(c => c.id === conv.id)
+    if (existingIndex !== -1) {
+      conversations.value[existingIndex] = conv
+    } else {
+      conversations.value.unshift(conv)
+    }
     saveConversationApi(conv).catch(() => {})
   }
 
@@ -124,7 +129,6 @@ export function useChat() {
     thinkingLines.value = []
     isThinking.value = false
     isStreaming.value = false
-    conversations.value = conversations.value.filter(c => c.id !== conversationId)
   }
 
   async function loadConversations() {

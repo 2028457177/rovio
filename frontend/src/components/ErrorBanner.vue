@@ -26,10 +26,10 @@ defineEmits(['dismiss'])
 
 <style scoped>
 .error-banner {
-  background: rgba(239, 68, 68, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.15);
   padding: 10px 20px;
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@ defineEmits(['dismiss'])
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #fca5a5;
+  color: #dc2626;
 }
 
 .error-icon {
@@ -56,7 +56,7 @@ defineEmits(['dismiss'])
 .error-close {
   background: none;
   border: none;
-  color: #fca5a5;
+  color: #dc2626;
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
@@ -66,8 +66,8 @@ defineEmits(['dismiss'])
 }
 
 .error-close:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fff;
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
   transform: scale(1.15);
 }
 </style>
