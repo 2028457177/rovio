@@ -8,6 +8,7 @@ from AIRAGAgent.agent.react_agent import ReactAgent
 from AIRAGAgent.model.factory import chat_model
 from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.utils.prompt_loader import load_all_tool_details
+from AIRAGAgent.utils.config_handler import agent_conf
 
 SUPERVISOR_SYSTEM_PROMPT = """你是一个任务编排智能体。你的唯一职责是：分析用户需求，对照可用工具清单，将任务拆解成具体的工具调用步骤，交给工作智能体执行。
 
@@ -57,12 +58,32 @@ class SupervisorState(TypedDict):
     iteration: int
 
 
+BEAUTIFY_SYSTEM_PROMPT = """你是一个文本排版美化专家。你的任务是对给定的文本进行格式美化，使其清晰、美观、易读。
+
+## 核心规则
+1. **绝对禁止修改任何事实数据**：不改动日期、数字、名称、地点、数据等任何信息，只调整排版格式。
+2. **绝对禁止增删内容**：不添加原文没有的信息，不删除原文已有的信息。
+3. **只做格式层面的优化**：调整结构、换行、标点、标题层级、列表等。
+
+## 美化要点
+- 如果内容包含标题/主题，用 `##` 或 `###` 标注
+- 数据列表用无序列表 `- ` 或有序列表 `1. ` 整理
+- 关键信息用 `**加粗**` 突出
+- 每段之间保持适当空行，避免文字堆砌
+- 如果原文是纯文本没有结构，根据内容自然分段
+- 保持专业、简洁的风格
+
+## 输出要求
+直接输出美化后的内容，不要加任何前缀说明。"""
+
+
 class SupervisorAgent:
     MAX_RETRIES = 1
 
     def __init__(self):
         self.worker = ReactAgent()
         self.supervisor_llm = chat_model
+        self.enable_beautify = agent_conf.get("enable_beautify", True)
 
     @staticmethod
     def _extract_text(content) -> str:
@@ -105,6 +126,25 @@ class SupervisorAgent:
             lines.append(f"- {role}: {entry.get('content', '')}")
         lines.append("---")
         return "\n".join(lines)
+
+    def _beautify_output(self, raw_content: str) -> str:
+        """使用在线模型对内容进行格式美化，不改动任何事实数据"""
+        if not self.enable_beautify:
+            return raw_content
+        try:
+            messages = [
+                SystemMessage(content=BEAUTIFY_SYSTEM_PROMPT),
+                HumanMessage(content=f"请美化以下文本的格式：\n\n{raw_content}"),
+            ]
+            response = self.supervisor_llm.invoke(messages)
+            beautified = self._extract_text(
+                response.content if hasattr(response, "content") else response
+            )
+            logger.info(f"[Supervisor] 格式美化完成，原长度 {len(raw_content)} → 新长度 {len(beautified)}")
+            return beautified if beautified.strip() else raw_content
+        except Exception as e:
+            logger.warning(f"[Supervisor] 格式美化失败，使用原始内容: {e}")
+            return raw_content
 
     def _get_full_system_prompt(self) -> str:
         if not hasattr(self, "_cached_system_prompt"):
@@ -197,25 +237,26 @@ class SupervisorAgent:
             review = self._supervisor_decide(query, worker_result, retry_count, chat_history)
 
             if review.get("action") == "accept":
+                final_content = review.get("final_answer", worker_result)
                 yield {
                     "type": "supervisor_thinking",
-                    "content": "审查通过，输出最终回复",
+                    "content": "审查通过，正在美化格式...",
                 }
-                yield {"type": "output", "content": review.get("final_answer", worker_result)}
+                beautified = self._beautify_output(final_content)
+                yield {"type": "output", "content": beautified}
                 return
 
             if retry_count >= self.MAX_RETRIES:
                 yield {
                     "type": "supervisor_thinking",
-                    "content": "已达最大重试次数，输出当前最优结果",
+                    "content": "已达最大重试次数，正在美化格式...",
                 }
                 force_accept = self._supervisor_decide(
                     query, worker_result, retry_count + 1, chat_history
                 )
-                yield {
-                    "type": "output",
-                    "content": force_accept.get("final_answer", worker_result),
-                }
+                final_content = force_accept.get("final_answer", worker_result)
+                beautified = self._beautify_output(final_content)
+                yield {"type": "output", "content": beautified}
                 return
 
             yield {

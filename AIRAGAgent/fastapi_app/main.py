@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse, HTMLResponse
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -180,7 +180,16 @@ async def delete_conversation(conversation_id: str):
 
 @app.get("/")
 async def root():
-    return FileResponse(STATIC_DIR / "index.html")
+    with open(STATIC_DIR / "index.html", encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(
+        content=html_content,
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        }
+    )
 
 
 app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
@@ -191,4 +200,13 @@ async def spa_fallback(path: str):
     target = STATIC_DIR / path
     if target.exists() and target.is_file():
         return FileResponse(target)
-    return FileResponse(STATIC_DIR / "index.html")
+    with open(STATIC_DIR / "index.html", encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(
+        content=html_content,
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        }
+    )

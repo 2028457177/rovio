@@ -4,6 +4,7 @@ from AIRAGAgent.database.connection import get_db
 
 
 def save_conversation_full(conversation_id: str, title: str, messages: list) -> None:
+    """保存会话：更新标题。消息已由 save_message() 在流式对话时逐条持久化，此处不再重复写入。"""
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -14,12 +15,6 @@ def save_conversation_full(conversation_id: str, title: str, messages: list) -> 
             """,
             (conversation_id, title)
         )
-        cursor.execute("DELETE FROM messages WHERE conversation_id = %s", (conversation_id,))
-        for msg in messages:
-            cursor.execute(
-                "INSERT INTO messages (conversation_id, role, content) VALUES (%s, %s, %s)",
-                (conversation_id, msg.get("role", ""), msg.get("content", ""))
-            )
         conn.commit()
 
 
@@ -84,17 +79,30 @@ def delete_conversation(conversation_id: str) -> None:
         cursor.execute("DELETE FROM conversations WHERE id = %s", (conversation_id,))
 
 
+def _generate_title(content: str) -> str:
+    """从消息内容生成标题：取前30个字符，超出则加省略号"""
+    return content[:30] + "..." if len(content) > 30 else content
+
+
 def save_message(conversation_id: str, role: str, content: str) -> None:
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO conversations (id, title)
-            VALUES (%s, %s)
-            ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP
-            """,
-            (conversation_id, "")
-        )
+        cursor.execute("SELECT title FROM conversations WHERE id = %s", (conversation_id,))
+        row = cursor.fetchone()
+
+        if row is None:
+            # 新会话，从首条消息自动生成标题
+            title = _generate_title(content)
+            cursor.execute(
+                "INSERT INTO conversations (id, title) VALUES (%s, %s)",
+                (conversation_id, title)
+            )
+        else:
+            cursor.execute(
+                "UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+                (conversation_id,)
+            )
+
         cursor.execute(
             "INSERT INTO messages (conversation_id, role, content) VALUES (%s, %s, %s)",
             (conversation_id, role, content)

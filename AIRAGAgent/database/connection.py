@@ -49,7 +49,7 @@ def init_db():
                 role VARCHAR(20) NOT NULL,
                 content TEXT NOT NULL,
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_conversation_id (conversation_id),
+                INDEX idx_conv_created (conversation_id, created_at),
                 CONSTRAINT fk_messages_conversation
                     FOREIGN KEY (conversation_id) REFERENCES conversations(id)
                     ON DELETE CASCADE
