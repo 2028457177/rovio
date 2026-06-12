@@ -6,17 +6,22 @@ from typing import TypedDict, Annotated, Sequence, Optional, List, Dict
 import operator
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, AIMessageChunk, ToolMessage
 
-from AIRAGAgent.model.local_factory import local_chat_model
 from AIRAGAgent.model.factory import chat_model
 from AIRAGAgent.utils.prompt_loader import load_identity_prompts
-from AIRAGAgent.agent.tools.agent_tools import (rag_summarize, get_weather, get_user_location, get_user_id,
-                                                get_current_month, fetch_external_data, fill_context_for_report,
-                                                get_schedule, get_city_code)
+from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.agent.tools.agent_tools import _get_rag
-from AIRAGAgent.agent.tools.file_tools import (auto_fill_word)
-from AIRAGAgent.agent.tools.search_tools import (search)
-from AIRAGAgent.agent.tools.wx_tools import (send_wx_message)
-from AIRAGAgent.agent.tools.middleware import monitor_tool,log_before_model,smart_prompt_switch
+from AIRAGAgent.agent.tools.middleware import skill_aware_monitor, log_before_model, smart_prompt_switch
+
+# ── Skill 体系集成 ──
+from AIRAGAgent.skills.definitions import register_all_skills
+from AIRAGAgent.skills.base import SkillRegistry
+
+# 注册所有 Skill（模块加载时一次性完成，单例保证只注册一次）
+register_all_skills()
+
+# 从 SkillRegistry 收集所有工具，不再手动逐个 import 工具函数
+registry = SkillRegistry()
+all_skill_tools = registry.get_all_tools()
 
 
 class AgentState(TypedDict):
@@ -25,14 +30,12 @@ class AgentState(TypedDict):
 
 tool_call_limiter = ToolCallLimitMiddleware(run_limit=15, exit_behavior="end")
 
-# 创建智能体
+# 创建智能体（工具列表由 SkillRegistry 统一管理）
 agent = create_agent(
-    model=local_chat_model,
+    model=chat_model,
     system_prompt=load_identity_prompts(),
-    tools=[rag_summarize,get_weather,get_user_location,get_city_code,get_user_id,
-           get_current_month,fetch_external_data,fill_context_for_report,get_schedule,
-           auto_fill_word,search,send_wx_message],
-    middleware=[tool_call_limiter, monitor_tool, log_before_model, smart_prompt_switch],
+    tools=all_skill_tools,
+    middleware=[tool_call_limiter, skill_aware_monitor, log_before_model, smart_prompt_switch],
 )
 
 
@@ -63,6 +66,24 @@ class ReactAgent:
         self.agent = agent
         self.graph = graph
         _get_rag()
+
+    @classmethod
+    def create_standalone(cls):
+        """创建独立的 ReactAgent 实例，拥有独占的 agent（线程安全，用于并行执行）"""
+        instance = cls.__new__(cls)
+        instance.agent = create_agent(
+            model=chat_model,
+            system_prompt=load_identity_prompts(),
+            tools=all_skill_tools,
+            middleware=[
+                ToolCallLimitMiddleware(run_limit=15, exit_behavior="end"),
+                skill_aware_monitor,
+                log_before_model,
+                smart_prompt_switch,
+            ],
+        )
+        _get_rag()
+        return instance
     
     @staticmethod
     def _history_to_messages(chat_history: Optional[List[Dict[str, str]]]) -> list:
@@ -94,6 +115,9 @@ class ReactAgent:
         seen_tool_ids = set()
         reported_tool_results = set()
         has_entered_tool_phase = False
+        any_tools_called = False
+        last_tool_results = {}
+        has_user_output = False  # 模型是否产生了面向用户的文本输出
 
         for msg, metadata in self.agent.stream(
             input_dict,
@@ -105,6 +129,7 @@ class ReactAgent:
                 has_tool_calls = bool(msg.tool_calls) if hasattr(msg, 'tool_calls') else False
 
                 if has_tool_calls:
+                    any_tools_called = True
                     for tc in msg.tool_calls:
                         tc_id = tc.get("id", "")
                         tc_name = tc.get("name", "")
@@ -113,36 +138,54 @@ class ReactAgent:
                             has_entered_tool_phase = True
                             yield {
                                 "type": "thinking",
-                                "content": f"正在调用工具: {tc_name}"
+                                "content": f"\n正在调用工具: {tc_name}\n"
                             }
 
-                if msg.content:
+                # 提取输出内容（优先 msg.content，回退到 reasoning_content）
+                output_text = msg.content or ""
+                reasoning = (
+                    getattr(msg, 'additional_kwargs', None) or {}
+                ).get('reasoning_content', '')
+
+                if reasoning and not output_text:
+                    # 纯推理无正文：当作 thinking 展示（原始 delta 连续累积）
+                    yield {
+                        "type": "thinking",
+                        "content": reasoning
+                    }
+                else:
+                    if not output_text and reasoning:
+                        output_text = reasoning
+
+                if output_text:
                     if has_entered_tool_phase:
                         yield {
                             "type": "thinking_end",
                             "content": ""
                         }
                         has_entered_tool_phase = False
+                    has_user_output = True
                     yield {
                         "type": "output",
-                        "content": msg.content
+                        "content": output_text
                     }
 
             elif isinstance(msg, ToolMessage):
                 tool_name = getattr(msg, 'name', '未知工具')
+                last_tool_results[tool_name] = str(msg.content)
                 if tool_name not in reported_tool_results:
                     reported_tool_results.add(tool_name)
-                    result_preview = _truncate_content(str(msg.content))
                     yield {
                         "type": "thinking",
-                        "content": f"工具 [{tool_name}] 执行完成\n{result_preview}"
+                        "content": f"\n工具 [{tool_name}] 执行完成\n"
                     }
 
-
-def _truncate_content(content: str, max_len: int = 200) -> str:
-    if len(content) <= max_len:
-        return content
-    return content[:max_len] + "..."
+        # 安全兜底：模型调用了工具但未产出文本时，追加原始数据
+        if any_tools_called and not has_user_output and last_tool_results:
+            fallback_parts = []
+            for tname, tresult in last_tool_results.items():
+                fallback_parts.append(f"**{tname} 结果**：\n{tresult}\n")
+            yield {"type": "output", "content": "\n\n---\n" + "\n".join(fallback_parts)}
 
 
 if __name__ == '__main__':

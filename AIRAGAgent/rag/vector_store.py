@@ -5,7 +5,6 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from AIRAGAgent.utils.config_handler import chroma_conf
 from AIRAGAgent.model.factory import embed_model
-from AIRAGAgent.model.local_factory import local_embed_model
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from AIRAGAgent.utils.path_tool import get_abs_path
 from AIRAGAgent.utils.file_handler import pdf_loader,txt_loader,excel_loader,listdir_with_allowed_type,get_file_md5_hex
@@ -21,7 +20,7 @@ class VectorStoreService:
         # 初始化向量数据库
         self.vector_store = Chroma(
             collection_name=chroma_conf["collection_name"],     # 向量数据库集合名
-            embedding_function=local_embed_model,                 # 本地嵌入模型
+            embedding_function=embed_model,                 # 在线嵌入模型
             persist_directory=chroma_conf["persist_directory"],     # 持久化目录
         )
         # 初始化文本分割器

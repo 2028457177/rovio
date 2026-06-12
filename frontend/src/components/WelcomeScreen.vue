@@ -5,9 +5,9 @@
         <div class="welcome-icon-ring"></div>
         <div class="welcome-icon">🤖</div>
       </div>
-      <h1 class="welcome-title">自动化办公助手</h1>
+      <h1 class="welcome-title">Rovio</h1>
       <p class="welcome-desc">
-        基于大语言模型的智能办公伴侣，帮你处理文档、搜索知识库、查询信息、生成报告。请在下方输入你的需求。
+        基于大语言模型的智能助手，帮你处理文档、搜索知识库、查询信息、生成报告。请在下方输入你的需求。
       </p>
       <div class="welcome-suggestions">
         <button
@@ -51,6 +51,12 @@ const suggestions = [
   padding: 48px 44px;
   animation: welcome-fade 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: var(--radius-lg);
+  background: var(--glass-strong);
+  transition: background 0.35s ease;
+}
+
+[data-theme="dark"] .welcome-card {
+  background: rgba(22, 25, 31, 0.92);
 }
 
 @keyframes welcome-fade {
@@ -87,6 +93,12 @@ const suggestions = [
     inset 0 1px 2px rgba(0,0,0,0.02),
     0 12px 28px rgba(8, 10, 14, 0.15);
   animation: icon-float 3s ease-in-out infinite;
+}
+
+[data-theme="dark"] .welcome-icon {
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.12), transparent 16%),
+    radial-gradient(circle at 50% 50%, #2c313a, #1f2329 68%, #16191f 100%);
 }
 
 @keyframes icon-float {
@@ -141,7 +153,7 @@ const suggestions = [
   cursor: pointer;
   font-size: 13px;
   color: var(--text);
-  background: #fff;
+  background: var(--panel);
   border: 1px solid var(--border);
   transition: transform var(--spring), box-shadow var(--spring), background var(--transition), border-color var(--transition);
   font-family: inherit;
@@ -150,7 +162,7 @@ const suggestions = [
 
 .suggestion-card:hover {
   border-color: rgba(8, 9, 11, 0.3);
-  background: #fff;
+  background: var(--panel);
   transform: translateY(-3px);
   box-shadow: 0 12px 32px var(--shadow);
 }

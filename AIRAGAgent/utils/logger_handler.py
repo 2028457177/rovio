@@ -62,6 +62,7 @@ def get_logger(
 ) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
+    logger.propagate = False  # 防止日志传播到 root logger 被二次输出
 
     #避免重复添加Handler
     if logger.handlers:

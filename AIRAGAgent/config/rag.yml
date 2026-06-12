@@ -3,8 +3,6 @@ api_key : ***REMOVED***
 embedding_model_name : text-embedding-v4
 https_proxy : http://ip-api.com/json/
 gaode_api_key : ***REMOVED***
-
-local_chat_model_name : qwen3:4b
-local_embedding_model_name : nomic-embed-text-v2-moe
+tavily_api_key : ***REMOVED***
 
 

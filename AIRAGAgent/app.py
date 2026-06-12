@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import streamlit as st
 from AIRAGAgent.agent.supervisor_agent import SupervisorAgent
 
-st.title("自动化办公助手（多智能体协同）")
+st.title("Rovio（多智能体协同）")
 st.divider()
 
 if "agent" not in st.session_state:

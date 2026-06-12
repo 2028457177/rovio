@@ -1,6 +1,7 @@
 import os
 import re
 import random
+from contextvars import ContextVar
 from datetime import datetime, timedelta
 
 import docx
@@ -14,6 +15,14 @@ from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.rag.rag_service import RagSummarizeService
 from AIRAGAgent.utils.config_handler import agent_conf
 from AIRAGAgent.utils.path_tool import get_abs_path
+
+# 存储当前请求的用户真实 IP，由 FastAPI 接口在调用工具前设置
+user_ip_var: ContextVar[str | None] = ContextVar('user_ip', default=None)
+# 存储当前请求的用户浏览器经纬度（高精度定位）
+user_lat_var: ContextVar[float | None] = ContextVar('user_lat', default=None)
+user_lon_var: ContextVar[float | None] = ContextVar('user_lon', default=None)
+# 存储当前登录用户的真实 ID
+user_id_var: ContextVar[int | None] = ContextVar('user_id', default=None)
 
 _rag_instance = None
 
@@ -35,69 +44,107 @@ def rag_summarize(query: str) -> str:
     return _get_rag().rag_summarize(query)
 
 
-@tool(description="将城市名以城市编码的形式传入，获取指定城市的天气信息")
-def get_weather(code: str) -> dict[str, Any]:
+@tool(description="传入城市名称，获取指定城市未来天气信息")
+def get_weather(city_name: str) -> dict[str, Any]:
     """
-    获取未来几天的天气预报
-    :param code: 城市编码
-    :return: 天气预报信息字典
+    获取未来几天的天气预报（使用 wttr.in 免费服务）
+    :param city_name: 纯城市名（如"杭州"），由 get_city_code 处理后的结果
+    :return: 天气预报信息列表
     """
-    key = rag_conf["gaode_api_key"]
-    city_code = code
+    try:
+        url = f"https://wttr.in/{city_name}?format=j1&lang=zh"
+        response = requests.get(url, timeout=10)
 
-    # 使用extensions=all获取预报天气
-    url = f"https://restapi.amap.com/v3/weather/weatherInfo?key={key}&city={city_code}&extensions=all"
+        if response.status_code != 200:
+            return {'error': f'请求失败，HTTP 状态码：{response.status_code}'}
 
-    response = requests.get(url, timeout=10)
+        data = response.json()
+        weather_list = []
 
-    if response.status_code == 200:
-        result = response.json()
-        if result["status"] == "1":
-            # 获取预报数据（完全按照你给的JSON结构）
-            forecast_data = result["forecasts"][0]
+        for day_data in data.get('weather', [])[:5]:  # 最多5天
+            date_str = day_data.get('date', '')
+            hourly = day_data.get('hourly', [])
 
-            # 构建天气预报信息字典
-            weather_info = {
-                '查询时间': forecast_data['reporttime'],
-                '地点': forecast_data['province'],
-                '城市': forecast_data['city'],
-                '城市编码': forecast_data['adcode'],
-                '天气预报': []
+            if not hourly:
+                continue
+
+            # 收集所有温度
+            temps = []
+            for h in hourly:
+                try:
+                    temps.append(float(h.get('tempC', 0)))
+                except (ValueError, TypeError):
+                    pass
+
+            # 取中午时段(约12:00)作为白天天气代表，晚间(约21:00)作为夜晚天气代表
+            day_idx = min(4, len(hourly) - 1)   # ~12:00
+            night_idx = min(7, len(hourly) - 1)  # ~21:00
+
+            day_h = hourly[day_idx]
+            night_h = hourly[night_idx]
+
+            # wttr.in 中文描述在 lang_zh 字段中
+            day_desc = (
+                day_h.get('lang_zh', [{}])[0].get('value', '') if day_h.get('lang_zh')
+                else day_h.get('weatherDesc', [{}])[0].get('value', '')
+            )
+            night_desc = (
+                night_h.get('lang_zh', [{}])[0].get('value', '') if night_h.get('lang_zh')
+                else night_h.get('weatherDesc', [{}])[0].get('value', '')
+            )
+
+            daily_forecast = {
+                '日期': date_str,
+                '白天天气': day_desc or '未知',
+                '夜晚天气': night_desc or '未知',
+                '白天温度': max(temps) if temps else 0.0,
+                '夜晚温度': min(temps) if temps else 0.0,
+                '白天风向': day_h.get('winddir16Point', ''),
+                '夜晚风向': night_h.get('winddir16Point', ''),
+                '白天风力': str(day_h.get('windspeedKmph', '')) + 'km/h',
+                '夜晚风力': str(night_h.get('windspeedKmph', '')) + 'km/h'
             }
+            weather_list.append(daily_forecast)
 
-            # 遍历未来几天的预报（casts数组）
-            for cast in forecast_data['casts']:
-                daily_forecast = {
-                    '日期': cast['date'],
-                    #'星期': cast['week'],
-                    '白天天气': cast['dayweather'],
-                    '夜晚天气': cast['nightweather'],
-                    '白天温度': float(cast['daytemp']),
-                    '夜晚温度': float(cast['nighttemp']),
-                    '白天风向': cast['daywind'],
-                    '夜晚风向': cast['nightwind'],
-                    '白天风力': cast['daypower'],
-                    '夜晚风力': cast['nightpower']
-                }
-                weather_info['天气预报'].append(daily_forecast)
+        return weather_list
 
-            return weather_info['天气预报']
-        else:
-            return {'error': f"API 返回错误：{result['info']}"}
-    else:
-        return {'error': f"请求失败，HTTP 状态码：{response.status_code}"}
+    except Exception as e:
+        return {'error': f'获取天气失败：{str(e)}'}
 
 
 @tool(description="获取用户所在城市信息，以纯字符串形式返回")
-def get_user_location()-> Any | None:
+def get_user_location() -> Any | None:
     """
-        通过 IP 地址获取当前位置的省市信息
+        通过 IP 地址或浏览器经纬度获取当前位置的省市信息
+        优先使用浏览器高精度定位（GPS），回退到 IP 定位
         返回格式：某某省某某市（字符串）
     """
     try:
-        # 使用高德地图 API 通过 IP 获取地理位置信息
-        key = rag_conf["gaode_api_key"]
-        url = f"https://restapi.amap.com/v3/ip?&output=json&key={key}"
+        lat = user_lat_var.get()
+        lon = user_lon_var.get()
+
+        if lat is not None and lon is not None:
+            # 使用 Nominatim 逆地理编码（免费无 Key，精度高）
+            url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&accept-language=zh"
+            headers = {'User-Agent': 'Rovio/1.0'}
+            response = requests.get(url, timeout=5, headers=headers)
+            data = response.json()
+
+            address = data.get('address', {})
+            province = address.get('state', '') or address.get('province', '')
+            city = address.get('city', '') or address.get('town', '') or address.get('county', '')
+
+            if province or city:
+                return f"{province}{city}"
+
+        # 回退：通过高德 IP 定位（国内精度远优于 ip-api.com）
+        user_ip = user_ip_var.get()
+        gaode_key = rag_conf.get("gaode_api_key", "")
+
+        if user_ip:
+            url = f"https://restapi.amap.com/v3/ip?key={gaode_key}&ip={user_ip}"
+        else:
+            url = f"https://restapi.amap.com/v3/ip?key={gaode_key}"
 
         response = requests.get(url, timeout=5)
         data = response.json()
@@ -105,50 +152,57 @@ def get_user_location()-> Any | None:
         if data.get('status') == '1':
             province = data.get('province', '')
             city = data.get('city', '')
+            # 对直辖市（北京/上海/天津/重庆），city 可能为空，用 province 作为城市
+            if isinstance(city, list):
+                city = ''
+            if isinstance(province, list):
+                province = ''
 
-            # 直接返回字符串格式：某某省某某市
+            if not city and province:
+                return province  # 直辖市，province 本身就是城市名（如"北京市"）
+            if not province and not city:
+                logger.warning(f"高德IP定位返回空省市: {data}")
+                return "未知位置"
             return f"{province}{city}"
         else:
+            logger.warning(f"高德IP定位失败: {data}")
             return "未知位置"
 
-    except Exception :
+    except Exception:
         return "获取失败"
 
 
-@tool(description="将城市名称（如'杭州市'）转换为高德地图城市编码（adcode），供get_weather使用")
+@tool(description="处理城市名称，提取纯城市名供天气查询使用")
 def get_city_code(city_name: str) -> str:
     """
-    将城市名称转换为高德地图城市编码
+    从省市字符串中提取纯城市名（如"浙江省杭州市"→"杭州"），供get_weather使用
 
     Args:
         city_name: get_user_location返回的城市名称，格式如"浙江省杭州市"
 
     Returns:
-        城市编码字符串（adcode），如"330100"
+        纯城市名字符串，如"杭州"
     """
     try:
-        key = rag_conf["gaode_api_key"]
-        url = f"https://restapi.amap.com/v3/config/district?key={key}&keywords={city_name}&subdistrict=0"
-
-        response = requests.get(url, timeout=5)
-        data = response.json()
-
-        if data.get('status') == '1' and data.get('districts'):
-            district = data['districts'][0]
-            adcode = district.get('adcode', '')
-            name = district.get('name', '')
-            if adcode:
-                return adcode
-            return f"未找到'{city_name}'的城市编码"
+        # 去掉"省"前缀，提取城市名
+        if '省' in city_name:
+            result = city_name.split('省')[1]
         else:
-            return f"查询'{city_name}'的城市编码失败：{data.get('info', '未知错误')}"
-
+            result = city_name
+        # 去掉末尾的"市"字（wttr.in 需要城市名不加"市"）
+        if result.endswith('市'):
+            result = result[:-1]
+        return result
     except Exception as e:
-        return f"获取城市编码失败：{str(e)}"
+        return city_name
 
 
 @tool(description="获取用户的ID，以纯字符串形式返回")
-def get_user_id()->str:
+def get_user_id() -> str:
+    uid = user_id_var.get()
+    if uid is not None:
+        return str(uid)
+    # 兼容旧模式：无用户上下文时随机返回一个 ID
     return random.choice(user_ids)
 
 @tool(description="wantday 作为用户想查询的日期与当前日期相差的天数，如明天是 1 后天是 2，大后天是 3，以此类推，如果是查看当天的日期则为 0")

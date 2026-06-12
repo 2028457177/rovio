@@ -1,12 +1,9 @@
 from langchain_core.tools import tool
-import os
 from langchain_community.tools.tavily_search import TavilySearchResults
-from dotenv import load_dotenv
-
-load_dotenv()
+from AIRAGAgent.utils.config_handler import rag_conf
 
 search_tool = TavilySearchResults(
-    tavily_api_key=os.getenv("TAVILY_API_KEY"),
+    tavily_api_key=rag_conf.get("tavily_api_key", ""),
     max_results = 1,
     topic = "general",
     search_depth = "basic",

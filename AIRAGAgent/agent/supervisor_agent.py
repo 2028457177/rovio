@@ -1,4 +1,6 @@
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import contextvars
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from typing import TypedDict, Annotated, Sequence
@@ -8,73 +10,85 @@ from AIRAGAgent.agent.react_agent import ReactAgent
 from AIRAGAgent.model.factory import chat_model
 from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.utils.prompt_loader import load_all_tool_details
-from AIRAGAgent.utils.config_handler import agent_conf
 
-SUPERVISOR_SYSTEM_PROMPT = """你是一个任务编排智能体。你的唯一职责是：分析用户需求，对照可用工具清单，将任务拆解成具体的工具调用步骤，交给工作智能体执行。
+SUPERVISOR_SYSTEM_PROMPT = """你是一个任务编排智能体。你的唯一职责是：分析用户需求，对照可用技能清单，选择最合适的技能（Skill）委派给工作智能体执行。
 
-工作智能体是一个只会按指令调用工具的执行者，它不会自行判断该调什么工具。所以你必须在委派任务中明确写出每一步要调用的工具名称和参数，不能只说"查询一下课表"这种模糊的话。
+## 重要变化：从编排工具到选择技能
+工作智能体已经内置了每个技能的工具调用流程（如天气查询会自动按 get_user_location → get_city_code → get_weather 执行），并且会在首次调用工具时自动获取专属的详细操作指南。
 
-## 铁律（违反任何一条都算失败）
-1. 禁止在TASK/RETRY中写出任何具体数据（日期、城市名、用户ID等）。所有数据必须通过调用工具获取。写"假设今天是X月X日"就是违规。
-2. 禁止使用模糊描述替代工具名。写"查询课表工具"就是违规，必须写 get_schedule。
-3. TASK 中每个步骤必须包含「调用 工具名(参数=值)」格式，不允许"步骤1：获取用户ID"这种没有工具名的写法。
-4. 每次先想清楚用哪些工具、顺序是什么，再写 TASK。不确定的工具去"可用工具详细清单"里找。
+你不再需要写出每种工具的名称和参数。你只需：
+1. 分析用户需求，判断是否包含多个「无依赖关系的独立子任务」
+2. 为每个独立子任务选择 1 个最合适的技能
+3. 把每个子任务整理成任务描述，分别输出为独立的 TASK
+4. 审查工作智能体的返回结果是否满足用户需求
 
-## TASK 输出模板（必须原样套用，不可省略任何部分）
-TASK: 请严格按以下步骤执行，不要跳过或合并任何步骤：
-1. 调用 <工具名>(<参数名>=<参数值>) — <说明该步骤目的>
-2. 用第1步返回的 <字段名>，调用 <工具名>(<参数名>=<第1步的字段名>) — <说明该步骤目的>
-N. 将以上工具返回的数据整理成清晰的格式，输出给用户。
+## 并行委派规则（重要）
+如果用户需求包含多个互不依赖的子任务，必须输出多条 TASK，每条对应一个技能。
+工作智能体会自动并行执行这些 TASK，大幅提升响应速度。
+
+判断标准：
+- 两个子任务是否需要等待对方的结果才能执行？如果是 → 单 TASK 串行；如果否 → 多 TASK 并行
+- 例如："查明天课程，顺便看明天下不下雨" → 课程查询和天气查询互不依赖 → 输出 2 条 TASK
+- 例如："查明天天气，如果是雨天就查课表" → 课表依赖天气结果 → 只能输出 1 条 TASK（先查天气）
+
+## 铁律
+1. 禁止在 TASK 中写出任何具体数据（日期、城市名、用户ID等）。所有数据必须让工作智能体通过工具获取。
+2. 禁止写出工具名称。你选的是技能（如 schedule），不是工具（如 get_schedule）。
+3. 单 TASK 和 多 TASK 并行都是合法的，取决于子任务之间有无依赖关系。
+
+## TASK 输出模板
+
+### 单一任务时
+TASK: 使用 <技能名> 技能，为用户完成以下任务：<自然语言描述任务>
+
+### 多任务并行时（每个任务一行 TASK）
+TASK: 使用 <技能名1> 技能，为用户完成以下任务：<子任务1描述>
+TASK: 使用 <技能名2> 技能，为用户完成以下任务：<子任务2描述>
 
 ## 正确 vs 错误 对比
+
+用户问："明天有什么课，顺便查查明天北京天气"
+
+【正确 - 多任务并行】
+TASK: 使用 schedule 技能，查询用户明天的课程安排，包括课程名称、时间、地点。
+TASK: 使用 weather 技能，查询北京明天的天气情况。
+
 用户问："明天有什么课"
 
-【错误 - 绝对禁止】TASK: 查询用户明天（2026年5月27日，星期三）的课程安排，包括课程名称、时间、地点。
-> 违规：自己写了具体日期，且没有写工具名，worker 不知道该调什么。
+【正确 - 单一任务】
+TASK: 使用 schedule 技能，查询用户明天的课程安排，包括课程名称、时间、地点。
 
-【正确 - 必须这样写】TASK: 请严格按以下步骤执行：
-1. 调用 get_current_month(wantday=1) — 获取明天的日期、学期周次和星期几。
-2. 用第1步返回的 week 和 day，调用 get_schedule(week=<第1步的week>, day=<第1步的day>) — 查询明天的课程。
-3. 将第2步返回的课程列表（时间段、课程名、节次、地点）整理成清晰的格式输出。
+【错误 - 旧模式（禁止使用）】TASK: 请严格按以下步骤执行：1. 调用 get_current_month(wantday=1)... 2. 调用 get_schedule(...)
+> 违规：写出了工具名，这是旧做法。
 
-## RETRY 模板（也必须写出具体工具名和步骤）
-RETRY: 上次执行有问题：<指出具体哪里不对>。请重新按以下步骤执行：
-1. 调用 <工具名>(<参数名>=<参数值>)
-2. 调用 <工具名>(<参数名>=<第1步的xxx>)
-...
+## RETRY 模板（审查时使用）
+RETRY: 上次执行有问题：<指出具体哪里不对>。请使用 <技能名> 技能重新执行。
+
+ACCEPT: （所有任务已完成且满足需求时使用）
 
 ## 审查标准
-- 工作智能体是否按你编排的步骤逐一调用了正确的工具
+- 工作智能体是否正确调用了所选技能
 - 返回的数据是否真实（通过工具获取，而非编造）
 - 是否完整回答了用户的核心问题
 
+## 问候 / 闲聊处理
+当用户需求仅为简单问候（如"你好""Hi""早上好"）或纯闲聊（不涉及任何技能），你不需要委派给工作智能体。直接输出：
+ACCEPT: <友好问候回复>
+
+例如：
+用户："你好"
+你应该输出：
+ACCEPT: 你好！我是Rovio智能助手，可以帮你查天气、课程、生成报告、处理Word文档等，有什么可以帮你的吗？
+
 ## 注意
 - 最多重试1次，第2次审查必须 ACCEPT
-- 你的名字是"任务编排智能体"，你的价值在于编排，不要替工作智能体做它该做的事"""
+- 识别出无依赖关系的子任务时大胆用多 TASK 并行
+- 你的价值在于选择合适的技能，不要替工作智能体做它该做的事"""
 
 
 class SupervisorState(TypedDict):
     messages: Annotated[Sequence, operator.add]
     iteration: int
-
-
-BEAUTIFY_SYSTEM_PROMPT = """你是一个文本排版美化专家。你的任务是对给定的文本进行格式美化，使其清晰、美观、易读。
-
-## 核心规则
-1. **绝对禁止修改任何事实数据**：不改动日期、数字、名称、地点、数据等任何信息，只调整排版格式。
-2. **绝对禁止增删内容**：不添加原文没有的信息，不删除原文已有的信息。
-3. **只做格式层面的优化**：调整结构、换行、标点、标题层级、列表等。
-
-## 美化要点
-- 如果内容包含标题/主题，用 `##` 或 `###` 标注
-- 数据列表用无序列表 `- ` 或有序列表 `1. ` 整理
-- 关键信息用 `**加粗**` 突出
-- 每段之间保持适当空行，避免文字堆砌
-- 如果原文是纯文本没有结构，根据内容自然分段
-- 保持专业、简洁的风格
-
-## 输出要求
-直接输出美化后的内容，不要加任何前缀说明。"""
 
 
 class SupervisorAgent:
@@ -83,7 +97,6 @@ class SupervisorAgent:
     def __init__(self):
         self.worker = ReactAgent()
         self.supervisor_llm = chat_model
-        self.enable_beautify = agent_conf.get("enable_beautify", True)
 
     @staticmethod
     def _extract_text(content) -> str:
@@ -99,21 +112,53 @@ class SupervisorAgent:
             return "".join(parts)
         return str(content)
 
-    def _parse_supervisor_response(self, text: str) -> Dict[str, str]:
-        if text.startswith("TASK:"):
-            return {"action": "delegate", "task": text[5:].strip()}
-        elif text.startswith("ACCEPT:"):
-            return {"action": "accept", "final_answer": text[7:].strip()}
-        elif text.startswith("RETRY:"):
-            return {"action": "retry", "feedback": text[6:].strip()}
-        else:
-            first_line = text.split("\n")[0].strip() if text else ""
-            if "TASK" in first_line.upper():
-                return {
-                    "action": "delegate",
-                    "task": text.replace("TASK:", "").replace("TASK", "").strip(),
-                }
-            return {"action": "accept", "final_answer": text}
+    def _parse_supervisor_response(self, text: str) -> Dict[str, Any]:
+        import re
+        
+        # 先检测 RETRY / ACCEPT（优先级高于 TASK）
+        for keyword, action, key_name in [
+            ("RETRY:", "retry", "feedback"),
+            ("ACCEPT:", "accept", "final_answer"),
+        ]:
+            match = re.search(r"\b" + re.escape(keyword), text)
+            if match:
+                after = text[match.end():].strip()
+                return {"action": action, key_name: after}
+
+        # 兜底 RETRY / ACCEPT 不带冒号
+        for keyword, action, key_name in [
+            ("RETRY", "retry", "feedback"),
+            ("ACCEPT", "accept", "final_answer"),
+        ]:
+            match = re.search(r"\b" + re.escape(keyword) + r"\b", text)
+            if match:
+                after = text[match.end():].strip().lstrip(":").strip()
+                return {"action": action, key_name: after}
+        
+        # 查找所有 TASK: 行（支持单任务和多任务并行）
+        task_pattern = r"TASK:\s*使用\s+(\w+)\s+技能[，,]?\s*为用户完成以下任务[：:]\s*(.+?)(?=\nTASK:|\nRETRY|\nACCEPT|\n\n\S|\Z)"
+        task_matches = re.findall(task_pattern, text, re.DOTALL)
+        
+        if task_matches:
+            tasks = []
+            for skill_name, description in task_matches:
+                tasks.append({
+                    "skill": skill_name.strip(),
+                    "description": description.strip().rstrip(".")
+                })
+            logger.info(f"[Supervisor] 解析到 {len(tasks)} 个并行任务: {[t['skill'] for t in tasks]}")
+            return {"action": "delegate", "tasks": tasks}
+
+        # 兜底：匹配不带冒号的 TASK（如 "TASK" 后跟换行的内容）
+        match = re.search(r"\bTASK\b", text, re.IGNORECASE)
+        if match:
+            after = text[match.end():].strip().lstrip(":").strip()
+            return {"action": "delegate", "task": after}
+        
+        # 兜底：如果 LLM 返回了类似"请提供xxx"的废话，通过 ACCEPT 返回给用户
+        # 这种情况通常是 LLM 没有按格式输出 TASK/RETRY/ACCEPT
+        logger.warning(f"[Supervisor] 解析失败，LLM 返回内容未被识别为 TASK/RETRY/ACCEPT: {text[:200]}")
+        return {"action": "accept", "final_answer": text}
 
     @staticmethod
     def _format_history(chat_history: Optional[List[Dict[str, str]]]) -> str:
@@ -127,32 +172,12 @@ class SupervisorAgent:
         lines.append("---")
         return "\n".join(lines)
 
-    def _beautify_output(self, raw_content: str) -> str:
-        """使用在线模型对内容进行格式美化，不改动任何事实数据"""
-        if not self.enable_beautify:
-            return raw_content
-        try:
-            messages = [
-                SystemMessage(content=BEAUTIFY_SYSTEM_PROMPT),
-                HumanMessage(content=f"请美化以下文本的格式：\n\n{raw_content}"),
-            ]
-            response = self.supervisor_llm.invoke(messages)
-            beautified = self._extract_text(
-                response.content if hasattr(response, "content") else response
-            )
-            logger.info(f"[Supervisor] 格式美化完成，原长度 {len(raw_content)} → 新长度 {len(beautified)}")
-            return beautified if beautified.strip() else raw_content
-        except Exception as e:
-            logger.warning(f"[Supervisor] 格式美化失败，使用原始内容: {e}")
-            return raw_content
-
     def _get_full_system_prompt(self) -> str:
-        if not hasattr(self, "_cached_system_prompt"):
-            tool_details = load_all_tool_details()
-            self._cached_system_prompt = (
-                SUPERVISOR_SYSTEM_PROMPT + "\n\n## 可用工具详细清单\n\n" + tool_details
-            )
-        return self._cached_system_prompt
+        """构建完整 system prompt，含可用技能清单"""
+        from AIRAGAgent.skills.base import SkillRegistry
+        registry = SkillRegistry()
+        skill_descriptions = registry.get_all_descriptions()
+        return SUPERVISOR_SYSTEM_PROMPT + "\n\n" + skill_descriptions
 
     def _supervisor_decide(
         self,
@@ -202,12 +227,95 @@ class SupervisorAgent:
         return self._parse_supervisor_response(content)
 
     def _yield_worker_chunks(self, task: str, chat_history: Optional[List[Dict[str, str]]] = None):
+        """执行工作智能体，thinking 进度直接透传，output 流式输出给用户"""
         output_parts = []
         for chunk in self.worker.execute_stream(task, chat_history):
-            yield chunk
             if isinstance(chunk, dict) and chunk["type"] == "output":
                 output_parts.append(chunk["content"])
+                yield chunk  # 流式输出，用户无需等待审查结束
+            else:
+                yield chunk
         return "".join(output_parts)
+
+    def _run_single_worker(self, task_desc: str, chat_history: Optional[List[Dict[str, str]]]) -> tuple:
+        """在线程中执行单个 worker 任务，使用独立 agent 实例保证线程安全"""
+        # 每个并行 worker 创建独立的 agent，避免共享全局 agent 导致 stream 干扰
+        worker = ReactAgent.create_standalone()
+        thinking_chunks = []
+        output_parts = []
+        try:
+            for chunk in worker.execute_stream(task_desc, chat_history):
+                if isinstance(chunk, dict):
+                    if chunk["type"] == "output":
+                        output_parts.append(chunk["content"])
+                    elif chunk["type"] == "thinking":
+                        thinking_chunks.append(chunk)
+            result = "".join(output_parts)
+            logger.info(f"[Supervisor] 并行任务 [{task_desc[:30]}...] 完成，结果长度: {len(result)}")
+            return (task_desc, result, thinking_chunks)
+        except Exception as e:
+            logger.error(f"[Supervisor] 并行任务 [{task_desc[:30]}...] 失败: {e}")
+            return (task_desc, f"[执行失败: {e}]", thinking_chunks)
+
+    def _execute_parallel_tasks(
+        self,
+        tasks: List[Dict[str, str]],
+        chat_history: Optional[List[Dict[str, str]]] = None,
+    ):
+        """并行执行多个独立任务，yield 进度信息，最终 yield 合并结果"""
+        task_count = len(tasks)
+        yield {
+            "type": "supervisor_action",
+            "content": f"检测到 {task_count} 个独立子任务，并行执行中...",
+        }
+
+        # 捕获当前上下文（此时已通过上层 ctx.run 恢复 user_ip/lat/lon 等 ContextVar），
+        # 为每个 worker 生成独立副本，避免 ThreadPoolExecutor 子线程拿不到 ContextVar 值，
+        # 也避免多 worker 共用同一 Context 对象导致 set() 互相干扰。
+        worker_contexts = [contextvars.copy_context() for _ in tasks]
+
+        results = []
+        with ThreadPoolExecutor(max_workers=min(task_count, 5)) as executor:
+            futures = {}
+            for i, t in enumerate(tasks):
+                worker_ctx = worker_contexts[i]
+                future = executor.submit(
+                    lambda desc=t["description"], c=worker_ctx: c.run(
+                        self._run_single_worker, desc, chat_history
+                    )
+                )
+                futures[future] = (i, t)
+
+            completed_count = 0
+            for future in as_completed(futures):
+                task_desc, result, thinking_chunks = future.result()
+                idx, task_info = futures[future]
+                completed_count += 1
+                results.append((idx, result, task_info))
+
+                yield {
+                    "type": "supervisor_thinking",
+                    "content": f"并行任务进度: {completed_count}/{task_count} 已完成",
+                }
+
+        # 按原始顺序排列结果
+        results.sort(key=lambda x: x[0])
+
+        # 合并结果
+        merged_parts = []
+        for i, (idx, result, task_info) in enumerate(results):
+            skill_name = task_info.get("skill", "未知")
+            merged_parts.append(f"### {skill_name} 技能结果\n{result.strip()}")
+
+        merged_result = "\n\n".join(merged_parts)
+        logger.info(f"[Supervisor] 并行任务全部完成，开始美化格式...")
+        
+        yield {
+            "type": "supervisor_thinking",
+            "content": "并行任务全部完成，正在整理结果...",
+        }
+
+        yield {"type": "output", "content": merged_result}
 
     def execute_stream(self, query: str, chat_history: Optional[List[Dict[str, str]]] = None):
         logger.info(f"[Supervisor] 收到用户任务: {query[:100]}...")
@@ -217,16 +325,40 @@ class SupervisorAgent:
         decision = self._supervisor_decide(query, chat_history=chat_history)
 
         if decision.get("action") != "delegate":
-            yield {"type": "output", "content": decision.get("final_answer", "")}
+            # 流式输出：将回答按小段拆分，逐段推送
+            answer = decision.get("final_answer", "")
+            chunk_size = max(1, len(answer) // 20) if len(answer) > 20 else len(answer)
+            for i in range(0, len(answer), chunk_size):
+                yield {"type": "output", "content": answer[i:i + chunk_size]}
             return
 
-        worker_task = decision.get("task", query)
+        # ── 检测是否为并行多任务 ──
+        tasks = decision.get("tasks")
+        if tasks:
+            if len(tasks) > 1:
+                # 多任务并行模式
+                yield from self._execute_parallel_tasks(tasks, chat_history)
+                return
+            else:
+                # 单任务（从 tasks 列表中提取）
+                worker_task = tasks[0]["description"]
+        else:
+            # ── 单任务模式（兼容旧逻辑）──
+            worker_task = decision.get("task", query)
         yield {
             "type": "supervisor_action",
             "content": "任务已委派给工作智能体执行",
         }
 
-        worker_result = yield from self._yield_worker_chunks(worker_task, chat_history)
+        # yield thinking 进度，output 由 generator return 值收集
+        worker_gen = self._yield_worker_chunks(worker_task, chat_history)
+        while True:
+            try:
+                chunk = next(worker_gen)
+                yield chunk
+            except StopIteration as e:
+                worker_result = e.value or ""
+                break
 
         for retry_count in range(self.MAX_RETRIES + 1):
             yield {
@@ -237,26 +369,11 @@ class SupervisorAgent:
             review = self._supervisor_decide(query, worker_result, retry_count, chat_history)
 
             if review.get("action") == "accept":
-                final_content = review.get("final_answer", worker_result)
-                yield {
-                    "type": "supervisor_thinking",
-                    "content": "审查通过，正在美化格式...",
-                }
-                beautified = self._beautify_output(final_content)
-                yield {"type": "output", "content": beautified}
+                # 输出已经流式推送给用户了，审查通过后直接结束，不重复输出
                 return
 
             if retry_count >= self.MAX_RETRIES:
-                yield {
-                    "type": "supervisor_thinking",
-                    "content": "已达最大重试次数，正在美化格式...",
-                }
-                force_accept = self._supervisor_decide(
-                    query, worker_result, retry_count + 1, chat_history
-                )
-                final_content = force_accept.get("final_answer", worker_result)
-                beautified = self._beautify_output(final_content)
-                yield {"type": "output", "content": beautified}
+                # 输出已经流式推送给用户了，即使审查不满意也接受当前结果
                 return
 
             yield {
@@ -264,9 +381,17 @@ class SupervisorAgent:
                 "content": f"工作成果需要改进：{review.get('feedback', '请重新执行')}",
             }
 
-            worker_result = yield from self._yield_worker_chunks(
+            # 重试：thinking 和 output 都透传给用户
+            retry_gen = self._yield_worker_chunks(
                 review.get("feedback", query), chat_history
             )
+            while True:
+                try:
+                    chunk = next(retry_gen)
+                    yield chunk
+                except StopIteration as e:
+                    worker_result = e.value or ""
+                    break
 
     def execute(self, query: str, chat_history: Optional[List[Dict[str, str]]] = None) -> str:
         output_parts = []

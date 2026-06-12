@@ -7,7 +7,6 @@ from AIRAGAgent.rag.vector_store import VectorStoreService
 from AIRAGAgent.utils.prompt_loader import load_rag_prompts
 from langchain_core.prompts import PromptTemplate
 from AIRAGAgent.model.factory import chat_model
-from AIRAGAgent.model.local_factory import local_chat_model
 from AIRAGAgent.infrastructure.rag_cache import get_cached_rag_result, cache_rag_result
 # 打印提示词
 def print_prompt(prompt):
@@ -22,7 +21,7 @@ class RagSummarizeService(object):
         self.retriever = self.vector_store.get_retriever()    # 检索器
         self.prompt_text = load_rag_prompts()    # 加载提示词
         self.prompt_template = PromptTemplate.from_template(self.prompt_text)    # 提示词模板
-        self.model = local_chat_model    # 聊天模型
+        self.model = chat_model    # 聊天模型
         self.chain = self._init_chain()    # 初始化链
     # 初始化链
     def _init_chain(self):

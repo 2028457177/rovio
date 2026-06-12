@@ -12,6 +12,9 @@ export function renderMarkdown(text) {
 
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>')
 
+  // 链接: [text](url)
+  html = html.replace(/\[([^\]]+)\]\((\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 
   html = html.replace(/^### (.+)$/gm, '<strong>$1</strong>')

@@ -18,7 +18,8 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: '../static',
-    emptyOutDir: true
+    outDir: 'dist',
+    emptyOutDir: true,
+    // 生产部署时如需更改 API 地址，修改 .env.production 中的 VITE_API_BASE
   }
 })
