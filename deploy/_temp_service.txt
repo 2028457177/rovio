@@ -1,0 +1,15 @@
+[Unit]
+Description=lc-course Backend Service
+After=network.target mysql.service redis.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/lc-course/backend
+EnvironmentFile=/opt/lc-course/backend/.env
+ExecStart=/opt/lc-course/backend/.venv/bin/python -m uvicorn AIRAGAgent.fastapi_app.main:app --host 0.0.0.0 --port 8000 --log-level info
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

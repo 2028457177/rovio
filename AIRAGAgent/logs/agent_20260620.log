@@ -1,0 +1,467 @@
+2026-06-20 21:38:37,357 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:38:37,357 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:38:37,357 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:38:37,358 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:38:37,358 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:38:37,358 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:38:37,358 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:38:37,358 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:39:46,919 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:39:46,919 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:39:46,919 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:39:46,920 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:39:46,920 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:39:46,920 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:39:46,920 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:39:46,920 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:41:08,581 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:41:08,582 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:41:08,938 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:41:53,819 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:41:53,820 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:41:53,965 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:41:53,965 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:41:53,965 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:41:53,965 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:41:53,966 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:41:53,966 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:41:53,966 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:41:53,966 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:41:54,103 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:42:02,737 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:42:02,738 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:42:08,894 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:42:08,894 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:42:08,894 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:42:08,894 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:42:08,894 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:42:08,895 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:42:08,895 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:42:08,895 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:42:09,002 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:42:26,626 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:43:14,270 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:43:14,271 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:43:14,387 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:43:59,826 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:43:59,826 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:43:59,826 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:43:59,827 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:43:59,827 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:43:59,827 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:43:59,827 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:43:59,827 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:43:59,944 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:44:08,396 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:44:08,513 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:44:27,015 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:44:27,015 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:44:27,016 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:44:27,121 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:45:08,746 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:45:08,747 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:45:08,747 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:45:08,748 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:45:08,748 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:45:08,749 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:45:08,749 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:45:08,750 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:45:09,400 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:46:58,950 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:46:58,950 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:46:58,950 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:46:58,950 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:46:58,951 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:46:58,951 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:46:58,951 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:46:58,951 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:47:35,528 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:47:35,530 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:47:35,531 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:47:35,532 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:47:35,533 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:47:35,534 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:47:35,538 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:47:35,540 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:48:31,155 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:48:31,156 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:48:31,157 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:48:31,158 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:48:31,159 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:48:31,159 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:48:31,160 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:48:31,161 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:48:31,800 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:49:05,682 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:49:05,682 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:49:05,683 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:49:05,870 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:49:10,807 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:49:10,808 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:49:10,954 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:49:15,317 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:49:15,317 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:49:15,317 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:49:15,318 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:49:15,318 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:49:15,318 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:49:15,318 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:49:15,318 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:49:15,466 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:50:59,095 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:50:59,096 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:50:59,097 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:50:59,097 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:50:59,098 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:50:59,099 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:50:59,099 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:50:59,100 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:50:59,622 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:50:59,695 - agent - INFO - main.py:52 - 项目启动中，开始加载本地模型...
+2026-06-20 21:50:59,695 - agent - INFO - main.py:34 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-06-20 21:51:02,365 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:51:02,366 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:51:02,477 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:51:02,494 - agent - INFO - main.py:52 - 项目启动中，开始加载本地模型...
+2026-06-20 21:51:02,494 - agent - INFO - main.py:34 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-06-20 21:51:03,805 - agent - WARNING - main.py:56 - 本地模型预热失败（Ollama 可能未运行），跳过: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2026-06-20 21:51:03,805 - agent - INFO - main.py:57 - 正在初始化MySQL数据库...
+2026-06-20 21:51:03,897 - agent - INFO - main.py:59 - 正在注册任务队列处理器...
+2026-06-20 21:51:03,897 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.FILL_WORD
+2026-06-20 21:51:03,898 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.SEND_WX
+2026-06-20 21:51:03,898 - agent - INFO - main.py:61 - 数据库初始化完成，服务就绪
+2026-06-20 21:51:06,598 - agent - WARNING - main.py:56 - 本地模型预热失败（Ollama 可能未运行），跳过: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2026-06-20 21:51:06,598 - agent - INFO - main.py:57 - 正在初始化MySQL数据库...
+2026-06-20 21:51:06,637 - agent - INFO - main.py:59 - 正在注册任务队列处理器...
+2026-06-20 21:51:06,637 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.FILL_WORD
+2026-06-20 21:51:06,638 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.SEND_WX
+2026-06-20 21:51:06,638 - agent - INFO - main.py:61 - 数据库初始化完成，服务就绪
+2026-06-20 21:51:06,638 - agent - INFO - main.py:63 - 项目关闭
+2026-06-20 21:51:39,296 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:51:39,297 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:51:39,410 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:51:39,427 - agent - INFO - main.py:52 - 项目启动中，开始加载本地模型...
+2026-06-20 21:51:39,427 - agent - INFO - main.py:34 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-06-20 21:51:43,518 - agent - WARNING - main.py:56 - 本地模型预热失败（Ollama 可能未运行），跳过: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2026-06-20 21:51:43,519 - agent - INFO - main.py:57 - 正在初始化MySQL数据库...
+2026-06-20 21:51:43,553 - agent - INFO - main.py:59 - 正在注册任务队列处理器...
+2026-06-20 21:51:43,553 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.FILL_WORD
+2026-06-20 21:51:43,553 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.SEND_WX
+2026-06-20 21:51:43,553 - agent - INFO - main.py:61 - 数据库初始化完成，服务就绪
+2026-06-20 21:51:43,554 - agent - INFO - main.py:63 - 项目关闭
+2026-06-20 21:52:03,274 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 21:52:03,274 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 21:52:03,275 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 21:52:03,403 - agent - INFO - vector_store.py:92 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 21:52:03,422 - agent - INFO - main.py:52 - 项目启动中，开始加载本地模型...
+2026-06-20 21:52:03,422 - agent - INFO - main.py:34 - 正在预热本地聊天模型 (qwen3:4b)...
+2026-06-20 21:52:07,508 - agent - WARNING - main.py:56 - 本地模型预热失败（Ollama 可能未运行），跳过: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2026-06-20 21:52:07,509 - agent - INFO - main.py:57 - 正在初始化MySQL数据库...
+2026-06-20 21:52:07,548 - agent - INFO - main.py:59 - 正在注册任务队列处理器...
+2026-06-20 21:52:07,549 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.FILL_WORD
+2026-06-20 21:52:07,549 - agent - INFO - task_queue.py:95 - 任务处理器已注册: TaskType.SEND_WX
+2026-06-20 21:52:07,549 - agent - INFO - main.py:61 - 数据库初始化完成，服务就绪
+2026-06-20 21:53:46,492 - agent - DEBUG - agent_service.py:124 - [Agent 服务] 开始流式输出，消息：帮我搜索最新的办公效率工具...
+2026-06-20 21:53:46,652 - agent - INFO - supervisor_agent.py:334 - [Supervisor] 收到用户任务: 帮我搜索最新的办公效率工具...
+2026-06-20 21:53:48,547 - agent - INFO - supervisor_agent.py:246 - [Supervisor] 决策内容: TASK: 使用 search 技能，搜索最新的办公效率工具相关信息。...
+2026-06-20 21:53:48,550 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有1条消息。
+2026-06-20 21:53:48,550 - agent - DEBUG - middleware.py:110 - [log_before_model]HumanMessage | 使用 search 技能，搜索最新的办公效率工具相关信息。
+2026-06-20 21:53:49,704 - agent - INFO - middleware.py:78 - [skill monitor] 自动激活 skill [search]（runtime context），因为调用了工具 search
+2026-06-20 21:53:49,705 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:search
+2026-06-20 21:53:49,705 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{'content': '最新办公效率工具 2025'}
+2026-06-20 21:53:53,623 - agent - INFO - middleware.py:85 - [skill monitor]工具search调用成功
+2026-06-20 21:53:53,628 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有3条消息。
+2026-06-20 21:53:53,629 - agent - DEBUG - middleware.py:110 - [log_before_model]ToolMessage | HTTPError('401 Client Error: Unauthorized for url: https://api.tavily.com/search')
+2026-06-20 21:53:53,637 - agent - INFO - middleware.py:144 - [smart_prompt_switch] 注入 1 个活跃 skill 的 prompt（来源: runtime context）
+2026-06-20 21:54:00,890 - agent - INFO - supervisor_agent.py:246 - [Supervisor] 决策内容: RETRY: 上次执行未获得结果。请使用 **search** 技能，搜索互联网获取最新的办公效率工具信息。...
+2026-06-20 21:54:00,896 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有1条消息。
+2026-06-20 21:54:00,898 - agent - DEBUG - middleware.py:110 - [log_before_model]HumanMessage | 上次执行未获得结果。请使用 **search** 技能，搜索互联网获取最新的办公效率工具信息。
+2026-06-20 21:54:02,962 - agent - INFO - middleware.py:78 - [skill monitor] 自动激活 skill [search]（runtime context），因为调用了工具 search
+2026-06-20 21:54:02,962 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:search
+2026-06-20 21:54:02,963 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{'content': '2024 2025年最新办公效率工具推荐'}
+2026-06-20 21:54:09,958 - agent - INFO - middleware.py:85 - [skill monitor]工具search调用成功
+2026-06-20 21:54:09,966 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有3条消息。
+2026-06-20 21:54:09,966 - agent - DEBUG - middleware.py:110 - [log_before_model]ToolMessage | HTTPError('401 Client Error: Unauthorized for url: https://api.tavily.com/search')
+2026-06-20 21:54:09,971 - agent - INFO - middleware.py:144 - [smart_prompt_switch] 注入 1 个活跃 skill 的 prompt（来源: runtime context）
+2026-06-20 21:54:11,691 - agent - INFO - middleware.py:78 - [skill monitor] 自动激活 skill [knowledge]（runtime context），因为调用了工具 rag_summarize
+2026-06-20 21:54:11,692 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:rag_summarize
+2026-06-20 21:54:11,693 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{'query': '最新办公效率工具推荐 2024 2025'}
+2026-06-20 21:54:15,804 - agent - ERROR - middleware.py:88 - 工具rag_summarize调用失败，原因:Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-06-20 21:54:15,809 - agent - ERROR - agent_service.py:145 - [Agent 服务] 流式响应失败：Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+Traceback (most recent call last):
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\fastapi_app\services\agent_service.py", line 129, in _stream_response
+    for chunk in self.agent.execute_stream(message, chat_history):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\supervisor_agent.py", line 404, in execute_stream
+    for chunk in self._yield_worker_chunks(
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        review.get("feedback", query), chat_history
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\supervisor_agent.py", line 253, in _yield_worker_chunks
+    for chunk in self.worker.execute_stream(task, chat_history):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\react_agent.py", line 119, in execute_stream
+    for msg, metadata in self.agent.stream(
+                         ~~~~~~~~~~~~~~~~~^
+        input_dict,
+        ^^^^^^^^^^^
+    ...<2 lines>...
+        context={"report": False},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\pregel\main.py", line 2725, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 258, in tick
+    _panic_or_proceed(
+    ~~~~~~~~~~~~~~~~~^
+        futures.done.union(f for f, t in futures.items() if t is not None),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        panic=reraise,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 520, in _panic_or_proceed
+    raise exc
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\pregel\_executor.py", line 80, in done
+    task.result()
+    ~~~~~~~~~~~^^
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 449, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 96, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 813, in _func
+    outputs = list(
+        executor.map(self._run_one, tool_calls, input_types, tool_runtimes)
+    )
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\nxt\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 579, in _wrapped_fn
+    return contexts.pop().run(fn, *args)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 1039, in _run_one
+    content = _handle_tool_error(e, flag=self._handle_tool_errors)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 430, in _handle_tool_error
+    content = flag(e)  # type: ignore [assignment, call-arg]
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 387, in _default_handle_tool_errors
+    raise e
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 1033, in _run_one
+    return self._wrap_tool_call(tool_request, execute)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langsmith\run_helpers.py", line 760, in wrapper
+    function_result = run_container["context"].run(
+        func, *args, **kwargs
+    )
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain\agents\middleware\types.py", line 2036, in wrapped
+    return func(request, handler)
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\tools\middleware.py", line 91, in skill_aware_monitor
+    raise e
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\tools\middleware.py", line 84, in skill_aware_monitor
+    result = handler(request)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 1029, in execute
+    return self._execute_tool_sync(req, input_type, config)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 973, in _execute_tool_sync
+    content = _handle_tool_error(e, flag=self._handle_tool_errors)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 430, in _handle_tool_error
+    content = flag(e)  # type: ignore [assignment, call-arg]
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 387, in _default_handle_tool_errors
+    raise e
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langgraph\prebuilt\tool_node.py", line 930, in _execute_tool_sync
+    response = tool.invoke(call_args, config)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\tools\base.py", line 642, in invoke
+    return self.run(tool_input, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\tools\base.py", line 1001, in run
+    raise error_to_raise
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\tools\base.py", line 967, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\tools\structured.py", line 97, in _run
+    return self.func(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\agent\tools\agent_tools.py", line 42, in rag_summarize
+    return _get_rag().rag_summarize(query)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\rag_service.py", line 53, in rag_summarize
+    context_docs = self.retrieve_doce(query)
+  File "C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\rag\rag_service.py", line 41, in retrieve_doce
+    docs = self.retriever.invoke(query)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\retrievers.py", line 222, in invoke
+    result = self._get_relevant_documents(
+        input, run_manager=run_manager, **kwargs_
+    )
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_core\vectorstores\base.py", line 1045, in _get_relevant_documents
+    docs = self.vectorstore.similarity_search(query, **kwargs_)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 748, in similarity_search
+    docs_and_scores = self.similarity_search_with_score(
+        query,
+    ...<2 lines>...
+        **kwargs,
+    )
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_chroma\vectorstores.py", line 848, in similarity_search_with_score
+    query_embedding = self._embedding_function.embed_query(query)
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_ollama\embeddings.py", line 335, in embed_query
+    return self.embed_documents([text])[0]
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\langchain_ollama\embeddings.py", line 325, in embed_documents
+    return self._client.embed(
+           ~~~~~~~~~~~~~~~~~~^
+        self.model,
+        ^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=self.keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )["embeddings"]
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\ollama\_client.py", line 393, in embed
+    return self._request(
+           ~~~~~~~~~~~~~^
+      EmbedResponse,
+      ^^^^^^^^^^^^^^
+    ...<9 lines>...
+      ).model_dump(exclude_none=True),
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\ollama\_client.py", line 189, in _request
+    return cls(**self._request_raw(*args, **kwargs).json())
+                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nxt\PycharmProjects\lc-course\.venv\Lib\site-packages\ollama\_client.py", line 135, in _request_raw
+    raise ConnectionError(CONNECTION_ERROR_MESSAGE) from None
+ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+During task with name 'tools' and id '0824d3e8-8df7-b224-c8aa-3acd325361bc'
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: weather（含 3 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: schedule（含 2 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: report（含 4 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: knowledge（含 1 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: document（含 1 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: communication（含 1 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - base.py:45 - [SkillRegistry] 注册 skill: search（含 1 个工具）
+2026-06-20 22:24:21,874 - agent - INFO - definitions.py:179 - [Skills] 共注册 7 个 Skill
+2026-06-20 22:24:23,071 - agent - INFO - vector_store.py:91 - [加载知识库]C:\Users\nxt\PycharmProjects\lc-course\AIRAGAgent\data\24级土木1班课表-2025-2026-2.xlsx内容已经存在知识库内，跳过
+2026-06-20 22:24:23,252 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有1条消息。
+2026-06-20 22:24:23,253 - agent - DEBUG - middleware.py:110 - [log_before_model]HumanMessage | 今天天气怎么样
+2026-06-20 22:24:25,027 - agent - WARNING - redis_client.py:35 - Redis 服务不可用，将跳过 Redis 相关功能
+2026-06-20 22:24:25,027 - agent - INFO - middleware.py:78 - [skill monitor] 自动激活 skill [weather]（runtime context），因为调用了工具 get_user_location
+2026-06-20 22:24:25,027 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:get_user_location
+2026-06-20 22:24:25,028 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{}
+2026-06-20 22:24:25,353 - agent - INFO - middleware.py:85 - [skill monitor]工具get_user_location调用成功
+2026-06-20 22:24:25,355 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有3条消息。
+2026-06-20 22:24:25,355 - agent - DEBUG - middleware.py:110 - [log_before_model]ToolMessage | 河北省廊坊市
+2026-06-20 22:24:25,357 - agent - INFO - middleware.py:144 - [smart_prompt_switch] 注入 1 个活跃 skill 的 prompt（来源: runtime context）
+2026-06-20 22:24:26,993 - agent - WARNING - redis_client.py:35 - Redis 服务不可用，将跳过 Redis 相关功能
+2026-06-20 22:24:26,993 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:get_city_code
+2026-06-20 22:24:26,993 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{'city_name': '廊坊'}
+2026-06-20 22:24:26,994 - agent - INFO - middleware.py:85 - [skill monitor]工具get_city_code调用成功
+2026-06-20 22:24:26,995 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有5条消息。
+2026-06-20 22:24:26,995 - agent - DEBUG - middleware.py:110 - [log_before_model]ToolMessage | 廊坊
+2026-06-20 22:24:26,997 - agent - INFO - middleware.py:144 - [smart_prompt_switch] 注入 1 个活跃 skill 的 prompt（来源: runtime context）
+2026-06-20 22:24:28,267 - agent - WARNING - redis_client.py:35 - Redis 服务不可用，将跳过 Redis 相关功能
+2026-06-20 22:24:28,267 - agent - INFO - middleware.py:80 - [skill monitor]执行工具:get_weather
+2026-06-20 22:24:28,267 - agent - INFO - middleware.py:81 - [skill monitor]工具参数:{'city_name': '廊坊'}
+2026-06-20 22:24:30,858 - agent - INFO - middleware.py:85 - [skill monitor]工具get_weather调用成功
+2026-06-20 22:24:30,865 - agent - INFO - middleware.py:99 - [log_before_model]即将调用模型，带有7条消息。
+2026-06-20 22:24:30,866 - agent - DEBUG - middleware.py:110 - [log_before_model]ToolMessage | [{"日期": "2026-06-20", "白天天气": "Sunny", "夜晚天气": "Smoky haze", "白天温度": 30.0, "夜晚温度": 22.0, "白天风向": "NNW", "夜晚风向": "N", "白天风力": "31km/h", "夜晚风力": "14km/h"}, {"日期": "2026-06-21", "白天天气": "Dust storm", "夜晚天气": "Clear ", "白天温度": 31.0, "夜晚温度": 19.0, "白天风向": "SW", "夜晚风向": "S", "白天风力": "13km/h", "夜晚风力": "13km/h"}, {"日期": "2026-06-22", "白天天气": "Sunny", "夜晚天气": "Clear ", "白天温度": 35.0, "夜晚温度": 20.0, "白天风向": "SSW", "夜晚风向": "S", "白天风力": "20km/h", "夜晚风力": "11km/h"}]
+2026-06-20 22:24:30,876 - agent - INFO - middleware.py:144 - [smart_prompt_switch] 注入 1 个活跃 skill 的 prompt（来源: runtime context）
