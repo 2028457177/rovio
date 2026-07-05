@@ -1,0 +1,1 @@
+var e=`/user-avatar.jpg`;export{e as t};

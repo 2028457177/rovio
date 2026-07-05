@@ -1,4 +1,4 @@
-import { getToken } from './auth.js'
+import { getToken, logout } from './auth.js'
 
 const API_BASE = '/api'
 
@@ -52,6 +52,11 @@ export async function sendChatMessage(message, sessionId, latitude, longitude, o
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        logout()
+        window.location.href = '/login'
+        return ''
+      }
       throw new Error(`请求失败: ${response.status}`)
     }
 

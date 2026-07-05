@@ -27,94 +27,43 @@ from AIRAGAgent.agent.tools.wx_tools import send_wx_message
 # 各 Skill 的领域 System Prompt
 # ═══════════════════════════════════════════════
 
-WEATHER_SKILL_PROMPT = """你正在执行【天气查询】任务。
-**重要**：直接输出天气数据，禁止输出内部推理过程。
+WEATHER_SKILL_PROMPT = """你现在帮用户查天气。别啰嗦，直接干：
 
-## 工具流程
-1. get_user_location() → 获取用户省市
-2. get_city_code(city_name) → 提取纯城市名
-3. get_weather(city_name) → 获取天气预报
+1. get_user_location() 看看用户在哪儿
+2. get_city_code(city_name) 把省市名变纯城市名
+3. get_weather(city_name) 拿天气数据
 
-## 规则
-- 用户已说城市名时跳过步骤1
-- 如实展示，不编造数据
-
-## 输出
-仅返回用户关心的天气数据（日期、天气、温度、风力），一行一条，不加多余解释。"""
+用户已经说了城市的话，跳过第1步。拿到数据直接告诉用户就行了——日期、天气、温度、风力，一条一行，别加戏。"""
 
 
-SCHEDULE_SKILL_PROMPT = """你正在执行【课表/日程查询】任务。
-**重要**：直接输出课程数据，禁止输出内部推理过程。
+SCHEDULE_SKILL_PROMPT = """你现在帮用户查课表。步骤很简单：
 
-## 工具流程
-1. get_current_month(wantday) → 获取日期/周次/星期
-2. get_schedule(week, day) → 查询课程
+1. get_current_month(wantday) 看看那天是第几周、星期几
+2. get_schedule(week, day) 拿课表
 
-## 规则
-- 必须用 get_current_month 获取准确值，不自推算
-- 如实展示课表
-
-## 输出
-列出课程名、时间、节次、地点。无课则一句话说明。不加多余分析。"""
+别自己推算日期，老老实实调工具查。拿到课表直接列出来：课程名、时间、节次、地点。没课就说没课，别瞎分析。"""
 
 
-REPORT_SKILL_PROMPT = """你正在执行【工作报告生成】任务。
+REPORT_SKILL_PROMPT = """你现在帮用户写工作报告。按顺序来，别跳：
 
-## 工具流程（严格顺序）
 1. get_user_id()
-2. fill_context_for_report()
-3. 确定月份（用户指定或用 get_current_month(0)）
+2. fill_context_for_report()（这步不能省）
+3. 确认月份（用户说了就用用户说的，没说就用 get_current_month(0)）
 4. fetch_external_data(user_id, month)
 
-## 规则
-- fill_context_for_report 不可跳过
-- 按"特征、效率、耗材、对比"四维度整理
-- 无数据则直接告知
-
-## 输出
-结构化列出四维度数据，各维度一行总结。"""
+数据到手后，从特征、效率、耗材、对比四个角度整理。没数据就直说。"""
 
 
-KNOWLEDGE_SKILL_PROMPT = """你正在执行【知识库检索】任务。
-
-## 工具
-rag_summarize(query) — query 用核心关键词
-
-## 输出
-检索结果 + 简明实用建议，不展开无关知识点。"""
+KNOWLEDGE_SKILL_PROMPT = """你现在帮用户搜一下内部资料库。调 rag_summarize(query)，query 用核心关键词就行。搜到了就总结一下，顺手给点实用建议，别跑题。"""
 
 
-DOCUMENT_SKILL_PROMPT = """你正在执行【文档处理】任务。
-
-## 工具
-auto_fill_word(template_path)
-
-## 规则
-template_path 为用户上传后的服务器文件路径。
-
-## 输出
-告知处理完成，附下载链接。"""
+DOCUMENT_SKILL_PROMPT = """你现在帮用户填 Word 文档。调 auto_fill_word(template_path)，template_path 就是用户上传后服务器给的路径。处理完了告诉用户，别忘了附上下载链接。"""
 
 
-COMMUNICATION_SKILL_PROMPT = """你正在执行【微信消息发送】任务。
-
-## 工具
-send_wx_message(contact_name, message)
-
-## 规则
-contact_name 用微信昵称/备注，需微信桌面版已登录。
-
-## 输出
-告知发送成功或失败。"""
+COMMUNICATION_SKILL_PROMPT = """你现在帮用户发微信消息。调 send_wx_message(contact_name, message)，联系人是微信昵称或备注名。前提是微信桌面版得开着。发完告诉用户成功没成功。"""
 
 
-SEARCH_SKILL_PROMPT = """你正在执行【联网搜索】任务。
-
-## 工具
-search(content)
-
-## 输出
-整理搜索结果，标注来源，简洁回答。"""
+SEARCH_SKILL_PROMPT = """你现在帮用户上网搜东西。调 search(content)，搜完了把结果整理一下，标注来源，简要回答就行。"""
 
 
 # ═══════════════════════════════════════════════

@@ -1,31 +1,42 @@
-"""上传前端文件到服务器"""
-import paramiko, os
+"""增量上传前端文件到服务器"""
+import paramiko
+import os
+
+HOST = "81.70.100.57"
+USER = "ubuntu"
+PASSWORD = "***REMOVED***"
+FRONTEND_DIR = "/var/www/lc-course-frontend"
+LOCAL_STATIC = os.path.join(os.path.dirname(__file__), "..", "static")
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect('81.70.100.57', username='ubuntu', password='***REMOVED***', timeout=15)
+ssh.connect(HOST, username=USER, password=PASSWORD, timeout=15)
 sftp = ssh.open_sftp()
 
-FRONTEND_DIR = '/var/www/lc-course-frontend'
+def sudo(cmd):
+    ssh.exec_command(f"echo '{PASSWORD}' | sudo -S bash -c '{cmd}'", get_pty=True)
 
-for root, dirs, files in os.walk('static'):
-    rel_path = root.replace('\\', '/')
-    if rel_path == 'static':
-        remote_subdir = FRONTEND_DIR
-    else:
-        remote_subdir = FRONTEND_DIR + '/' + rel_path.replace('static/', '')
-    
-    try:
-        sftp.stat(remote_subdir)
-    except FileNotFoundError:
-        ssh.exec_command(f"mkdir -p {remote_subdir}", get_pty=True)
+# 确保前端目录权限正确
+sudo(f"chown -R ubuntu:ubuntu {FRONTEND_DIR}")
 
+# 上传所有静态文件
+for root, dirs, files in os.walk(LOCAL_STATIC):
     for f in files:
-        local = os.path.join(root, f)
-        remote = remote_subdir + '/' + f
-        print(f'  {f}')
-        sftp.put(local, remote)
+        local_path = os.path.join(root, f)
+        rel_path = os.path.relpath(local_path, LOCAL_STATIC).replace("\\", "/")
+        remote_path = f"{FRONTEND_DIR}/{rel_path}"
+        # 确保远程子目录存在
+        remote_dir = os.path.dirname(remote_path)
+        try:
+            sftp.stat(remote_dir)
+        except FileNotFoundError:
+            ssh.exec_command(f"mkdir -p {remote_dir}", get_pty=True)
+        print(f"Uploading: {rel_path}")
+        sftp.put(local_path, remote_path)
 
-print('Done - frontend updated')
+# 重载 nginx
+sudo("nginx -t && nginx -s reload")
+print("\nNginx reloaded. Frontend updated successfully!")
+
 sftp.close()
 ssh.close()

@@ -7,7 +7,7 @@
       </div>
       <h1 class="welcome-title">Rovio</h1>
       <p class="welcome-desc">
-        基于大语言模型的智能助手，帮你处理文档、搜索知识库、查询信息、生成报告。请在下方输入你的需求。
+        上传 Word 模板（{内容提示|字体|字号}），AI 自动填充并生成文档；支持知识库检索、天气查询、报告生成、联网搜索。
       </p>
       <div class="welcome-suggestions">
         <button
@@ -20,6 +20,10 @@
           <span class="suggestion-text">{{ item.label }}</span>
           <span class="suggestion-arrow">→</span>
         </button>
+      </div>
+      <div class="welcome-tags">
+        <code>{内容提示|字体|字号}</code>
+        <span>例：<code>{姓名|楷体|四号}</code>、<code>{日期}</code>、<code>{金额||三号}</code></span>
       </div>
     </div>
   </div>
@@ -186,5 +190,25 @@ const suggestions = [
   transition: var(--transition);
   color: var(--text-muted);
   font-size: 14px;
+}
+
+.welcome-tags {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.welcome-tags code {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 12px;
 }
 </style>

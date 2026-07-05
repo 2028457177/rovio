@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken, getUser } from '@/api/auth.js'
+import { getToken, getUser, logout } from '@/api/auth.js'
 
 const routes = [
   {
@@ -27,17 +27,50 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+// 避免并发多次验证 token
+let tokenVerified = false
+
+async function verifyToken() {
+  if (tokenVerified) return true
+
+  const token = getToken()
+  if (!token) return false
+
+  try {
+    const response = await fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!response.ok) {
+      if (response.status === 401) {
+        logout()
+      }
+      return false
+    }
+    tokenVerified = true
+    return true
+  } catch {
+    return true // 网络异常时放行，避免离线时被卡住
+  }
+}
+
+router.beforeEach(async (to, from, next) => {
   const token = getToken()
   const user = getUser()
 
-  if (to.meta.requiresAuth && !token) {
-    next({ name: 'Login', query: { redirect: to.fullPath } })
-    return
+  if (to.meta.requiresAuth) {
+    if (!token) {
+      next({ name: 'Login', query: { redirect: to.fullPath } })
+      return
+    }
+    // 验证 token 是否过期，过期则清除并跳转登录
+    const valid = await verifyToken()
+    if (!valid) {
+      next({ name: 'Login', query: { redirect: to.fullPath } })
+      return
+    }
   }
 
   if (to.meta.guest && token) {
-    // 已登录用户访问登录页，根据角色跳转
     if (user && user.role === 'admin') {
       next({ name: 'Admin' })
     } else {
@@ -46,7 +79,6 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  // 角色路由保护：管理员不能访问普通用户页面，反之亦然
   if (to.meta.role && user) {
     if (to.meta.role === 'admin' && user.role !== 'admin') {
       next({ name: 'Chat' })
