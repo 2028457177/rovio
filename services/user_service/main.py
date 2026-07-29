@@ -1,0 +1,332 @@
+"""user_service FastAPI 入口。
+
+路由：
+- PATCH  /api/user/profile              修改昵称 / 邮箱
+- POST   /api/user/avatar               上传头像
+- GET    /api/avatars/{filename}        提供头像文件访问
+- POST   /api/user/schedule             上传课表 Excel + 开学日期
+- PATCH  /api/user/schedule/start-date  仅修改开学日期
+- GET    /api/user/schedule             获取课表设置
+- DELETE /api/user/schedule             删除课表（DB + 物理文件）
+- GET    /api/schedules/{filename}      提供课表文件下载
+- DELETE /api/user/account              注销账号
+- 内部 GET    /internal/user/profile      供其他服务查询用户资料
+- 内部 POST   /internal/user/profile      供 auth_service 注册时创建资料记录
+- 内部 POST   /internal/user/delete       供 auth_service 注销时清理 user 数据
+- 内部 DELETE /internal/user/{user_id}    同上（DELETE 方式）
+"""
+from __future__ import annotations
+import asyncio
+import os
+import uuid
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+from fastapi import Depends, UploadFile, File, Form
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic import BaseModel
+
+from services.common import (
+    create_app, get_current_user, get_client_ip,
+    ServiceClient, logger,
+)
+from services.common.paths import UPLOAD_DIR
+from . import models
+
+app = create_app("user_service", version="1.0.0")
+
+UPLOAD_DIR_PATH = Path(UPLOAD_DIR)
+
+
+# ==================== 请求体 ====================
+
+class ProfileUpdateRequest(BaseModel):
+    display_name: Optional[str] = None
+    email: Optional[str] = None
+
+
+class ScheduleStartDateRequest(BaseModel):
+    start_date: Optional[str] = None  # None 表示清除
+
+
+class DeleteAccountRequest(BaseModel):
+    password: str
+
+
+class InternalProfileRequest(BaseModel):
+    user_id: int
+    display_name: str = ""
+
+
+# ==================== 用户资料 API ====================
+
+@app.patch("/api/user/profile")
+async def update_profile(req: ProfileUpdateRequest, user: dict = Depends(get_current_user)):
+    """修改昵称 / 邮箱"""
+    updated = await asyncio.get_event_loop().run_in_executor(
+        None, models.upsert_profile, user["id"], req.display_name, req.email
+    )
+    if updated is None:
+        return JSONResponse(status_code=400, content={"error": "昵称不能为空"})
+    return JSONResponse(content={"status": "ok", "user": updated})
+
+
+@app.post("/api/user/avatar")
+async def upload_avatar(avatar: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    """上传头像"""
+    # 校验文件类型
+    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    content_type = avatar.content_type or ""
+    if content_type not in allowed_types and not avatar.filename.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
+        return JSONResponse(status_code=400, content={"error": "仅支持 JPG / PNG / GIF / WEBP 格式"})
+
+    content = await avatar.read()
+    if len(content) > 5 * 1024 * 1024:  # 5MB
+        return JSONResponse(status_code=400, content={"error": "头像大小不能超过 5MB"})
+
+    ext = os.path.splitext(avatar.filename)[1] or ".png"
+    avatar_name = f"avatar_{user['id']}_{uuid.uuid4().hex[:8]}{ext}"
+    avatar_dir = UPLOAD_DIR_PATH / "avatars"
+    avatar_dir.mkdir(parents=True, exist_ok=True)
+    avatar_path = avatar_dir / avatar_name
+    with open(avatar_path, "wb") as f:
+        f.write(content)
+
+    avatar_url = f"/api/avatars/{avatar_name}"
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.update_avatar_url, user["id"], avatar_url
+    )
+    return JSONResponse(content={"status": "ok", "avatar_url": avatar_url})
+
+
+@app.get("/api/avatars/{filename}")
+async def serve_avatar(filename: str):
+    """提供头像文件访问"""
+    # 防止路径穿越
+    if "/" in filename or "\\" in filename or ".." in filename:
+        return JSONResponse(status_code=400, content={"error": "非法文件名"})
+    avatar_path = UPLOAD_DIR_PATH / "avatars" / filename
+    if not avatar_path.exists():
+        return JSONResponse(status_code=404, content={"error": "头像不存在"})
+    return FileResponse(path=str(avatar_path))
+
+
+# ==================== 课表 API ====================
+
+@app.post("/api/user/schedule")
+async def upload_schedule(
+    file: UploadFile = File(...),
+    start_date: str = Form(...),
+    user: dict = Depends(get_current_user),
+):
+    """上传 / 替换课表 Excel + 开学日期
+
+    multipart/form-data:
+        file: .xlsx 课表文件
+        start_date: 'YYYY-MM-DD' 开学日期
+    """
+    # 1. 校验文件后缀
+    if not file.filename.lower().endswith((".xlsx", ".xls")):
+        return JSONResponse(status_code=400, content={"error": "仅支持 .xlsx / .xls 格式课表"})
+
+    # 2. 校验大小（课表通常很小，限 2MB）
+    content = await file.read()
+    if len(content) > 2 * 1024 * 1024:
+        return JSONResponse(status_code=400, content={"error": "课表文件不能超过 2MB"})
+
+    # 3. 校验开学日期格式
+    try:
+        datetime.strptime(start_date, "%Y-%m-%d")
+    except ValueError:
+        return JSONResponse(status_code=400, content={"error": "开学日期格式应为 YYYY-MM-DD"})
+
+    # 4. 用 pandas 预校验 Excel 列名（避免坏文件污染数据）
+    import io
+    import pandas as pd
+    try:
+        df = pd.read_excel(io.BytesIO(content), header=2, index_col=0, sheet_name=0)
+        required_cols = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期天"}
+        actual_cols = {str(c).strip() for c in df.columns}
+        if not required_cols.issubset(actual_cols):
+            missing = "、".join(sorted(required_cols - actual_cols))
+            return JSONResponse(status_code=400, content={
+                "error": f"Excel 列名不符合要求，缺少：{missing}（需包含 星期一~星期天）"
+            })
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": f"Excel 解析失败：{e}"})
+
+    # 5. 覆盖式保存（文件名固定 schedule_{user_id}.xlsx，无需清旧）
+    schedule_dir = UPLOAD_DIR_PATH / "schedules"
+    schedule_dir.mkdir(parents=True, exist_ok=True)
+    file_name = f"schedule_{user['id']}.xlsx"
+    save_path = schedule_dir / file_name
+    with open(save_path, "wb") as f:
+        f.write(content)
+
+    rel_path = f"schedules/{file_name}"
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.update_schedule, user["id"], rel_path, start_date
+    )
+
+    return JSONResponse(content={
+        "status": "ok",
+        "schedule_url": f"/api/schedules/{file_name}",
+        "start_date": start_date,
+    })
+
+
+@app.patch("/api/user/schedule/start-date")
+async def update_schedule_start_date(req: ScheduleStartDateRequest, user: dict = Depends(get_current_user)):
+    """仅修改开学日期（不重传文件）"""
+    settings = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_schedule_settings, user["id"]
+    )
+    if not settings["uploaded"]:
+        return JSONResponse(status_code=400, content={"error": "请先上传课表再设置开学日期"})
+    if req.start_date:
+        try:
+            datetime.strptime(req.start_date, "%Y-%m-%d")
+        except ValueError:
+            return JSONResponse(status_code=400, content={"error": "日期格式应为 YYYY-MM-DD"})
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.update_schedule_start_date, user["id"], req.start_date
+    )
+    return JSONResponse(content={"status": "ok", "start_date": req.start_date})
+
+
+@app.get("/api/user/schedule")
+async def get_schedule_settings(user: dict = Depends(get_current_user)):
+    """获取当前用户的课表设置状态"""
+    settings = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_schedule_settings, user["id"]
+    )
+    return JSONResponse(content=settings)
+
+
+@app.delete("/api/user/schedule")
+async def delete_schedule(user: dict = Depends(get_current_user)):
+    """删除当前用户的课表（DB 记录 + 物理文件）"""
+    old_rel = await asyncio.get_event_loop().run_in_executor(
+        None, models.clear_schedule, user["id"]
+    )
+    if old_rel:
+        try:
+            (UPLOAD_DIR_PATH / old_rel).unlink(missing_ok=True)
+        except Exception as e:
+            logger.warning(f"[delete_schedule] 删除文件 {old_rel} 失败：{e}")
+    return JSONResponse(content={"status": "ok"})
+
+
+@app.get("/api/schedules/{filename}")
+async def serve_schedule(filename: str):
+    """提供课表文件下载 / 访问"""
+    if "/" in filename or "\\" in filename or ".." in filename:
+        return JSONResponse(status_code=400, content={"error": "非法文件名"})
+    schedule_path = UPLOAD_DIR_PATH / "schedules" / filename
+    if not schedule_path.exists():
+        return JSONResponse(status_code=404, content={"error": "课表不存在"})
+    return FileResponse(path=str(schedule_path))
+
+
+# ==================== 注销账号 ====================
+
+@app.delete("/api/user/account")
+async def delete_account(req: DeleteAccountRequest, user: dict = Depends(get_current_user)):
+    """注销账号
+
+    流程：
+    1. 调用 auth_service 删除用户认证记录（内部校验不能删 admin）
+    2. 成功则清理 user 数据 + 删除 schedule 物理文件
+    3. 可选：调用 chat_service 清理会话（失败不阻塞）
+    """
+    user_id = user["id"]
+
+    # 1. 调用 auth_service 删除认证记录
+    try:
+        async with ServiceClient("auth") as client:
+            resp = await client.post(f"/internal/auth/users/{user_id}/delete")
+            if resp.status_code != 200:
+                detail = resp.json().get("error", "认证服务删除失败")
+                return JSONResponse(status_code=400, content={"error": detail})
+    except Exception as e:
+        logger.error(f"[delete_account] 调用 auth_service 失败: {e}")
+        return JSONResponse(status_code=500, content={"error": "认证服务不可用"})
+
+    # 2. 清理 user 数据 + 删除 schedule 物理文件
+    await _cleanup_user_data(user_id)
+
+    # 3. 可选：调用 chat_service 清理会话（失败不阻塞）
+    try:
+        async with ServiceClient("chat") as client:
+            await client.delete(f"/internal/chat/users/{user_id}/data")
+    except Exception as e:
+        logger.warning(f"[delete_account] 清理 chat_service 数据失败（不阻塞）: {e}")
+
+    return JSONResponse(content={"status": "ok"})
+
+
+# ==================== 内部接口（供其他服务调用，不暴露给 nginx） ====================
+
+@app.get("/internal/user/profile")
+async def internal_get_profile(user_id: int):
+    """供其他服务查询用户资料"""
+    profile = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_profile, user_id
+    )
+    return JSONResponse(content={
+        "profile": {
+            "display_name": profile["display_name"],
+            "email": profile["email"],
+            "avatar_url": profile["avatar_url"],
+        }
+    })
+
+
+@app.post("/internal/user/profile")
+async def internal_create_profile(req: InternalProfileRequest):
+    """供 auth_service 注册时创建 user_profiles 记录（INSERT IGNORE）"""
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.ensure_profile, req.user_id, req.display_name
+    )
+    return JSONResponse(content={"status": "ok"})
+
+
+@app.post("/internal/user/delete")
+async def internal_delete_user(user_id: int):
+    """供 auth_service 注销时清理 user 数据（query 参数方式）"""
+    await _cleanup_user_data(user_id)
+    return JSONResponse(content={"status": "ok"})
+
+
+@app.delete("/internal/user/{user_id}")
+async def internal_delete_user_by_path(user_id: int):
+    """供 auth_service 注销时清理 user 数据（路径参数方式）"""
+    await _cleanup_user_data(user_id)
+    return JSONResponse(content={"status": "ok"})
+
+
+# ==================== 辅助函数 ====================
+
+async def _cleanup_user_data(user_id: int):
+    """清理用户 user 侧数据：课表物理文件 + user_profiles + user_schedules。"""
+    # 先取课表文件相对路径，再删 DB 记录，最后删物理文件
+    old_rel = await asyncio.get_event_loop().run_in_executor(
+        None, models.clear_schedule, user_id
+    )
+    if old_rel:
+        try:
+            (UPLOAD_DIR_PATH / old_rel).unlink(missing_ok=True)
+        except Exception as e:
+            logger.warning(f"[_cleanup_user_data] 删除课表文件 {old_rel} 失败：{e}")
+
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.delete_user_data, user_id
+    )
+
+
+if __name__ == "__main__":
+    import uvicorn
+    from services.common.config import SERVICE_REGISTRY
+    port = SERVICE_REGISTRY["user"]["port"]
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
