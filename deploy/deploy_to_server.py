@@ -7,10 +7,13 @@ import sys
 import stat
 
 # ====== 配置 ======
-HOST = "81.70.100.57"
-USER = "ubuntu"
-PASSWORD = "***REMOVED***"
-PORT = 22
+HOST = os.environ.get("LC_SERVER_HOST", "81.70.100.57")
+USER = os.environ.get("LC_SERVER_USER", "ubuntu")
+PASSWORD = os.environ.get("LC_SERVER_PASSWORD")
+PORT = int(os.environ.get("LC_SERVER_PORT", "22"))
+
+if not PASSWORD:
+    raise SystemExit("未设置 LC_SERVER_PASSWORD 环境变量。请先注入：$env:LC_SERVER_PASSWORD='你的服务器密码'")
 
 LOCAL_BACKEND = r"c:\Users\nxt\PycharmProjects\lc-course\deploy\dist\backend"
 LOCAL_FRONTEND = r"c:\Users\nxt\PycharmProjects\lc-course\deploy\dist\frontend"

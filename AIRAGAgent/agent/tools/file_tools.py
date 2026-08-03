@@ -8,8 +8,17 @@ from docx.shared import Pt
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 from langchain_core.tools import tool
-from AIRAGAgent.model.factory import chat_model
+from AIRAGAgent.model.factory import chat_model, get_user_chat_model
 from AIRAGAgent.utils.logger_handler import logger
+
+
+def _current_user_id() -> int | None:
+    """从请求上下文解析当前用户 ID（非 Web 请求场景返回 None）。"""
+    try:
+        from AIRAGAgent.agent.tools.agent_tools import user_id_var
+        return user_id_var.get()
+    except Exception:
+        return None
 
 UPLOAD_DIR = Path(__file__).resolve().parent.parent.parent.parent / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -168,7 +177,8 @@ def _generate_tag_contents(hints: set, context: str) -> dict:
 {{"项目名称": "办公自动化系统升级项目", "开始时间": "2025年1月1日"}}"""
 
     try:
-        response = chat_model.invoke(prompt)
+        # 按当前用户解析对话模型（用户自配 OpenAI 兼容模型优先，否则系统默认）
+        response = get_user_chat_model(_current_user_id()).invoke(prompt)
         content = response.content.strip()
 
         json_match = re.search(r'\{.*\}', content, re.DOTALL)

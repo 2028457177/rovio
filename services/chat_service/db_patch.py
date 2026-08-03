@@ -22,11 +22,11 @@ def apply_db_redirect():
         return
 
     import AIRAGAgent.database.connection as _conn
-    from services.common.config import get_db_name
-    from services.common.logger import logger
+    from core.config import DB_NAME
+    from core.logger import logger
 
     # 1. 重定向数据库
-    new_db = get_db_name("chat")
+    new_db = DB_NAME
     old_db = _conn.mysql_conf.get("database", "agent_records")
     _conn.mysql_conf["database"] = new_db
     logger.info(f"[chat_service] AIRAGAgent.database 重定向: {old_db} → {new_db}")
@@ -34,7 +34,7 @@ def apply_db_redirect():
     # 2. 替换 log_rate_limit_event：rate_limit_events 表在 lc_admin，不在 lc_chat
     #    改为发布 Redis 事件，由 admin_service 订阅落库
     import AIRAGAgent.database as _db
-    from services.common.events import publish_event, CHANNEL_RATE_LIMITED
+    from core.events import publish_event, CHANNEL_RATE_LIMITED
 
     def _log_rate_limit_event_via_redis(user_id, ip, limit_type, identifier):
         try:
@@ -50,7 +50,7 @@ def apply_db_redirect():
     _db.log_rate_limit_event = _log_rate_limit_event_via_redis
 
     # 3. 包装 log_tool_call：写 lc_chat + 发布 Redis 事件供 admin 聚合
-    from services.common.events import publish_event as _pub, CHANNEL_TOOL_CALLED as _CH_TOOL
+    from core.events import publish_event as _pub, CHANNEL_TOOL_CALLED as _CH_TOOL
     _orig_log_tool_call = _db.log_tool_call
 
     def _log_tool_call_with_event(user_id, session_id, tool_name, duration_ms, is_success, error_msg):

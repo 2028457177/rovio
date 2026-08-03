@@ -2,13 +2,17 @@
 Fix MySQL + nginx port 80
 """
 import paramiko
+import os
 import time
 
-HOST = "81.70.100.57"
-USER = "ubuntu"
-PASSWORD = "***REMOVED***"
-MYSQL_PW = "***REMOVED***"
+HOST = os.environ.get("LC_SERVER_HOST", "81.70.100.57")
+USER = os.environ.get("LC_SERVER_USER", "ubuntu")
+PASSWORD = os.environ.get("LC_SERVER_PASSWORD")
+MYSQL_PW = os.environ.get("LC_MYSQL_PASSWORD")
 BACKEND_DIR = "/opt/lc-course/backend"
+
+if not PASSWORD or not MYSQL_PW:
+    raise SystemExit("未设置 LC_SERVER_PASSWORD / LC_MYSQL_PASSWORD 环境变量。")
 
 
 def ssh_connect():
@@ -38,9 +42,9 @@ print("[OK] Connected")
 
 # 1. Fix MySQL root auth
 print("\n=== 1. Fix MySQL root password ===")
-run(ssh, 'sudo mysql -e "ALTER USER root@localhost IDENTIFIED VIA mysql_native_password USING PASSWORD(\'***REMOVED***\'); FLUSH PRIVILEGES;"')
+run(ssh, f'sudo mysql -e "ALTER USER root@localhost IDENTIFIED VIA mysql_native_password USING PASSWORD(\'{MYSQL_PW}\'); FLUSH PRIVILEGES;"')
 run(ssh, "sudo mysql -e \"CREATE DATABASE IF NOT EXISTS agent_records CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\"")
-run(ssh, "mysql -u root -p***REMOVED*** -e 'SELECT 1 AS test;'")
+run(ssh, f"mysql -u root -p{MYSQL_PW} -e 'SELECT 1 AS test;'")
 
 # 2. Fix port 80 conflict
 print("\n=== 2. Fix port 80 ===")

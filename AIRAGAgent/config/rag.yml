@@ -1,8 +1,8 @@
 chat_model_name : deepseek-v4-flash
-api_key : ***REMOVED***
+api_key :
 embedding_model_name : text-embedding-v4
 https_proxy : http://ip-api.com/json/
-gaode_api_key : ***REMOVED***
-tavily_api_key : ***REMOVED***
+gaode_api_key :
+tavily_api_key :
 
 

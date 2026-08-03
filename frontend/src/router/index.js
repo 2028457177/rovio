@@ -20,6 +20,24 @@ const routes = [
     component: () => import('@/views/AdminView.vue'),
     meta: { requiresAuth: true, role: 'admin' },
   },
+  {
+    path: '/admin/kb',
+    name: 'AdminKb',
+    component: () => import('@/views/AdminKbView.vue'),
+    meta: { requiresAuth: true, role: 'admin' },
+  },
+  {
+    path: '/kb',
+    name: 'UserKb',
+    component: () => import('@/views/UserKbView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('@/views/SettingsView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

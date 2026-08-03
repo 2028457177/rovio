@@ -5,6 +5,15 @@ data_path : data
 md5_hex_store : md5.txt
 allow_knowledge_file_type : ["pdf", "txt","xls","xlsx"]
 
+# ---- 知识库嵌入提供者（kb_store 集合专用，全部为在线服务） ----
+# dashscope：远程 DashScope 嵌入，需在 rag.yml 配置有效的 embedding_api_key
+# openai：OpenAI 兼容端点嵌入（如阿里云百炼 compatible-mode），需配置 openai_base_url / openai_api_key
+embedding_provider : openai
+# OpenAI 兼容嵌入配置（阿里云百炼 compatible-mode）
+openai_base_url : https://llm-eargxd4abto96qe6.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+openai_api_key :
+openai_embedding_model : qwen3.7-text-embedding
+
 chunk_size : 200
 chunk_overlap : 20
 separators : ["\n\n","\n",".","!","?","。","！","？",""," "]

@@ -1,14 +1,14 @@
 """user_service 数据访问层（lc_user 数据库）。"""
 from typing import Optional
 
-from services.common.db import get_db
+from core.db import get_db
 
 
 # ==================== 用户资料 ====================
 
 def get_profile(user_id: int) -> dict:
     """读取用户资料。不存在时返回默认值。"""
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT user_id, display_name, email, avatar_url "
@@ -38,7 +38,7 @@ def upsert_profile(user_id: int, display_name: Optional[str] = None,
     if display_name is not None and not display_name.strip():
         return None
 
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT user_id FROM user_profiles WHERE user_id = %s", (user_id,))
         exists = cur.fetchone() is not None
@@ -76,7 +76,7 @@ def upsert_profile(user_id: int, display_name: Optional[str] = None,
 
 def update_avatar_url(user_id: int, avatar_url: str) -> bool:
     """更新头像 URL，若 profile 不存在先 INSERT。"""
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO user_profiles (user_id, display_name, email, avatar_url) "
@@ -90,7 +90,7 @@ def update_avatar_url(user_id: int, avatar_url: str) -> bool:
 
 def ensure_profile(user_id: int, display_name: str = "") -> bool:
     """INSERT IGNORE 方式确保 user_profiles 记录存在（注册时由 auth_service 调用）。"""
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "INSERT IGNORE INTO user_profiles (user_id, display_name, email, avatar_url) "
@@ -115,7 +115,7 @@ def get_schedule_settings(user_id: int) -> dict:
             schedule_url: str | None,     # 前端下载用的 URL
         }
     """
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT file_path, start_date, uploaded_at "
@@ -145,7 +145,7 @@ def update_schedule(user_id: int, file_path: str, start_date: Optional[str]) -> 
     file_path: 相对 UPLOAD_DIR 的路径，如 'schedules/schedule_42.xlsx'
     start_date: 'YYYY-MM-DD' 字符串或 None
     """
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO user_schedules (user_id, file_path, start_date, uploaded_at) "
@@ -159,12 +159,18 @@ def update_schedule(user_id: int, file_path: str, start_date: Optional[str]) -> 
 
 
 def update_schedule_start_date(user_id: int, start_date: Optional[str]) -> bool:
-    """仅修改开学日期（不重传文件）。"""
-    with get_db("user") as conn:
+    """仅修改开学日期（不重传文件）。
+
+    允许尚未上传课表时先保存日期：无记录则插入（file_path 为空），
+    之后上传课表时再由 update_schedule 覆盖。
+    """
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
-            "UPDATE user_schedules SET start_date = %s WHERE user_id = %s",
-            (start_date, user_id)
+            "INSERT INTO user_schedules (user_id, file_path, start_date, uploaded_at) "
+            "VALUES (%s, '', %s, CURRENT_TIMESTAMP) "
+            "ON DUPLICATE KEY UPDATE start_date = VALUES(start_date)",
+            (user_id, start_date)
         )
         conn.commit()
         return cur.rowcount > 0
@@ -174,7 +180,7 @@ def clear_schedule(user_id: int) -> Optional[str]:
     """清除用户课表设置，返回被清除的旧文件相对路径（供调用方删物理文件）。
     返回 None 表示原本就没上传过。
     """
-    with get_db("user") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT file_path FROM user_schedules WHERE user_id = %s", (user_id,))
         row = cur.fetchone()
@@ -188,13 +194,108 @@ def clear_schedule(user_id: int) -> Optional[str]:
         return old_path or None
 
 
+# ==================== 模型设置（用户自配 OpenAI 兼容模型） ====================
+
+def _mask_api_key(api_key: str) -> str:
+    """脱敏 API Key：只保留前 4 位和后 4 位，如 'sk-abcd****wxyz'。"""
+    if not api_key:
+        return ""
+    if len(api_key) <= 8:
+        return "*" * len(api_key)
+    return f"{api_key[:4]}****{api_key[-4:]}"
+
+
+def get_model_settings(user_id: int) -> dict:
+    """读取当前用户的模型配置（api_key 脱敏后返回）。
+
+    返回:
+        {
+            configured: bool,   # 是否已配置完整（base_url + model_name + api_key 均非空）
+            base_url: str,
+            api_key: str,       # 脱敏
+            model_name: str,
+        }
+    """
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT base_url, api_key, model_name FROM user_models WHERE user_id = %s",
+            (user_id,)
+        )
+        row = cur.fetchone()
+        if not row:
+            return {"configured": False, "base_url": "", "api_key": "", "model_name": ""}
+        base_url = (row["base_url"] or "").strip()
+        api_key = (row["api_key"] or "").strip()
+        model_name = (row["model_name"] or "").strip()
+        return {
+            "configured": bool(base_url and api_key and model_name),
+            "base_url": base_url,
+            "api_key": _mask_api_key(api_key),
+            "model_name": model_name,
+        }
+
+
+def save_model_settings(user_id: int, base_url: str, api_key: str, model_name: str) -> bool:
+    """保存 / 更新用户模型配置（upsert）。"""
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO user_models (user_id, base_url, api_key, model_name) "
+            "VALUES (%s, %s, %s, %s) "
+            "ON DUPLICATE KEY UPDATE base_url = VALUES(base_url), "
+            "api_key = VALUES(api_key), model_name = VALUES(model_name), "
+            "updated_at = CURRENT_TIMESTAMP",
+            (user_id, (base_url or "").strip()[:500],
+             (api_key or "").strip()[:500], (model_name or "").strip()[:200])
+        )
+        conn.commit()
+        return cur.rowcount > 0
+
+
+def clear_model_settings(user_id: int) -> bool:
+    """清除用户模型配置（恢复系统默认模型）。"""
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM user_models WHERE user_id = %s", (user_id,))
+        conn.commit()
+        return cur.rowcount > 0
+
+
+def get_model_config_raw(user_id: int) -> Optional[dict]:
+    """读取完整模型配置（内部接口用，api_key 不脱敏）。
+
+    返回 None 表示未配置或配置不完整。
+    """
+    with get_db() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT base_url, api_key, model_name FROM user_models WHERE user_id = %s",
+            (user_id,)
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        base_url = (row["base_url"] or "").strip()
+        api_key = (row["api_key"] or "").strip()
+        model_name = (row["model_name"] or "").strip()
+        if not (base_url and api_key and model_name):
+            return None
+        return {
+            "base_url": base_url,
+            "api_key": api_key,
+            "model_name": model_name,
+        }
+
+
 # ==================== 注销清理 ====================
 
 def delete_user_data(user_id: int) -> bool:
-    """注销账号时清理 user_profiles + user_schedules。"""
-    with get_db("user") as conn:
+    """注销账号时清理 user_profiles + user_schedules + user_models。"""
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("DELETE FROM user_profiles WHERE user_id = %s", (user_id,))
         cur.execute("DELETE FROM user_schedules WHERE user_id = %s", (user_id,))
+        cur.execute("DELETE FROM user_models WHERE user_id = %s", (user_id,))
         conn.commit()
         return True

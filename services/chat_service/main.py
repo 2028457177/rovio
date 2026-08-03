@@ -24,30 +24,36 @@ from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from pydantic import BaseModel
 from datetime import datetime
 
-from services.common import (
+from core import (
     create_app, get_current_user, get_client_ip, logger,
     publish_event,
 )
-from services.common.events import CHANNEL_RATE_LIMITED
-from services.common.config import get_db_name
-from services.common.paths import UPLOAD_DIR
+from core.events import CHANNEL_RATE_LIMITED
+from core.paths import UPLOAD_DIR
 
 # DB 重定向在 agent.py 中完成（import 时副作用）
-from .agent import AgentService
+import agent
 from AIRAGAgent.infrastructure.rate_limiter import get_chat_rate_limiter
 from AIRAGAgent.infrastructure.task_queue import register_default_handlers
 from AIRAGAgent.agent.tools.agent_tools import user_ip_var, user_lat_var, user_lon_var, user_id_var
 
 
 async def _on_startup():
-    """启动：注册任务队列处理器"""
+    """启动：建表 + 注册任务队列处理器 + 清理过期工作目录"""
+    from AIRAGAgent.database.connection import init_db
+    await asyncio.get_event_loop().run_in_executor(None, init_db)
+    logger.info("[chat_service] 数据库表已就绪")
     await asyncio.get_event_loop().run_in_executor(None, register_default_handlers)
     logger.info("[chat_service] 任务队列处理器已注册")
+    # 清理超过 30 天的日期子目录（workspace/YYYYMMDD/）
+    from AIRAGAgent.utils.paths import cleanup_old_daily_workspaces
+    removed = await asyncio.get_event_loop().run_in_executor(None, cleanup_old_daily_workspaces)
+    logger.info(f"[chat_service] 过期工作目录清理完成，删除 {removed} 个")
 
 
 app = create_app("chat_service", version="1.0.0", on_startup=_on_startup)
 
-agent_service = AgentService()
+agent_service = agent.AgentService()
 
 
 # ==================== 请求体 ====================
@@ -86,6 +92,20 @@ class FeedbackRequest(BaseModel):
     message_role: str = "assistant"
     message_content: str = ""
     feedback: str
+
+
+class PlanRequest(BaseModel):
+    """DeepAgent plan 执行请求。
+
+    mode:
+        stream     - 流式同步执行（默认，与 /api/chat 一致，但语义上明确为 plan 模式）
+        background - 后台异步执行，立即返回 task_id，用户通过 /api/tasks/{task_id} 查询
+    """
+    message: str
+    session_id: str = None
+    mode: str = "stream"
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 # ==================== 聊天 ====================
@@ -253,6 +273,82 @@ async def save_feedback(req: FeedbackRequest, user: dict = Depends(get_current_u
     return JSONResponse(content={"status": "ok"})
 
 
+# ==================== DeepAgent Plan 接口 ====================
+
+@app.post("/api/plan")
+async def plan(plan_req: PlanRequest, req: Request, user: dict = Depends(get_current_user)):
+    """DeepAgent plan 执行入口。
+
+    - mode=stream（默认）：流式 SSE，产出 plan_created / step_started / step_output / plan_completed 等事件
+    - mode=background：投递到 task_queue 后台执行，立即返回 task_id
+    """
+    client_ip = (
+        req.headers.get("X-Real-IP")
+        or (req.headers.get("X-Forwarded-For") or "").split(",")[0].strip()
+        or (req.client.host if req.client else None)
+        or "unknown"
+    )
+    user_id = user["id"]
+    user_ip_var.set(client_ip)
+    user_lat_var.set(plan_req.latitude)
+    user_lon_var.set(plan_req.longitude)
+    user_id_var.set(user_id)
+
+    if plan_req.mode == "background":
+        task_id = agent_service.enqueue_plan_background(user_id, plan_req.message, plan_req.session_id)
+        if task_id is None:
+            return JSONResponse(status_code=503, content={"error": "Redis 不可用，无法投递后台任务"})
+        return JSONResponse(content={"task_id": task_id, "status": "pending"})
+
+    # 流式模式：复用 generate_sse_stream
+    return StreamingResponse(
+        generate_sse_stream(user_id, plan_req.message, plan_req.session_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.get("/api/plans")
+async def list_plans(user: dict = Depends(get_current_user)):
+    """列出当前用户的 plan（按更新时间倒序）"""
+    from AIRAGAgent.agent.plan import list_user_plans as db_list_plans
+    plans = await asyncio.get_event_loop().run_in_executor(None, db_list_plans, user["id"])
+    return JSONResponse(content={"plans": plans})
+
+
+@app.get("/api/plans/{plan_id}")
+async def get_plan_detail(plan_id: str, user: dict = Depends(get_current_user)):
+    """查询 plan 详情（含所有 step 状态、结果）"""
+    from AIRAGAgent.agent.plan import load_plan as db_load_plan
+    plan = await asyncio.get_event_loop().run_in_executor(None, db_load_plan, plan_id)
+    if plan is None:
+        return JSONResponse(status_code=404, content={"error": "plan 不存在"})
+    if plan.user_id != user["id"]:
+        return JSONResponse(status_code=403, content={"error": "无权访问该 plan"})
+    return JSONResponse(content={"plan": plan.to_dict()})
+
+
+@app.get("/api/subagents")
+async def list_subagents(user: dict = Depends(get_current_user)):
+    """列出所有可用 SubAgent（供前端展示 Agent 卡片 / 能力清单）"""
+    from AIRAGAgent.agent.sub_agent import SubAgentRegistry
+    registry = SubAgentRegistry()
+    agents = []
+    for name, sub in registry.all().items():
+        agents.append({
+            "name": name,
+            "description": sub.description,
+            "workflow_hint": sub.workflow_hint,
+            "category": sub.category,
+            "tools": [getattr(t, "name", "") for t in sub.tools],
+        })
+    return JSONResponse(content={"subagents": agents})
+
+
 # ==================== 任务状态 ====================
 
 @app.get("/api/tasks/{task_id}")
@@ -281,8 +377,8 @@ async def internal_cleanup_user_data(user_id: int):
     # delete_user_admin 会删 messages + conversations，但它也尝试删 users 表
     # 这里不能调它（users 表在 auth_service）。手动删 chat 相关表。
     try:
-        from services.common.db import get_db
-        with get_db("chat") as conn:
+        from core.db import get_db
+        with get_db() as conn:
             cur = conn.cursor()
             cur.execute(
                 "DELETE m FROM messages m JOIN conversations c ON m.conversation_id = c.id WHERE c.user_id = %s",
@@ -301,6 +397,5 @@ async def internal_cleanup_user_data(user_id: int):
 
 if __name__ == "__main__":
     import uvicorn
-    from services.common.config import SERVICE_REGISTRY
-    port = SERVICE_REGISTRY["chat"]["port"]
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    from core.config import PORT
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")

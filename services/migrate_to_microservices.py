@@ -14,12 +14,16 @@
 
 用法::
 
-    python -m services.migrate_to_microservices          # 迁移
-    python -m services.migrate_to_microservices --check   # 仅检查不执行
+    python services/migrate_to_microservices.py          # 迁移
+    python services/migrate_to_microservices.py --check   # 仅检查不执行
+
+说明：本脚本完全自包含（不再依赖 services/common），配置读取环境变量，
+默认值与各微服务 core/config.py 保持一致。使用前可加载 deploy/backend/.env。
 """
 import argparse
 import sys
 import os
+import logging
 
 import pymysql
 from pymysql.cursors import DictCursor
@@ -27,13 +31,46 @@ from pymysql.cursors import DictCursor
 # 让脚本能在项目根目录直接运行
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from services.common.config import (
-    MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_CHARSET,
-    get_db_name, get_mysql_config,
-)
-from services.common.logger import logger, set_service_name
+# ==================== 环境变量配置（与各服务 core/config.py 对齐） ====================
+MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
+MYSQL_PORT = int(os.getenv("MYSQL_PORT", "3306"))
+MYSQL_USER = os.getenv("MYSQL_USER", "root")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
+MYSQL_CHARSET = os.getenv("MYSQL_CHARSET", "utf8mb4")
 
-set_service_name("migrate")
+_DB_NAMES = {
+    "auth": os.getenv("AUTH_DB", "lc_auth"),
+    "user": os.getenv("USER_DB", "lc_user"),
+    "chat": os.getenv("CHAT_DB", "lc_chat"),
+    "kb": os.getenv("KB_DB", "lc_kb"),
+    "admin": os.getenv("ADMIN_DB", "lc_admin"),
+}
+
+
+def get_db_name(svc: str) -> str:
+    return _DB_NAMES.get(svc, f"lc_{svc}")
+
+
+def get_mysql_config(svc: str = None) -> dict:
+    cfg = {
+        "host": MYSQL_HOST,
+        "port": MYSQL_PORT,
+        "user": MYSQL_USER,
+        "password": MYSQL_PASSWORD,
+        "charset": MYSQL_CHARSET,
+    }
+    if svc:
+        cfg["database"] = get_db_name(svc)
+    return cfg
+
+
+# 简单控制台日志（迁移脚本不写文件）
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("migrate")
+
+
+def set_service_name(name: str):
+    pass
 
 OLD_DB = "agent_records"
 
@@ -100,7 +137,7 @@ def init_auth_schema():
         with conn.cursor() as cur:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS users (
-                    id BIGINT PRIMARY KEY,
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
                     username VARCHAR(50) NOT NULL UNIQUE,
                     password_hash VARCHAR(255) NOT NULL,
                     role VARCHAR(20) NOT NULL DEFAULT 'user',
@@ -162,6 +199,15 @@ def init_user_schema():
                     file_path VARCHAR(255) NOT NULL DEFAULT '',
                     start_date DATE NULL,
                     uploaded_at DATETIME NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS user_models (
+                    user_id BIGINT PRIMARY KEY,
+                    base_url VARCHAR(500) NOT NULL DEFAULT '',
+                    api_key VARCHAR(500) NOT NULL DEFAULT '',
+                    model_name VARCHAR(200) NOT NULL DEFAULT '',
+                    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             """)
         conn.commit()

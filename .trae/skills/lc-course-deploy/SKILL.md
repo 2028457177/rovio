@@ -9,20 +9,27 @@ description: "将 lc-course（自动化办公助手）项目部署或更新到�
 
 ## 部署架构
 
+微服务架构：6 个 FastAPI 进程 + nginx 按路径前缀路由。
+
 | 组件 | 路径 | 端口 |
 |------|------|------|
 | 前端 (Vue SPA) | `/var/www/lc-course-frontend/` | nginx:80 |
-| 后端 (FastAPI) | `/opt/lc-course/backend/` | uvicorn:8000 |
+| auth_service | `/opt/lc-course/backend/` | 8001 |
+| user_service | `/opt/lc-course/backend/` | 8002 |
+| chat_service | `/opt/lc-course/backend/` | 8003 |
+| kb_service | `/opt/lc-course/backend/` | 8004 |
+| admin_service | `/opt/lc-course/backend/` | 8005 |
+| file_service | `/opt/lc-course/backend/` | 8006 |
 | MySQL | 本地 | 3306 |
-| API 代理 | nginx `/api/*` → `127.0.0.1:8000` | - |
+| API 代理 | nginx 按路径前缀路由 `/api/*` → 对应微服务 | - |
 
 ## 服务器信息
 
 - IP: 81.70.100.57
 - 用户: ubuntu
-- 密码: ***REMOVED***
-- MySQL root 密码: ***REMOVED***
-- 数据库: agent_records
+- 密码: 通过环境变量 `LC_SERVER_PASSWORD` 注入（勿硬编码）
+- MySQL root 密码: 通过环境变量 `LC_MYSQL_PASSWORD` 注入（勿硬编码）
+- 数据库: lc_auth / lc_user / lc_chat / lc_kb / lc_admin（5 个独立库）
 
 ---
 
@@ -43,6 +50,7 @@ Copy-Item -Recurse "static\*" "deploy\dist\frontend\"
 
 # 复制后端
 Copy-Item -Recurse "AIRAGAgent" "deploy\dist\backend\"
+Copy-Item -Recurse "services" "deploy\dist\backend\"
 Copy-Item -Recurse "chroma_ab" "deploy\dist\backend\"
 Copy-Item "pyproject.toml" "deploy\dist\backend\"
 Copy-Item "uv.lock" "deploy\dist\backend\"
@@ -50,6 +58,7 @@ Copy-Item "langgraph.json" "deploy\dist\backend\"
 
 # 清理缓存
 Get-ChildItem -Recurse "deploy\dist\backend\AIRAGAgent" -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Recurse "deploy\dist\backend\services" -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Recurse "deploy\dist\backend\AIRAGAgent\logs" -File -Filter "*.log" | Remove-Item -Force -ErrorAction SilentlyContinue
 ```
 
@@ -61,10 +70,11 @@ Python 上传脚本核心逻辑：
 
 ```python
 import paramiko
+import os
 
 HOST = "81.70.100.57"
 USER = "ubuntu"
-PASSWORD = "***REMOVED***"
+PASSWORD = os.environ["LC_SERVER_PASSWORD"]  # 运行前注入环境变量，勿硬编码
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -108,50 +118,17 @@ sudo apt-get install -y python3-pip python3-venv
 
 ### 第四步：配置 Nginx
 
-创建 `/etc/nginx/sites-available/lc-course`：
-
-```nginx
-server {
-    listen 80;
-    server_name 81.70.100.57;
-
-    root /var/www/lc-course-frontend;
-    index index.html;
-
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript;
-    gzip_min_length 1024;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /assets/ {
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-    }
-
-    location /api/ {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_buffering off;
-        proxy_cache off;
-        proxy_read_timeout 3600s;
-        proxy_send_timeout 3600s;
-        chunked_transfer_encoding on;
-    }
-}
-```
-
-启用配置：
+使用微服务版 nginx 配置（按路径前缀路由到 6 个微服务端口）。配置文件见项目内的 `deploy/nginx_microservices.conf`，将其部署到服务器：
 
 ```bash
+# 部署主配置
+sudo cp /opt/lc-course/backend/deploy/nginx_microservices.conf /etc/nginx/sites-available/lc-course
+
+# 部署代理片段（SSE / 长连接 / 通用代理头）
+sudo mkdir -p /etc/nginx/snippets
+sudo cp /opt/lc-course/backend/deploy/microservice_proxy.conf /etc/nginx/snippets/microservice_proxy.conf
+
+# 启用配置
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo ln -sf /etc/nginx/sites-available/lc-course /etc/nginx/sites-enabled/lc-course
 sudo nginx -t
@@ -162,10 +139,18 @@ sudo systemctl restart nginx
 
 ```bash
 # 设置 root 密码
-sudo mysql -e "ALTER USER root@localhost IDENTIFIED VIA mysql_native_password USING PASSWORD('***REMOVED***'); FLUSH PRIVILEGES;"
+sudo mysql -e "ALTER USER root@localhost IDENTIFIED VIA mysql_native_password USING PASSWORD('<MYSQL_ROOT_PASSWORD>'); FLUSH PRIVILEGES;"
 
-# 创建数据库
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS agent_records CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# 创建 5 个独立数据库（微服务各自独立库）
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS lc_auth CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS lc_user CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS lc_chat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS lc_kb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS lc_admin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# 首次部署：从旧 agent_records 库拆分数据到 5 个独立库
+cd /opt/lc-course/backend
+.venv/bin/python services/migrate_to_microservices.py
 ```
 
 ### 第六步：安装 Python 依赖
@@ -187,44 +172,51 @@ python3 -m venv .venv
 
 ### 第七步：创建 systemd 服务
 
-创建 `/etc/systemd/system/lc-course.service`：
+为每个微服务创建独立的 systemd unit（或用 start_microservices.sh 脚本管理）。以下是批量创建 6 个服务的示例：
 
-```ini
+```bash
+SERVICES=("auth:8001" "user:8002" "chat:8003" "kb:8004" "admin:8005" "file:8006")
+for entry in "${SERVICES[@]}"; do
+  name="${entry%%:*}"
+  port="${entry##*:}"
+  cat > /tmp/lc-course-${name}.service << EOF
 [Unit]
-Description=lc-course Backend Service
-After=network.target
+Description=lc-course ${name}_service
+After=network.target mysql.service redis.service
 
 [Service]
 Type=simple
 User=ubuntu
 WorkingDirectory=/opt/lc-course/backend
-ExecStart=/opt/lc-course/backend/.venv/bin/python -m uvicorn AIRAGAgent.fastapi_app.main:app --host 0.0.0.0 --port 8000 --log-level info
+EnvironmentFile=/opt/lc-course/backend/deploy/backend/.env
+ExecStart=/opt/lc-course/backend/.venv/bin/python -m uvicorn services.${name}_service.main:app --host 0.0.0.0 --port ${port} --log-level info
 Restart=always
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-```
+EOF
+  sudo cp /tmp/lc-course-${name}.service /etc/systemd/system/
+done
 
-启动服务：
-
-```bash
 sudo systemctl daemon-reload
-sudo systemctl enable lc-course
-sudo systemctl start lc-course
+for entry in "${SERVICES[@]}"; do
+  name="${entry%%:*}"
+  sudo systemctl enable lc-course-${name}
+  sudo systemctl start lc-course-${name}
+done
 ```
 
 ### 第八步：防火墙与验证
 
 ```bash
-# 开放端口
+# 开放端口（前端 80，微服务端口仅内部访问无需开放）
 sudo ufw allow 80/tcp
-sudo ufw allow 8000/tcp
 
 # 验证
-curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/        # 前端，期望 200
-curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/   # 后端，期望 200
-curl -s http://127.0.0.1/api/conversations                       # API，期望 "[]"
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/           # 前端，期望 200
+curl -s http://127.0.0.1/api/health                                  # API，期望 status=ok
+curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8003/api/health  # chat_service，期望 200
 ```
 
 ---
@@ -239,10 +231,10 @@ curl -s http://127.0.0.1/api/conversations                       # API，期望 
 
 | 修改了什么 | 需要做什么 |
 |-----------|-----------|
-| 只改 Python 后端代码 | 上传改动文件 → 重启 lc-course |
+| 只改 Python 后端代码 | 上传改动文件 → 重启对应微服务 |
 | 只改前端代码 (Vue) | 本地构建 → 上传 static/ → nginx 重载 |
-| 新增了 Python 依赖包 | 上传改动文件 → 安装新依赖 → 重启 lc-course |
-| 改了 config/*.yml 配置 | 上传配置 → 重启 lc-course |
+| 新增了 Python 依赖包 | 上传改动文件 → 安装新依赖 → 重启对应微服务 |
+| 改了 config/*.yml 配置 | 上传配置 → 重启 chat_service / kb_service |
 | 改了 nginx 配置 | 上传配置 → nginx -t → nginx 重载 |
 
 ### 通用增量更新脚本
@@ -251,10 +243,11 @@ curl -s http://127.0.0.1/api/conversations                       # API，期望 
 
 ```python
 import paramiko
+import os
 
 HOST = "81.70.100.57"
 USER = "ubuntu"
-PASSWORD = "***REMOVED***"
+PASSWORD = os.environ["LC_SERVER_PASSWORD"]  # 运行前注入环境变量，勿硬编码
 BACKEND_DIR = "/opt/lc-course/backend"
 FRONTEND_DIR = "/var/www/lc-course-frontend"
 
@@ -268,8 +261,8 @@ def sudo(cmd):
 
 # ==== 上传后端文件 ====
 # 示例：上传改动的 Python 文件
-sftp.put("AIRAGAgent/fastapi_app/main.py", f"{BACKEND_DIR}/AIRAGAgent/fastapi_app/main.py")
 sftp.put("AIRAGAgent/agent/supervisor_agent.py", f"{BACKEND_DIR}/AIRAGAgent/agent/supervisor_agent.py")
+sftp.put("services/chat_service/main.py", f"{BACKEND_DIR}/services/chat_service/main.py")
 
 # 如果新增了依赖包
 # ssh.exec_command(f"cd {BACKEND_DIR} && .venv/bin/pip install 新包名", get_pty=True)
@@ -282,8 +275,10 @@ sftp.put("AIRAGAgent/agent/supervisor_agent.py", f"{BACKEND_DIR}/AIRAGAgent/agen
 # ==== 上传配置文件 ====
 # sftp.put("AIRAGAgent/config/rag.yml", f"{BACKEND_DIR}/AIRAGAgent/config/rag.yml")
 
-# ==== 重启服务 ====
-sudo("systemctl restart lc-course")
+# ==== 重启受影响的微服务 ====
+sudo("systemctl restart lc-course-chat")   # 改了 agent/chat 相关
+# sudo("systemctl restart lc-course-kb")   # 改了 kb 相关
+# sudo("systemctl restart lc-course-auth") # 改了 auth 相关
 print("Backend restarted")
 
 # 可选：重载 nginx
@@ -303,7 +298,7 @@ print("Backend restarted")
 sftp.put("pyproject.toml", f"{BACKEND_DIR}/pyproject.toml")
 # 如果改了依赖，需要重新安装
 ssh.exec_command(f"cd {BACKEND_DIR} && .venv/bin/pip install -r requirements.txt 或逐个安装", get_pty=True)
-sudo("systemctl restart lc-course")
+sudo("systemctl restart lc-course-chat lc-course-kb")
 ```
 
 ---
@@ -326,22 +321,29 @@ sudo("systemctl restart lc-course")
 
 7. **Windows SSH 限制**：无法通过管道传递密码，必须使用 Python paramiko 库进行远程操作
 
+8. **微服务环境变量**：`deploy/backend/.env`（从 `.env.microservices.example` 复制），含 5 个数据库名、6 个端口、JWT 共享密钥
+
 ---
 
 ## 常用管理命令
 
 ```bash
-# 后端服务
-sudo systemctl status lc-course          # 查看状态
-sudo systemctl restart lc-course         # 重启
-sudo journalctl -u lc-course -f          # 查看日志
+# 微服务（以 chat_service 为例，其余同理：auth/user/kb/admin/file）
+sudo systemctl status lc-course-chat       # 查看状态
+sudo systemctl restart lc-course-chat      # 重启
+sudo journalctl -u lc-course-chat -f       # 查看日志
+
+# 一次性重启全部微服务
+for svc in auth user chat kb admin file; do
+  sudo systemctl restart lc-course-$svc
+done
 
 # Nginx
 sudo systemctl status nginx
 sudo nginx -t && sudo nginx -s reload    # 重载配置
 
 # MySQL
-mysql -u root -p***REMOVED***               # 登录
+mysql -u root -p               # 登录（回车后输入密码，勿写在命令行）
 ```
 
 ## 部署脚本
@@ -349,6 +351,5 @@ mysql -u root -p***REMOVED***               # 登录
 项目中有现成的部署辅助脚本（使用 Python paramiko）：
 
 - `deploy/deploy_to_server.py` — 打包 + 上传文件
-- `deploy/setup_server.py` — 安装环境（nginx、pip、venv、systemd）
 - `deploy/fix_mysql.py` — 修复 MySQL 权限和 nginx 端口
 - `deploy/verify.py` — 验证部署状态

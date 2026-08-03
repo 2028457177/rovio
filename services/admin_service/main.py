@@ -16,21 +16,36 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from decimal import Decimal
+from datetime import date, datetime
 
 from fastapi import Depends, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from services.common import (
+from core import (
     create_app, get_admin_user, call_service, logger,
 )
-from services.common.events import (
+from core.events import (
     subscribe_events, CHANNEL_CHAT_COMPLETED, CHANNEL_TOOL_CALLED, CHANNEL_RATE_LIMITED,
 )
-from . import models
+import models
 
 # 事件订阅停止信号（lifespan 关闭时 set）
 stop_event = threading.Event()
+
+
+def _json_safe(obj):
+    """递归把 Decimal / date / datetime 等 JSON 不可序列化类型转为可序列化类型。"""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_json_safe(v) for v in obj]
+    return obj
 
 
 # ==================== 事件落库回调 ====================
@@ -213,7 +228,7 @@ async def admin_stats_overview(request: Request, admin: dict = Depends(get_admin
     data = await asyncio.get_event_loop().run_in_executor(
         None, models.get_dashboard_overview, users
     )
-    return JSONResponse(content=data)
+    return JSONResponse(content=_json_safe(data))
 
 
 @app.get("/api/admin/stats/trends")
@@ -224,7 +239,7 @@ async def admin_stats_trends(days: int = 30, admin: dict = Depends(get_admin_use
     data = await asyncio.get_event_loop().run_in_executor(
         None, models.get_dashboard_trends, int(days)
     )
-    return JSONResponse(content=data)
+    return JSONResponse(content=_json_safe(data))
 
 
 @app.get("/api/admin/stats/tools")
@@ -238,7 +253,7 @@ async def admin_stats_tools(days: int = 30, admin: dict = Depends(get_admin_user
     errors = await asyncio.get_event_loop().run_in_executor(
         None, models.get_dashboard_error_stats, int(days)
     )
-    return JSONResponse(content={"tools": tools, "errors": errors})
+    return JSONResponse(content=_json_safe({"tools": tools, "errors": errors}))
 
 
 @app.get("/api/admin/stats/top")
@@ -268,11 +283,10 @@ async def admin_stats_top(days: int = 30, limit: int = 10,
             tu["username"] = username
             tu["display_name"] = username
 
-    return JSONResponse(content={"top_users": top_users, "top_questions": questions})
+    return JSONResponse(content=_json_safe({"top_users": top_users, "top_questions": questions}))
 
 
 if __name__ == "__main__":
     import uvicorn
-    from services.common.config import SERVICE_REGISTRY
-    port = SERVICE_REGISTRY["admin"]["port"]
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    from core.config import PORT
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")

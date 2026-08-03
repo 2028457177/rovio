@@ -23,16 +23,16 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from fastapi import Depends, UploadFile, File, Form
+from fastapi import Depends, UploadFile, File, Form, Header
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 
-from services.common import (
+from core import (
     create_app, get_current_user, get_client_ip,
     ServiceClient, logger,
 )
-from services.common.paths import UPLOAD_DIR
-from . import models
+from core.paths import UPLOAD_DIR
+import models
 
 app = create_app("user_service", version="1.0.0")
 
@@ -48,6 +48,12 @@ class ProfileUpdateRequest(BaseModel):
 
 class ScheduleStartDateRequest(BaseModel):
     start_date: Optional[str] = None  # None 表示清除
+
+
+class ModelSettingsRequest(BaseModel):
+    base_url: str
+    api_key: str = ""
+    model_name: str
 
 
 class DeleteAccountRequest(BaseModel):
@@ -178,12 +184,10 @@ async def upload_schedule(
 
 @app.patch("/api/user/schedule/start-date")
 async def update_schedule_start_date(req: ScheduleStartDateRequest, user: dict = Depends(get_current_user)):
-    """仅修改开学日期（不重传文件）"""
-    settings = await asyncio.get_event_loop().run_in_executor(
-        None, models.get_schedule_settings, user["id"]
-    )
-    if not settings["uploaded"]:
-        return JSONResponse(status_code=400, content={"error": "请先上传课表再设置开学日期"})
+    """仅修改开学日期（不重传文件）。
+
+    允许尚未上传课表时先保存日期（后续上传课表时再一并覆盖）。
+    """
     if req.start_date:
         try:
             datetime.strptime(req.start_date, "%Y-%m-%d")
@@ -227,6 +231,47 @@ async def serve_schedule(filename: str):
     if not schedule_path.exists():
         return JSONResponse(status_code=404, content={"error": "课表不存在"})
     return FileResponse(path=str(schedule_path))
+
+
+# ==================== 模型设置 API（用户自配 OpenAI 兼容模型） ====================
+
+@app.get("/api/user/model")
+async def get_model_settings(user: dict = Depends(get_current_user)):
+    """获取当前用户的模型配置（api_key 脱敏返回）"""
+    settings = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_model_settings, user["id"]
+    )
+    return JSONResponse(content=settings)
+
+
+@app.put("/api/user/model")
+async def save_model_settings(req: ModelSettingsRequest, user: dict = Depends(get_current_user)):
+    """保存当前用户的模型配置（OpenAI 兼容：Base URL + API Key + 模型名）
+
+    配置后 AI 对话将使用该模型；清除后恢复系统默认模型。
+    """
+    base_url = (req.base_url or "").strip()
+    model_name = (req.model_name or "").strip()
+    if not base_url.startswith(("http://", "https://")):
+        return JSONResponse(status_code=400, content={"error": "Base URL 必须以 http:// 或 https:// 开头"})
+    if not model_name:
+        return JSONResponse(status_code=400, content={"error": "模型名称不能为空"})
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.save_model_settings, user["id"], base_url, req.api_key or "", model_name
+    )
+    settings = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_model_settings, user["id"]
+    )
+    return JSONResponse(content={"status": "ok", "settings": settings})
+
+
+@app.delete("/api/user/model")
+async def clear_model_settings(user: dict = Depends(get_current_user)):
+    """清除当前用户的模型配置，恢复系统默认模型"""
+    await asyncio.get_event_loop().run_in_executor(
+        None, models.clear_model_settings, user["id"]
+    )
+    return JSONResponse(content={"status": "ok"})
 
 
 # ==================== 注销账号 ====================
@@ -283,6 +328,20 @@ async def internal_get_profile(user_id: int):
     })
 
 
+@app.get("/internal/user/model-config")
+async def internal_get_model_config(user_id: int, x_internal_call: str = Header(default="")):
+    """供 AI 模型层查询用户完整模型配置（api_key 不脱敏）。
+
+    仅接受带 X-Internal-Call 头的内部调用，防止 API Key 被外部访问。
+    """
+    if x_internal_call != "1":
+        return JSONResponse(status_code=403, content={"error": "forbidden"})
+    cfg = await asyncio.get_event_loop().run_in_executor(
+        None, models.get_model_config_raw, user_id
+    )
+    return JSONResponse(content={"config": cfg})
+
+
 @app.post("/internal/user/profile")
 async def internal_create_profile(req: InternalProfileRequest):
     """供 auth_service 注册时创建 user_profiles 记录（INSERT IGNORE）"""
@@ -327,6 +386,5 @@ async def _cleanup_user_data(user_id: int):
 
 if __name__ == "__main__":
     import uvicorn
-    from services.common.config import SERVICE_REGISTRY
-    port = SERVICE_REGISTRY["user"]["port"]
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    from core.config import PORT
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")

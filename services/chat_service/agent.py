@@ -1,22 +1,23 @@
-"""chat_service Agent 封装。
+"""chat_service Agent 封装（DeepAgent 架构）。
 
-移植自 AIRAGAgent/fastapi_app/services/agent_service.py，改造点：
-- 复用 AIRAGAgent.agent.SupervisorAgent + 工具链 + RAG
+改造点：
+- 复用 AIRAGAgent.agent.Orchestrator（Planner/Executor/Reflector/Finalizer）
 - 会话持久化通过 AIRAGAgent.database（已重定向到 lc_chat）
 - log_api_call 写 lc_chat + 发布 chat.completed Redis 事件供 admin_service 聚合
+- 支持 plan 后台异步执行（通过 task_queue）
 """
 import asyncio
 import contextvars
 import time
 
-from services.common.logger import logger
-from services.common.events import publish_event, CHANNEL_CHAT_COMPLETED
+from core.logger import logger
+from core.events import publish_event, CHANNEL_CHAT_COMPLETED
 
 # 必须在 import AIRAGAgent 之前完成 DB 重定向
-from .db_patch import apply_db_redirect
-apply_db_redirect()
+import db_patch
+db_patch.apply_db_redirect()
 
-from AIRAGAgent.agent.supervisor_agent import SupervisorAgent
+from AIRAGAgent.agent.orchestrator import get_orchestrator
 from AIRAGAgent.database import (
     save_message, get_session_messages, clear_session, truncate_session_messages,
     log_api_call,
@@ -24,6 +25,7 @@ from AIRAGAgent.database import (
 from AIRAGAgent.infrastructure.session_cache import (
     cache_session_messages, get_cached_session, invalidate_session,
 )
+from AIRAGAgent.infrastructure.task_queue import enqueue_task, TaskType
 from AIRAGAgent.agent.tools.agent_tools import user_ip_var
 
 
@@ -36,10 +38,11 @@ def _estimate_tokens(text: str) -> int:
 
 
 class AgentService:
-    """Agent 服务：流式输出 + 会话持久化 + 埋点统计"""
+    """Agent 服务：DeepAgent 流式输出 + 会话持久化 + 埋点统计 + 后台执行"""
 
     def __init__(self):
-        self.agent = SupervisorAgent()
+        # 复用 Orchestrator 单例（内部触发 SubAgent 注册）
+        self.agent = get_orchestrator()
 
     @staticmethod
     def _get_session_messages_with_cache(user_id: int, session_id: str) -> list:
@@ -64,7 +67,7 @@ class AgentService:
 
     async def stream_response(self, user_id: int, message: str,
                              session_id: str = None, truncate_to: int = None):
-        """流式输出（移植自原 _stream_response，增加 Redis 事件发布）"""
+        """流式输出（DeepAgent Orchestrator，产出 plan_* / step_* / thinking / output 事件）"""
         loop = asyncio.get_event_loop()
         queue: asyncio.Queue = asyncio.Queue()
         SENTINEL = object()
@@ -83,7 +86,10 @@ class AgentService:
                 chat_history = self._get_session_messages_with_cache(user_id, session_id)
                 full_response_parts = []
 
-                for chunk in self.agent.execute_stream(message, chat_history):
+                # Orchestrator.execute_stream 签名：(query, chat_history, user_id, session_id)
+                for chunk in self.agent.execute_stream(
+                    message, chat_history, user_id=user_id, session_id=session_id or ""
+                ):
                     if isinstance(chunk, dict):
                         if chunk.get("type") == "output":
                             full_response_parts.append(chunk.get("content", ""))
@@ -166,6 +172,21 @@ class AgentService:
                 })
             except Exception as log_e:
                 logger.debug(f"[chat] 埋点/事件发布失败: {log_e}")
+
+    def enqueue_plan_background(self, user_id: int, message: str,
+                                session_id: str = None) -> str | None:
+        """把 plan 投递到 task_queue 后台执行（不阻塞，返回 task_id 供轮询）。
+
+        适用于长耗时任务（生成大报告、批量操作），用户通过 /api/tasks/{task_id} 查询进度。
+        """
+        chat_history = self._get_session_messages_with_cache(user_id, session_id) if session_id else []
+        params = {
+            "query": message,
+            "chat_history": chat_history or [],
+            "user_id": user_id,
+            "session_id": session_id or "",
+        }
+        return enqueue_task(TaskType.PLAN_EXECUTE, params, priority=1)
 
     async def clear_session(self, user_id: int, session_id: str) -> None:
         try:

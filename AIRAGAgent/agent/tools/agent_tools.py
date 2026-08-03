@@ -15,6 +15,7 @@ from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.rag.rag_service import RagSummarizeService
 from AIRAGAgent.utils.config_handler import agent_conf
 from AIRAGAgent.utils.path_tool import get_abs_path
+from AIRAGAgent.utils.paths import UPLOAD_DIR
 
 # 存储当前请求的用户真实 IP，由 FastAPI 接口在调用工具前设置
 user_ip_var: ContextVar[str | None] = ContextVar('user_ip', default=None)
@@ -211,7 +212,18 @@ def get_current_month(wantday:int)-> dict:
     target_date = now + timedelta(days=wantday)
     want_date_str = target_date.strftime("%Y-%m-%d")
 
-    start_date = datetime.strptime("2026-03-09", "%Y-%m-%d")
+    # 从 DB 读取当前用户的开学日期（按用户隔离）
+    _, start_date_str = _load_user_schedule_path()
+    if not start_date_str:
+        return {
+            "date": want_date_str,
+            "error": "未上传课表",
+            "hint": "请前往「设置 → 课表设置」上传你的课表 Excel 并设置开学日期",
+            "week": None,
+            "day": None,
+        }
+
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     diff_days = (target_date - start_date).days
     week_number = (diff_days // 7) + 1
 
@@ -224,6 +236,27 @@ def get_current_month(wantday:int)-> dict:
         "week": week_number,
         "day": weekday
     }
+
+
+def _load_user_schedule_path() -> tuple[str | None, str | None]:
+    """从当前上下文读取用户的课表绝对路径 + 开学日期。
+
+    返回 (abs_file_path, start_date_str)；未上传或读取出错时返回 (None, None)。
+    内部 lazy import 避免与 database 模块产生循环依赖。
+    """
+    uid = user_id_var.get()
+    if uid is None:
+        return None, None
+    try:
+        from AIRAGAgent.database.models import get_schedule_settings
+        settings = get_schedule_settings(int(uid))
+        if not settings["uploaded"] or not settings["file_path"]:
+            return None, None
+        abs_path = str(UPLOAD_DIR / settings["file_path"])
+        return abs_path, settings["start_date"]
+    except Exception as e:
+        logger.warning(f"[_load_user_schedule_path] 读取用户 {uid} 课表设置失败：{e}")
+        return None, None
 
 def generate_external_data():
     """
@@ -308,10 +341,16 @@ def get_schedule(week: int, day: str, file_path: str = None) -> List[Dict[str, A
         课程信息列表，每个课程包含：时间段、课程名、节次、地点、属性等
     """
     # 使用默认文件路径或传入的路径
-    if file_path is None:
-        file = "C:/Users/nxt/Desktop/24级土木1班课表-2025-2026-2.xlsx"
-    else:
+    if file_path is not None:
         file = file_path
+    else:
+        db_file, _ = _load_user_schedule_path()
+        if db_file is None:
+            return [{
+                "error": "未上传课表",
+                "hint": "请前往「设置 → 课表设置」上传你的课表 Excel 文件",
+            }]
+        file = db_file
     # ========== 1. 辅助函数：解析周次字符串 ==========
     def _parse_weeks(week_str: str, week_type: str) -> List[int]:
         """

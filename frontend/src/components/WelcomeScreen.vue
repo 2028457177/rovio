@@ -7,20 +7,8 @@
       </div>
       <h1 class="welcome-title">Rovio</h1>
       <p class="welcome-desc">
-        上传 Word 模板（{内容提示|字体|字号}），AI 自动填充并生成文档；支持知识库检索、天气查询、报告生成、联网搜索。
+        上传 Word 模板（{内容提示|字体|字号}），AI 自动填充并生成文档；支持知识库检索。
       </p>
-      <div class="welcome-suggestions">
-        <button
-          v-for="item in suggestions"
-          :key="item.prompt"
-          class="suggestion-card glass"
-          @click="$emit('send', item.prompt)"
-        >
-          <span class="suggestion-icon">{{ item.icon }}</span>
-          <span class="suggestion-text">{{ item.label }}</span>
-          <span class="suggestion-arrow">→</span>
-        </button>
-      </div>
       <div class="welcome-tags">
         <code>{内容提示|字体|字号}</code>
         <span>例：<code>{姓名|楷体|四号}</code>、<code>{日期}</code>、<code>{金额||三号}</code></span>
@@ -31,13 +19,6 @@
 
 <script setup>
 defineEmits(['send'])
-
-const suggestions = [
-  { icon: '📄', label: '自动填写文档', prompt: '帮我自动填写Word模板文件' },
-  { icon: '🌤️', label: '查询天气', prompt: '帮我查询今天的天气' },
-  { icon: '📊', label: '生成工作报告', prompt: '帮我生成一份个人工作数据报告' },
-  { icon: '🔍', label: '联网搜索', prompt: '帮我搜索最新的办公效率工具' },
-]
 </script>
 
 <style scoped>
@@ -139,57 +120,6 @@ const suggestions = [
   color: var(--text-secondary);
   line-height: 1.75;
   margin-bottom: 36px;
-}
-
-.welcome-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-.suggestion-card {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  transition: transform var(--spring), box-shadow var(--spring), background var(--transition), border-color var(--transition);
-  font-family: inherit;
-  box-shadow: 0 4px 14px var(--shadow-sm);
-}
-
-.suggestion-card:hover {
-  border-color: rgba(8, 9, 11, 0.3);
-  background: var(--panel);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px var(--shadow);
-}
-
-.suggestion-card:hover .suggestion-arrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.suggestion-icon {
-  font-size: 16px;
-}
-
-.suggestion-text {
-  font-weight: 500;
-}
-
-.suggestion-arrow {
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: var(--transition);
-  color: var(--text-muted);
-  font-size: 14px;
 }
 
 .welcome-tags {

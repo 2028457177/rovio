@@ -29,8 +29,8 @@ class TaskStatus(str, Enum):
 
 class TaskType(str, Enum):
     FILL_WORD = "fill_word"
-    SEND_WX = "send_wx"
-    SEND_WX_BATCH = "send_wx_batch"
+    PLAN_EXECUTE = "plan_execute"   # DeepAgent 整个 plan 后台执行
+    PLAN_STEP = "plan_step"         # DeepAgent 单个 step 后台执行（预留）
 
 
 def enqueue_task(task_type: TaskType, params: dict, priority: int = 0) -> Optional[str]:
@@ -212,13 +212,37 @@ def fill_word_handler(params: dict) -> str:
     return auto_fill_word.invoke({"template_path": template_path})
 
 
-def send_wx_handler(params: dict) -> str:
-    from AIRAGAgent.agent.tools.wx_tools import send_wx_message
-    contact = params.get("contact_name", "")
-    msg = params.get("message", "")
-    return send_wx_message.invoke({"contact_name": contact, "message": msg})
+def plan_execute_handler(params: dict) -> dict:
+    """DeepAgent plan 后台执行 handler。
+
+    params:
+        query: 用户输入
+        chat_history: 会话历史 list[dict]
+        user_id: int
+        session_id: str
+    返回：
+        {"plan_id": str, "final_answer": str, "success": bool}
+    """
+    from AIRAGAgent.agent.orchestrator import get_orchestrator
+    query = params.get("query", "")
+    chat_history = params.get("chat_history") or []
+    user_id = int(params.get("user_id", 0))
+    session_id = params.get("session_id", "")
+
+    orch = get_orchestrator()
+    final_text = orch.execute(query, chat_history, user_id=user_id, session_id=session_id)
+    # plan_id 由 Orchestrator 内部创建并持久化，这里从最近的 plan 取
+    plan_id = ""
+    try:
+        from AIRAGAgent.agent.plan import get_session_plan
+        plan = get_session_plan(session_id)
+        if plan:
+            plan_id = plan.id
+    except Exception:
+        pass
+    return {"plan_id": plan_id, "final_answer": final_text[:65000], "success": bool(final_text)}
 
 
 def register_default_handlers():
     _worker.register_handler(TaskType.FILL_WORD, fill_word_handler)
-    _worker.register_handler(TaskType.SEND_WX, send_wx_handler)
+    _worker.register_handler(TaskType.PLAN_EXECUTE, plan_execute_handler)

@@ -19,14 +19,14 @@ from fastapi import APIRouter, Depends, UploadFile, File
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from services.common import create_app, get_current_user, get_admin_user
-from services.common.config import get_db_name
+from core import create_app, get_current_user, get_admin_user
+from core.config import DB_NAME
 
 # 数据库重定向：复用 AIRAGAgent.kb 业务逻辑，但把 DB 指向 kb_service 独立库
 # AIRAGAgent.kb.models -> AIRAGAgent.database.connection.get_db() -> _get_db_config()
 # 在调用时读取 mysql_conf["database"]，此处 in-place 修改即可生效
 import AIRAGAgent.database.connection as _conn
-_conn.mysql_conf["database"] = get_db_name("kb")  # 默认 lc_kb，支持 KB_DB 环境变量覆盖
+_conn.mysql_conf["database"] = DB_NAME  # 默认 lc_kb，支持 KB_DB 环境变量覆盖
 
 from AIRAGAgent.kb import models as kb_models
 from AIRAGAgent.kb import service as kb_service
@@ -595,6 +595,5 @@ async def internal_search(q: str, user_id: int, top_k: int = 5):
 
 if __name__ == "__main__":
     import uvicorn
-    from services.common.config import SERVICE_REGISTRY
-    port = SERVICE_REGISTRY["kb"]["port"]
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    from core.config import PORT
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")

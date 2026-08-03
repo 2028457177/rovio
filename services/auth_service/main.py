@@ -26,12 +26,12 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 
-from services.common import (
+from core import (
     create_app, get_current_user, get_admin_user, get_client_ip,
     create_access_token, ServiceClient, logger,
 )
-from services.common.config import ADMIN_ALLOWED_IPS
-from . import models
+from core.config import ADMIN_ALLOWED_IPS
+import models
 
 app = create_app("auth_service", version="1.0.0")
 
@@ -332,6 +332,5 @@ async def _create_user_profile(user_id: int, display_name: str):
 
 if __name__ == "__main__":
     import uvicorn
-    from services.common.config import SERVICE_REGISTRY
-    port = SERVICE_REGISTRY["auth"]["port"]
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    from core.config import PORT
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")

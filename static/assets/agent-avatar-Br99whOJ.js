@@ -1,1 +1,0 @@
-var e=`/agent-avatar.jpg`;export{e as t};

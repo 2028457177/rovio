@@ -1,9 +1,13 @@
 """Verify deployment"""
 import paramiko
+import os
 
-HOST = "81.70.100.57"
-USER = "ubuntu"
-PASSWORD = "***REMOVED***"
+HOST = os.environ.get("LC_SERVER_HOST", "81.70.100.57")
+USER = os.environ.get("LC_SERVER_USER", "ubuntu")
+PASSWORD = os.environ.get("LC_SERVER_PASSWORD")
+
+if not PASSWORD:
+    raise SystemExit("未设置 LC_SERVER_PASSWORD 环境变量。")
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())

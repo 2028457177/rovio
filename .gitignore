@@ -32,3 +32,31 @@ Thumbs.db
 # Deploy output
 deploy/dist/
 frontend/dist/
+
+# ===== 运行时产物（runtime artifacts）=====
+# 日志（按服务/日期切分）
+**/logs/
+*.local.log
+*.local.err
+*.local.log.err
+*.stderr.log
+*.stdout.log
+agent_*.log
+service_*.log
+
+# 向量数据库持久化（ChromaDB）
+chroma_ab/
+
+# 前端构建产物（vite build → ../static）
+static/
+
+# 用户上传文件（头像/知识库文档/截图，运行时生成）
+uploads/
+
+# AI 工作区（按用户/日期/计划隔离，含 .playwright Chromium 二进制）
+workspace/
+
+# 测试缓存
+.pytest_cache/
+.coverage
+htmlcov/

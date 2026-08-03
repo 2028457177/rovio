@@ -7,10 +7,7 @@ rag_summarize：
 get_weather：
    - 干什么：查某个城市的天气预报（白天/晚上天气、温度、风力）
    - 怎么用：传 city_name（纯城市名，如"杭州"）
-   - 如果用户没说城市，你得三步走：
-     ① get_user_location 看看 ta 在哪儿
-     ② get_city_code 把返回的省市名变成纯城市名
-     ③ 拿纯城市名去调 get_weather
+   - 如果用户没说城市，先 get_user_location 定位，再 get_city_code 转纯城市名，最后调本工具
 
 ### get_user_location
 get_user_location：
@@ -19,35 +16,37 @@ get_user_location：
 
 ### get_city_code
 get_city_code：
-   - 干什么：把"浙江省杭州市"这种变成"杭州"
+   - 干什么：把"浙江省杭州市"这种变成纯城市名"杭州"
    - 怎么用：传从 get_user_location 拿到的城市名
 
 ### get_user_id
 get_user_id：
-   - 干什么：看是谁在问你问题
+   - 干什么：看是谁在问问题（用户 ID）
    - 怎么用：不用传参，直接调
 
 ### get_current_month
 get_current_month：
    - 干什么：看今天是几号、星期几、第几周
-   - 怎么用：传 wantday（整数，今天=0，明天=1，后天=2）
+   - 怎么用：传 wantday（整数，今天=0，明天=1，后天=2 这样）
 
 ### fetch_external_data
 fetch_external_data：
-   - 干什么：拉某个用户某个月的工作数据
-   - 怎么用：传 user_id 和 month（month 格式 "YYYY-MM"）
+   - 干什么：拉某个用户某个月的工作数据（生成报告用）
+   - 怎么用：传 user_id 和 month（month 格式必须是 "YYYY-MM"）
+   - 未检索到数据时返回空字符串
 
 ### fill_context_for_report
 fill_context_for_report：
-   - 干什么：生成工作报告之前调一下，帮后续流程做好准备
+   - 干什么：生成工作报告之前调一下，触发报告场景的提示词切换，为后续流程做准备
    - 怎么用：不用传参，直接调
-   - 只在做报告的时候调
+   - 只在做报告的时候调，其他时候别碰
 
 ### get_schedule
 get_schedule：
-   - 干什么：查课表
+   - 干什么：查课表（课程名、时间、节次、地点）
    - 怎么用：传 week（第几周，数字）和 day（星期几，如"星期一"）
-   - 一般先调 get_current_month 拿到日期信息再查
+   - 一般先调 get_current_month 拿到日期再查课表
+   - 如果返回"未上传课表"或 hint 字段，直接告诉用户去「设置 → 课表设置」上传课表，不要编造课程信息
 
 ### auto_fill_word
 auto_fill_word：
@@ -56,11 +55,95 @@ auto_fill_word：
 
 ### search
 search：
-   - 干什么：上网搜
+   - 干什么：联网搜索实时资讯、最新信息、外部知识
    - 怎么用：传 content（要搜什么）
+   - 搜完把结果整理一下，标注来源，简要回答
 
-### send_wx_message
-send_wx_message：
-   - 干什么：给微信好友发消息
-   - 怎么用：传 contact_name（对方的微信昵称/备注）和 message（消息内容）
-   - 前提：微信桌面版得开着且登录了
+### run_python_code
+run_python_code：
+   - 干什么：执行一段 Python 代码并返回 stdout+stderr。适用于计算、数据处理、验证逻辑等场景
+   - 怎么用：传 code（代码，尽量自包含、用 print 输出）和 timeout（秒，默认 10，上限由配置决定）
+   - 输出会被截断到 5000 字符，太长的输出请只打印关键部分
+
+### run_shell_command
+run_shell_command：
+   - 干什么：执行一条 shell 命令并返回输出（Windows 走 cmd，Linux 走 bash）。适用于查看系统状态、运行脚本、调用 CLI 工具
+   - 怎么用：传 command（命令）和 timeout（秒，默认 10）
+   - 高危命令（rm -rf / format / shutdown 等）默认会被拦截
+
+### install_package
+install_package：
+   - 干什么：安装 Python 依赖包到当前项目虚拟环境。当 run_python_code 因 ModuleNotFoundError 失败时，先装包再重试
+   - 怎么用：传 package（PyPI 包名或 git URL）和 timeout（秒，默认 60，最多 120）
+   - 装包会真实修改 venv 且持久化，装大包（torch、tensorflow 等）前先跟用户确认
+
+### list_packages
+list_packages：
+   - 干什么：列出当前虚拟环境已安装的 Python 包
+   - 怎么用：不用传参，直接调
+   - 不确定某个包是否已装时先查一下，避免重复安装
+
+### fetch_url
+fetch_url：
+   - 干什么：抓取网页并返回纯文本内容，自动去除 script/style/nav/footer 等非正文内容。适用于读取网页文章、文档、API 说明
+   - 怎么用：传 url 和 max_chars（默认 8000）
+   - 返回 403/Forbidden 或内容为空时，改调 fetch_url_rendered
+
+### extract_links
+extract_links：
+   - 干什么：从网页提取所有超链接列表，返回 JSON 字符串。适用于发现页面内相关链接、下载地址、分页
+   - 怎么用：传 url 和 filter_pattern（正则过滤 href，可选）
+
+### read_page_main_text
+read_page_main_text：
+   - 干什么：智能提取网页正文，去除导航/广告/侧边栏，优先取 article/main 或最长 div。适用于读取文章主体
+   - 怎么用：传 url
+
+### fetch_url_rendered
+fetch_url_rendered：
+   - 干什么：用真实浏览器渲染网页后提取纯文本（带反检测伪装）。适用于 JS 动态渲染页面、requests 拿不到内容或被 403 拦截的页面。新闻/文章详情页（今日头条、知乎、公众号等）直接用本工具
+   - 怎么用：传 url、max_chars（默认 8000）、wait_ms（渲染等待，默认 2500）、timeout（默认 30）
+
+### screenshot_url
+screenshot_url：
+   - 干什么：对网页截图保存为 PNG。截图自动保存到当前用户当天 workspace/{user_id}/YYYYMMDD/screenshots/ 目录
+   - 怎么用：传 url、full_page（是否整页截图，默认 false）、width/height（默认 1280x720）、timeout
+   - 首次使用需 playwright + chromium（按提示 install_package('playwright') + run_shell_command('playwright install chromium')，已配国内镜像加速）
+
+### remember
+remember：
+   - 干什么：记住一条关于用户的长期信息，下次会话也能用到
+   - 怎么用：传 key_name、value、memory_type（fact/preference/project/schedule，默认 fact）、confidence（可选）
+   - 主动记忆时机：用户透露身份/职业/项目/偏好、用户明确说"记一下"、判断信息跨会话有价值
+   - 不要记一次性的临时问题和对话历史里已有的内容
+
+### recall
+recall：
+   - 干什么：召回用户已记住的长期信息，可按类型或关键词过滤，无参数则返回最近所有记忆
+   - 怎么用：传 keyword（可选）、memory_type（可选）、limit（默认 20）
+
+### recall_one
+recall_one：
+   - 干什么：精确读取某个 key 的记忆值，找不到返回空字符串
+   - 怎么用：传 key_name
+
+### forget
+forget：
+   - 干什么：删除一条记忆（软删除，不再被召回）
+   - 怎么用：传 key_name 或 memory_id 都可
+
+### create_artifact
+create_artifact：
+   - 干什么：把一段内容注册为 Artifact（一等公民产物）。生成的报告、脚本、整理的数据都应该注册
+   - 怎么用：传 title、content、type（doc/code/sheet/note/file，默认 doc）、mime_type（可选）
+   - Artifact 会持久化，后续可通过 list_artifacts / get_artifact 引用，前端会展示在产物面板
+
+### list_artifacts
+list_artifacts：
+   - 干什么：列出当前用户的 Artifact，可按会话或类型过滤，返回最近的产物列表
+   - 怎么用：传 session_id（可选）、type（可选）、limit（默认 20）
+
+### get_artifact
+get_artifact：
+   - 干什么：读取一个 Artifact 的完整内容（按 id），用于在后续步骤中引用之前的产物
+   - 怎么用：传 artifact_id（以 art_ 开头）

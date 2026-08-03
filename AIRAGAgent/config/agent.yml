@@ -1,1 +1,58 @@
 external_data_path: data/external/records.csv
+
+# ═══════════════════════════════════════════════
+# 沙箱权限配置
+# ═══════════════════════════════════════════════
+sandbox:
+  # ── 文件系统策略 ──
+  # 只读根：这些路径下只能读不能写/删
+  # 支持 Windows 盘符（不区分大小写）和 Linux 绝对路径
+  fs_readonly_roots:
+    windows:
+      - "C:\\"           # C 盘整体只读（系统盘）
+    linux:
+      - "/etc"
+      - "/usr"
+      - "/bin"
+      - "/sbin"
+      - "/boot"
+      - "/root"
+      - "/var/log"
+      - "/proc"
+      - "/sys"
+
+  # 可写根：这些路径下可读写删除
+  # 策略：所有 AI 生成的文件统一收纳到项目内的 workspace/ 目录，
+  # 避免触发 Windows UAC / Defender 拦截（C盘系统区、D盘根目录都会被拦）
+  # 支持 ~ 展开（当前用户主目录）和 ${ENV_VAR} 环境变量
+  # 注意：writable 优先于 readonly，可在只读根内挖出可写子目录
+  fs_writable_roots:
+    windows:
+      - "${PROJECT_ROOT}\\workspace"
+    linux:
+      - "${PROJECT_ROOT}/workspace"
+
+  # 默认工作目录：list_files 不传 path 时使用此目录
+  # 空字符串表示使用 workspace/ 目录
+  fs_default_root: "${PROJECT_ROOT}/workspace"
+
+  # ── Shell / 代码执行策略 ──
+  # true  = 解禁黑名单，任意命令都执行（仅记录日志）
+  # false = 走黑名单（rm -rf / format / shutdown / mkfs 等直接拦截）
+  shell_dangerous_enabled: false
+
+  # 单次代码/命令执行的最大超时秒数（用户在工具调用里可传 timeout，但不超过此值）
+  code_timeout_max: 60
+
+  # ── 国内镜像配置（加速下载）──
+  # install_package / pip 走 PyPI 镜像；playwright chromium 走淘宝镜像
+  # 留空字符串则使用官方源
+  mirrors:
+    # PyPI 镜像（uv pip install / pip install 用）
+    # 清华：https://pypi.tuna.tsinghua.edu.cn/simple
+    # 阿里：https://mirrors.aliyun.com/pypi/simple
+    pypi: "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+    # playwright 浏览器二进制下载镜像
+    # 淘宝：https://cdn.npmmirror.com/binaries/playwright
+    playwright: "https://cdn.npmmirror.com/binaries/playwright"

@@ -5,7 +5,7 @@ import secrets
 from datetime import datetime
 from typing import Optional
 
-from services.common.db import get_db
+from core.db import get_db
 
 
 # ==================== 密码哈希 ====================
@@ -39,7 +39,7 @@ def verify_security_answer(answer: str, stored_hash: str) -> bool:
 
 def create_user(username: str, password: str, role: str = "user") -> Optional[dict]:
     """创建用户认证记录（仅 auth 信息）。返回 {id, username, role} 或 None（用户名已存在）"""
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT id FROM users WHERE username = %s", (username,))
         if cur.fetchone():
@@ -54,7 +54,7 @@ def create_user(username: str, password: str, role: str = "user") -> Optional[di
 
 
 def get_user_by_username(username: str) -> Optional[dict]:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT id, username, password_hash, role, created_at, last_password_changed "
@@ -75,7 +75,7 @@ def get_user_by_username(username: str) -> Optional[dict]:
 
 
 def get_user_by_id(user_id: int) -> Optional[dict]:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT id, username, role, created_at, last_password_changed "
@@ -97,7 +97,7 @@ def get_user_by_id(user_id: int) -> Optional[dict]:
 
 def get_all_users() -> list:
     """管理员：获取所有用户（仅 auth 信息，profile 由 admin_service 合并 user_service）"""
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT id, username, role, created_at, last_password_changed FROM users ORDER BY id ASC"
@@ -113,7 +113,7 @@ def get_all_users() -> list:
 
 
 def change_password(user_id: int, old_password: str, new_password: str) -> bool:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
         row = cur.fetchone()
@@ -130,7 +130,7 @@ def change_password(user_id: int, old_password: str, new_password: str) -> bool:
 
 def reset_user_password(target_user_id: int, new_password: str) -> bool:
     """管理员重置密码（不允许操作 admin 账号）"""
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT role FROM users WHERE id = %s", (target_user_id,))
         row = cur.fetchone()
@@ -147,7 +147,7 @@ def reset_user_password(target_user_id: int, new_password: str) -> bool:
 
 def delete_user(target_user_id: int) -> bool:
     """删除用户认证记录（不允许删 admin）。登录设备一并清理。"""
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT role FROM users WHERE id = %s", (target_user_id,))
         row = cur.fetchone()
@@ -165,7 +165,7 @@ def delete_user(target_user_id: int) -> bool:
 def set_security_question(user_id: int, question: str, answer: str) -> bool:
     if not question.strip() or not answer.strip():
         return False
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO security_questions (user_id, question, answer_hash) VALUES (%s, %s, %s) "
@@ -177,14 +177,14 @@ def set_security_question(user_id: int, question: str, answer: str) -> bool:
 
 
 def has_security_question(user_id: int) -> bool:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM security_questions WHERE user_id = %s", (user_id,))
         return cur.fetchone() is not None
 
 
 def get_security_question_by_username(username: str) -> Optional[dict]:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT u.id, u.username, sq.question, sq.answer_hash "
@@ -199,7 +199,7 @@ def get_security_question_by_username(username: str) -> Optional[dict]:
 
 
 def reset_password_by_security_answer(username: str, answer: str, new_password: str) -> bool:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT u.id, sq.answer_hash FROM users u "
@@ -243,7 +243,7 @@ def _parse_browser(user_agent: str) -> str:
 
 
 def create_login_device(user_id: int, device_token: str, user_agent: str, ip: str) -> None:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         ua = (user_agent or "").lower()
         if "mobile" in ua or "android" in ua or "iphone" in ua:
@@ -265,7 +265,7 @@ def create_login_device(user_id: int, device_token: str, user_agent: str, ip: st
 
 
 def touch_login_device(device_token: str, ip: Optional[str] = None) -> None:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         if ip:
             cur.execute(
@@ -283,7 +283,7 @@ def touch_login_device(device_token: str, ip: Optional[str] = None) -> None:
 
 
 def get_login_devices(user_id: int) -> list:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "SELECT id, device_token, device_type, os, browser, ip, user_agent, "
@@ -306,7 +306,7 @@ def get_login_devices(user_id: int) -> list:
 
 
 def revoke_login_device(user_id: int, device_id: int) -> bool:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "UPDATE login_devices SET is_revoked = 1 WHERE id = %s AND user_id = %s",
@@ -317,7 +317,7 @@ def revoke_login_device(user_id: int, device_id: int) -> bool:
 
 
 def revoke_all_other_devices(user_id: int, current_token: str) -> int:
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute(
             "UPDATE login_devices SET is_revoked = 1 "
@@ -332,7 +332,7 @@ def revoke_all_other_devices(user_id: int, current_token: str) -> int:
 
 def get_user_role(user_id: int) -> Optional[str]:
     """供 admin_service / user_service 校验权限"""
-    with get_db("auth") as conn:
+    with get_db() as conn:
         cur = conn.cursor()
         cur.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         row = cur.fetchone()

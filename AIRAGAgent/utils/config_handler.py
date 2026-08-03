@@ -1,3 +1,5 @@
+import os
+
 import yaml
 
 from AIRAGAgent.utils.path_tool import get_abs_path
@@ -41,6 +43,15 @@ prompts_conf = load_prompts_config()
 agent_conf = load_agent_config()
 mysql_conf = load_mysql_config()
 redis_conf = load_redis_config()
+
+# 敏感凭证优先从环境变量读取（由 .env 注入进程环境），YAML 中仅保留空占位。
+# 这样密钥不再进入 git 跟踪的配置文件，避免历史泄露。
+rag_conf["api_key"] = os.getenv("DEEPSEEK_API_KEY") or rag_conf.get("api_key", "")
+rag_conf["embedding_api_key"] = os.getenv("EMBEDDING_API_KEY") or rag_conf.get("embedding_api_key", "")
+rag_conf["tavily_api_key"] = os.getenv("TAVILY_API_KEY") or rag_conf.get("tavily_api_key", "")
+rag_conf["gaode_api_key"] = os.getenv("GAODE_API_KEY") or rag_conf.get("gaode_api_key", "")
+chroma_conf["openai_api_key"] = os.getenv("OPENAI_EMBEDDING_API_KEY") or chroma_conf.get("openai_api_key", "")
+mysql_conf["password"] = os.getenv("MYSQL_PASSWORD") or mysql_conf.get("password", "")
 
 if __name__ == '__main__':
     print(rag_conf["chat_model_name"])

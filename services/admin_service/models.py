@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from services.common.db import get_db
+from core.db import get_db
 
 
 # ==================== 数据统计：埋点写入 ====================
@@ -29,7 +29,7 @@ def log_api_call(user_id: int, session_id: str, ip: str, endpoint: str,
                  is_success: bool = True, error_msg: str = "") -> None:
     """记录一次 API 调用（用于统计调用量 / Token / 响应时长 / 错误率）"""
     try:
-        with get_db("admin") as conn:
+        with get_db() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -53,7 +53,7 @@ def log_tool_call(user_id: int, session_id: str, tool_name: str,
                   duration_ms: int, is_success: bool = True, error_msg: str = "") -> None:
     """记录一次工具调用（用于工具分布统计）"""
     try:
-        with get_db("admin") as conn:
+        with get_db() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -72,7 +72,7 @@ def log_tool_call(user_id: int, session_id: str, tool_name: str,
 def log_rate_limit_event(user_id: int, ip: str, limit_type: str, identifier: str) -> None:
     """记录一次限流触发事件"""
     try:
-        with get_db("admin") as conn:
+        with get_db() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -110,7 +110,7 @@ def get_dashboard_overview(users: list | None = None) -> dict:
     从 auth_service 拉取用户列表后通过 users 参数传入。
     users: list[{id, username, role, created_at}]，为 None 时这些字段返回 0。
     """
-    with get_db("admin") as conn:
+    with get_db() as conn:
         cursor = conn.cursor()
         now = datetime.now()
         today = now.strftime("%Y-%m-%d")
@@ -184,7 +184,7 @@ def get_dashboard_overview(users: list | None = None) -> dict:
 
 def get_dashboard_trends(days: int = 30) -> dict:
     """趋势图：每日调用量 / Token 消耗 / 平均响应时长"""
-    with get_db("admin") as conn:
+    with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -229,7 +229,7 @@ def get_dashboard_trends(days: int = 30) -> dict:
 
 def get_dashboard_tool_distribution(days: int = 30) -> list:
     """工具调用分布：哪个工具最常用"""
-    with get_db("admin") as conn:
+    with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -254,7 +254,7 @@ def get_dashboard_tool_distribution(days: int = 30) -> list:
 
 def get_dashboard_error_stats(days: int = 30) -> dict:
     """错误率 + 限流触发次数"""
-    with get_db("admin") as conn:
+    with get_db() as conn:
         cursor = conn.cursor()
         # API 错误率
         cursor.execute(
@@ -329,7 +329,7 @@ def get_dashboard_error_stats(days: int = 30) -> dict:
 
 def get_dashboard_top_users(days: int = 30, limit: int = 10) -> list:
     """Top 用户：按调用量排序（只返回 user_id，用户名由 main 层调 auth_service 补全）"""
-    with get_db("admin") as conn:
+    with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
