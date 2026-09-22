@@ -1294,12 +1294,11 @@ class Orchestrator:
                 if img_md:
                     yield {"type": "output", "content": "\n" + img_md}
                     final_text = (final_text or "") + "\n" + img_md
-            # 文档产物（Word/Excel/PPT/PDF）：发 file_embed 事件 → 前端 DocEmbed 预览卡片，
-            # 文本里附下载链接；用户在聊天里直接预览，无需打开 AI 工作区
+            # 文档产物（Word/Excel/PPT/PDF）：发 file_embed 事件 → 前端 DocEmbed 条目，
+            # 点击在左侧大面板直接预览；文本里只留纯提示（不放下载链接，避免用户误点直接下载）
             docs = [p for p in promoted_docs if p.is_file() and p.suffix.lower() in _DOC_EMBED_EXTS][:_MAX_INLINE_DOCS]
             if docs:
                 ws_root = get_daily_workspace(plan.user_id).parent
-                doc_lines = []
                 for p in docs:
                     try:
                         rel = urlquote(str(p.resolve().relative_to(ws_root)))
@@ -1316,11 +1315,9 @@ class Orchestrator:
                         "preview_url": preview_url,
                         "download_url": f"/api/file/download?path={rel}",
                     }
-                    doc_lines.append(f"\n📄 [{p.name}](/api/file/download?path={rel})\n")
-                if doc_lines:
-                    docs_md = "\n".join(doc_lines)
-                    yield {"type": "output", "content": "\n" + docs_md}
-                    final_text = (final_text or "") + "\n" + docs_md
+                hint = f"\n📄 已生成 {len(docs)} 个文档，点击下方文档卡片即可在左侧直接预览\n"
+                yield {"type": "output", "content": hint}
+                final_text = (final_text or "") + hint
             if inline_images or docs:
                 update_plan_status(plan.id, PlanStatus.COMPLETED.value,
                                    final_answer=(final_text or "")[:65000])

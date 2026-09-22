@@ -73,11 +73,12 @@
             @answer="(text) => emit('ask-answer', { message, answer: text })"
           />
 
-          <!-- 文档预览卡片（Word/Excel/PPT/PDF）：聊天内直接预览 -->
+          <!-- 文档预览条目（Word/Excel/PPT/PDF）：点击在左侧大面板打开 -->
           <DocEmbed
             v-for="(e, ei) in (message.embeds || [])"
             :key="(e.path || '') + ei"
             :embed="e"
+            @open="(embed) => emit('open-doc', embed)"
           />
 
           <!-- 消息操作栏 -->
@@ -209,7 +210,7 @@ const props = defineProps({
   canBranch: { type: Boolean, default: true }
 })
 
-const emit = defineEmits(['copy', 'regenerate', 'edit', 'stop', 'feedback', 'branch', 'ask-answer'])
+const emit = defineEmits(['copy', 'regenerate', 'edit', 'stop', 'feedback', 'branch', 'ask-answer', 'open-doc'])
 
 const copied = ref(false)
 const feedback = ref(props.message.feedback || '') // 'like' | 'dislike' | ''

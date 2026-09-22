@@ -260,6 +260,7 @@
               @feedback="onMessageFeedback"
               @branch="onMessageBranch"
               @ask-answer="onAskAnswer"
+              @open-doc="onOpenDoc"
             />
           </TransitionGroup>
         </div>
@@ -508,6 +509,9 @@
     >
       <SettingsPanel @account-deleted="onSettingsAccountDeleted" />
     </SideDrawer>
+
+    <!-- 文档查看器（左侧大面板）：点击聊天里的 Word/Excel/PPT/PDF 条目直接查看 -->
+    <DocViewer v-model="docViewerOpen" :doc="activeDoc || {}" />
   </div>
 </template>
 
@@ -526,6 +530,7 @@ import SettingsPanel from '@/components/SettingsPanel.vue'
 import FileBrowser from '@/components/FileBrowser.vue'
 import PlanHistory from '@/components/PlanHistory.vue'
 import TaskQueue from '@/components/TaskQueue.vue'
+import DocViewer from '@/components/DocViewer.vue'
 
 const router = useRouter()
 const { theme, toggle: toggleTheme } = useTheme()
@@ -581,6 +586,10 @@ const settingsDrawerOpen = ref(false)
 const workspaceDrawerOpen = ref(false)
 const planDrawerOpen = ref(false)
 const fileBrowserRef = ref(null)
+
+// 文档查看器（左侧大面板）：点击聊天里的文档条目打开
+const docViewerOpen = ref(false)
+const activeDoc = ref(null)
 
 // 滚动 / 新消息提示
 const showScrollBottom = ref(false)
@@ -821,6 +830,12 @@ function onMessageCopy() {
 // 互动提问面板作答（流中 → 同轮续跑；流已断 → 作为新消息发送）
 function onAskAnswer({ message, answer }) {
   answerQuestion(message, answer)
+}
+
+// 点击文档条目 → 左侧大面板查看器（ZCode 式，不下载）
+function onOpenDoc(embed) {
+  activeDoc.value = embed
+  docViewerOpen.value = true
 }
 
 function onMessageRegenerate(message) {
