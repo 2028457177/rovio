@@ -25,10 +25,12 @@ SSE 事件协议（与旧协议兼容 + 新增 plan_*）：
     {"type": "plan_revised",    "plan": {...}}
     {"type": "plan_completed",  "plan": {...}}
     {"type": "ask_user",        "question": "..."}           # 需要用户补充信息
+    {"type": "options_panel",   "options": [{"label", "value"}]}  # 最终回复末尾的可交互选项
 """
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import time
 import uuid
@@ -180,6 +182,9 @@ FINALIZER_SYSTEM_PROMPT = """你是 Rovio。前面的步骤已经执行完毕，
 5. 简洁为主，能列点就列点，不要写大段文字
 6. 步骤中生成了图片或文档（工具返回过"已生成/已保存/截图成功"等路径）时，告诉用户"已附在回复下方，可直接预览"即可，
    不要让用户去「AI 工作区」翻找文件，也不要自己编造链接（系统会自动把图片和 Word/Excel/PPT 预览卡片附在回复末尾）
+7. 如果回复末尾给用户提供了明确的并列选项（方案一/方案二、方向一/方向二等多选一），在正文之后额外输出一个
+   ```options 代码块，内容为 JSON 数组：[{"label": "按钮上显示的简述", "value": "点击后代表用户发送的完整表述"}]；
+   正文里仍保留自然语言的选项描述，代码块只放 JSON 本身
 """
 
 # ── 结构化输出指令（纯文本 JSON，兼容 DeepSeek thinking 模式，不用 function calling）──
@@ -220,6 +225,131 @@ def _extract_json(text: str) -> str:
     if first != -1 and last != -1 and last > first:
         return text[first:last + 1]
     return text
+
+
+# 最终回复末尾的可交互选项块：```options 围栏内的 JSON 数组
+_OPTIONS_BLOCK_RE = re.compile(r"\n*```options[^\S\n]*\n(.*?)```\s*$", re.DOTALL)
+
+
+def extract_trailing_options(text: str) -> tuple:
+    """从最终回复末尾提取 ```options 代码块，返回 (clean_text, options|None)。
+
+    options 为 [{"label": ..., "value": ...}] 列表（label/value 缺一的项丢弃）。
+    只认位于文本末尾的块；块在中间、JSON 损坏、结构不符等任何异常都静默返回原文本 + None。
+    """
+    if not text:
+        return text, None
+    m = _OPTIONS_BLOCK_RE.search(text)
+    if not m:
+        return text, None
+    try:
+        data = json.loads(m.group(1))
+    except Exception:
+        return text, None
+    if not isinstance(data, list):
+        return text, None
+    options = [
+        {"label": str(item["label"]), "value": str(item["value"])}
+        for item in data
+        if isinstance(item, dict) and item.get("label") and item.get("value")
+    ]
+    if not options:
+        return text, None
+    return text[:m.start()].rstrip(), options
+
+
+# ═══════════════════════════════════════════════
+# DSML 工具调用标记过滤
+# ═══════════════════════════════════════════════
+# 模型在无工具注入的纯文本路径（直接回答/最终汇总）中，偶尔会把工具调用以
+# <｜DSML｜...> 标记文本形式吐进正文，需要剥离，避免污染回复与落库文本。
+_DSML_BLOCK_RE = re.compile(r"<[｜|]DSML[｜|].*?(?:</[｜|]DSML[｜|]calls>|$)", re.S)
+
+
+def strip_dsml(text: str) -> str:
+    """一次性剔除文本中的 DSML 工具调用标记块（用于非流式文本）。"""
+    if not text:
+        return text
+    return _DSML_BLOCK_RE.sub("", text)
+
+
+class DsmlStreamFilter:
+    """流式 DSML 过滤器：逐块喂入 LLM 输出，返回可安全展示的正文片段。
+
+    DSML 块可能横跨多个 chunk，用内部缓冲识别块边界；未闭合的块内容一律丢弃。
+    """
+
+    _START_MARKERS = ("<｜DSML｜", "<||DSML||")
+    _END_MARKERS = ("</｜DSML｜calls>", "</||DSML||calls>")
+    _MAX_HOLD = 4000  # 块超过该长度仍未闭合，视为垃圾整体丢弃
+
+    def __init__(self):
+        self._buf = ""
+        self._in_block = False
+
+    def _find_start(self, buf: str):
+        """返回 (起始下标, 是否疑似前缀)。未找到返回 (-1, False)。"""
+        i = 0
+        while True:
+            idx = buf.find("<", i)
+            if idx == -1:
+                return -1, False
+            tail = buf[idx:]
+            for mark in self._START_MARKERS:
+                if tail.startswith(mark):
+                    return idx, False
+                if len(tail) < len(mark) and mark.startswith(tail):
+                    return idx, True
+            i = idx + 1
+
+    def _find_end(self, buf: str):
+        """返回 (结束标记下标, 标记长度)，未找到返回 (-1, 0)。"""
+        best, blen = -1, 0
+        for mark in self._END_MARKERS:
+            j = buf.find(mark)
+            if j != -1 and (best == -1 or j < best):
+                best, blen = j, len(mark)
+        return best, blen
+
+    def feed(self, text: str) -> str:
+        """喂入一个 chunk，返回可立即输出的正文（可能为空串）。"""
+        if not text:
+            return ""
+        self._buf += text
+        out = []
+        while self._buf:
+            if self._in_block:
+                end, end_len = self._find_end(self._buf)
+                if end == -1:
+                    if len(self._buf) > self._MAX_HOLD:
+                        self._buf = ""
+                        self._in_block = False
+                    break
+                self._buf = self._buf[end + end_len:]
+                self._in_block = False
+                continue
+            start, is_partial = self._find_start(self._buf)
+            if start == -1:
+                out.append(self._buf)
+                self._buf = ""
+            else:
+                out.append(self._buf[:start])
+                self._buf = self._buf[start:]
+                if is_partial:
+                    break
+                self._in_block = True
+        return "".join(out)
+
+    def flush(self) -> str:
+        """流结束时调用：块内残留或疑似 marker 前缀一律丢弃，其余输出。"""
+        buf, self._buf = self._buf, ""
+        if self._in_block:
+            self._in_block = False
+            return ""
+        for mark in self._START_MARKERS:
+            if len(buf) < len(mark) and mark.startswith(buf):
+                return ""
+        return buf
 
 
 # ═══════════════════════════════════════════════
@@ -602,7 +732,8 @@ class Orchestrator:
                     kb_ctx = self._kb_retrieve_context(plan.user_id, query or task_desc)
                     if kb_ctx:
                         user_content = f"{kb_ctx}\n{user_content}"
-                # 用 stream 真流式
+                # 用 stream 真流式（DSML 过滤：无工具路径下模型偶尔把工具调用标记吐进正文）
+                dsml_filter = DsmlStreamFilter()
                 stream = llm.stream(
                     [SystemMessage(content=identity)] + history_msgs + [HumanMessage(content=user_content)]
                 )
@@ -614,8 +745,14 @@ class Orchestrator:
                     if reasoning and not text:
                         yield {"type": think_type, "step_idx": step.step_idx, "content": reasoning}
                     if text:
-                        output_parts.append(text)
-                        yield {"type": out_type, "step_idx": step.step_idx, "content": text}
+                        text = dsml_filter.feed(text)
+                        if text:
+                            output_parts.append(text)
+                            yield {"type": out_type, "step_idx": step.step_idx, "content": text}
+                tail = dsml_filter.flush()
+                if tail:
+                    output_parts.append(tail)
+                    yield {"type": out_type, "step_idx": step.step_idx, "content": tail}
 
                 # thinking 模型烧爆预算兜底：推理吃光 max_tokens 时正文为空（finish=length）。
                 # 关闭 thinking 重试一次——开放性长文生成（方案/报告/作文）不再依赖推理预算
@@ -626,13 +763,28 @@ class Orchestrator:
                         direct_llm = llm.bind(extra_body={"thinking": {"type": "disabled"}})
                     except Exception:
                         direct_llm = llm
+                    dsml_filter = DsmlStreamFilter()
                     for chunk in direct_llm.stream(
                         [SystemMessage(content=identity)] + history_msgs + [HumanMessage(content=user_content)]
                     ):
                         text = getattr(chunk, "content", "") or ""
                         if text:
-                            output_parts.append(text)
-                            yield {"type": out_type, "step_idx": step.step_idx, "content": text}
+                            text = dsml_filter.feed(text)
+                            if text:
+                                output_parts.append(text)
+                                yield {"type": out_type, "step_idx": step.step_idx, "content": text}
+                    tail = dsml_filter.flush()
+                    if tail:
+                        output_parts.append(tail)
+                        yield {"type": out_type, "step_idx": step.step_idx, "content": tail}
+
+                # 末尾 ```options 选项块：提取为交互面板事件，正文/落库文本中剔除。
+                # 块在流式期间可能已短暂显示，前端收到 options_panel 后会从已累积内容中剔除。
+                if is_single_step and output_parts:
+                    _clean, _options = extract_trailing_options("".join(output_parts))
+                    if _options:
+                        output_parts[:] = [_clean]
+                        yield {"type": "options_panel", "options": _options}
             else:
                 # 委派 SubAgent
                 sub = self.registry.get(subagent_name)
@@ -1117,6 +1269,7 @@ class Orchestrator:
 
         output_parts: List[str] = []
         try:
+            dsml_filter = DsmlStreamFilter()
             stream = self._llm_for(plan.user_id).stream([
                 SystemMessage(content=system),
                 HumanMessage(content=user_msg),
@@ -1129,8 +1282,14 @@ class Orchestrator:
                 if reasoning and not text:
                     yield {"type": "thinking", "content": reasoning}
                 if text:
-                    output_parts.append(text)
-                    yield {"type": "output", "content": text}
+                    text = dsml_filter.feed(text)
+                    if text:
+                        output_parts.append(text)
+                        yield {"type": "output", "content": text}
+            tail = dsml_filter.flush()
+            if tail:
+                output_parts.append(tail)
+                yield {"type": "output", "content": tail}
 
             # thinking 烧爆预算兜底：正文为空时关闭 thinking 重试一次（与 _execute_step 同策略）
             if not output_parts:
@@ -1139,14 +1298,21 @@ class Orchestrator:
                     direct_llm = self._llm_for(plan.user_id).bind(extra_body={"thinking": {"type": "disabled"}})
                 except Exception:
                     direct_llm = self._llm_for(plan.user_id)
+                dsml_filter = DsmlStreamFilter()
                 for chunk in direct_llm.stream([
                     SystemMessage(content=system),
                     HumanMessage(content=user_msg),
                 ]):
                     text = getattr(chunk, "content", "") or ""
                     if text:
-                        output_parts.append(text)
-                        yield {"type": "output", "content": text}
+                        text = dsml_filter.feed(text)
+                        if text:
+                            output_parts.append(text)
+                            yield {"type": "output", "content": text}
+                tail = dsml_filter.flush()
+                if tail:
+                    output_parts.append(tail)
+                    yield {"type": "output", "content": tail}
         except Exception as e:
             logger.error(f"[Finalizer] 流式失败，回退到一次性输出: {e}")
             # 回退：直接拼接各步结果
@@ -1157,6 +1323,11 @@ class Orchestrator:
             yield {"type": "output", "content": fallback}
 
         final_text = "".join(output_parts)
+        # 末尾 ```options 选项块：提取为交互面板事件（plan_completed 之前到达前端），
+        # 落库/返回用剔除后的 clean_text；流式期间已显示的部分由前端在收到事件后剔除
+        final_text, _options = extract_trailing_options(final_text)
+        if _options:
+            yield {"type": "options_panel", "options": _options}
         # 同步内存状态（execute_stream 收尾依赖 plan.status 判断是否整理工作区/内嵌图片）
         plan.status = PlanStatus.COMPLETED.value
         update_plan_status(plan.id, PlanStatus.COMPLETED.value, final_answer=final_text[:65000])

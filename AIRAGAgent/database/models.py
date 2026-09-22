@@ -34,7 +34,9 @@ def save_conversation_full(user_id: int, conversation_id: str, title: str, messa
             steps = m.get("steps")
             question = m.get("question")
             embeds = m.get("embeds")
-            if not plan and not steps and not question and not embeds:
+            options = m.get("options")
+            options_selected = m.get("optionsSelected")
+            if not plan and not steps and not question and not embeds and not options:
                 continue
             extra = {}
             if plan:
@@ -48,6 +50,11 @@ def save_conversation_full(user_id: int, conversation_id: str, title: str, messa
             if embeds:
                 # 文档预览卡片（Word/Excel/PPT/PDF 内嵌）
                 extra["embeds"] = embeds
+            if options:
+                # 可交互选项面板（最终回复末尾 ```options 块）：含选中态，重载后继续展示
+                extra["options"] = options
+                if options_selected:
+                    extra["optionsSelected"] = options_selected
             try:
                 cursor.execute(
                     "UPDATE messages SET extra_json = %s WHERE id = %s AND conversation_id = %s",
@@ -114,6 +121,10 @@ def get_conversations(user_id: int) -> list:
                                 entry["question"] = extra["question"]
                             if extra.get("embeds"):
                                 entry["embeds"] = extra["embeds"]
+                            if extra.get("options"):
+                                entry["options"] = extra["options"]
+                            if extra.get("optionsSelected"):
+                                entry["optionsSelected"] = extra["optionsSelected"]
                     except Exception:
                         pass
                 conv["messages"].append(entry)
@@ -1092,6 +1103,10 @@ def get_user_conversations_admin(target_user_id: int) -> list:
                                 entry["question"] = extra["question"]
                             if extra.get("embeds"):
                                 entry["embeds"] = extra["embeds"]
+                            if extra.get("options"):
+                                entry["options"] = extra["options"]
+                            if extra.get("optionsSelected"):
+                                entry["optionsSelected"] = extra["optionsSelected"]
                     except Exception:
                         pass
                 conv["messages"].append(entry)

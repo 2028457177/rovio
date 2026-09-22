@@ -101,11 +101,12 @@ export async function sendChatMessage(message, sessionId, latitude, longitude, o
               onMessageIds && onMessageIds(parsed)
             }
 
-            // DeepAgent 事件透传：plan_created / step_* / ask_user / file_embed 等
+            // DeepAgent 事件透传：plan_created / step_* / ask_user / file_embed / options_panel 等
             // 调用方未传 onEvent 时静默忽略，保证旧调用方零改动兼容
             if (onEvent && parsed.type && (
               parsed.type.startsWith('plan_') || parsed.type.startsWith('step_') ||
-              parsed.type === 'ask_user' || parsed.type === 'file_embed'
+              parsed.type === 'ask_user' || parsed.type === 'file_embed' ||
+              parsed.type === 'options_panel'
             )) {
               onEvent(parsed)
             }

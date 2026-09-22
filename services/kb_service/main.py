@@ -50,7 +50,7 @@ app = create_app("kb_service", version="1.0.0", on_startup=_on_startup)
 
 router = APIRouter()
 
-MAX_FILE_SIZE = 20 * 1024 * 1024  # 单文件 20MB
+MAX_FILE_SIZE = int(os.getenv("KB_MAX_FILE_SIZE_MB", "100")) * 1024 * 1024  # 单文件上限，默认 100MB
 
 
 # ==================== 公共工具 ====================
@@ -101,7 +101,7 @@ async def _read_and_validate(file: UploadFile):
     if not content:
         return None, ext, f"文件「{file.filename}」内容为空"
     if len(content) > MAX_FILE_SIZE:
-        return None, ext, f"文件「{file.filename}」超过 20MB 限制"
+        return None, ext, f"文件「{file.filename}」超过 {MAX_FILE_SIZE // 1024 // 1024}MB 限制"
     return content, ext, None
 
 

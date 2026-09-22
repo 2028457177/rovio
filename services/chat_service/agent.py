@@ -17,7 +17,7 @@ from core.events import publish_event, CHANNEL_CHAT_COMPLETED
 import db_patch
 db_patch.apply_db_redirect()
 
-from AIRAGAgent.agent.orchestrator import get_orchestrator
+from AIRAGAgent.agent.orchestrator import get_orchestrator, extract_trailing_options, strip_dsml
 from AIRAGAgent.database import (
     save_message, get_session_messages, clear_session, truncate_session_messages,
     log_api_call,
@@ -106,6 +106,10 @@ class AgentService:
 
                 if session_id:
                     full_response = "".join(full_response_parts)
+                    # 落库前剔除 DSML 工具调用标记（无工具路径下模型误吐的文本）
+                    full_response = strip_dsml(full_response)
+                    # 落库前剔除末尾 ```options 选项块（前端已单独收到 options_panel 事件）
+                    full_response, _ = extract_trailing_options(full_response)
                     _msg_ids = self._save_session_messages_with_cache(
                         user_id, session_id, message, full_response
                     )

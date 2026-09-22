@@ -62,10 +62,12 @@ def excel_loader(filepath: str)-> list[Document]:
         # 读取Excel文件的所有工作表
         xls = pd.ExcelFile(filepath)
         for sheet_name in xls.sheet_names:
-            # 读取工作表数据
+            # 读取工作表数据（丢弃全空列，空单元格渲染为空串而不是 NaN）
             df = pd.read_excel(xls, sheet_name=sheet_name)
+            df = df.dropna(axis=1, how="all")
+            df.columns = ["" if str(c).startswith("Unnamed") else str(c) for c in df.columns]
             # 将数据转换为字符串
-            content = df.to_string(index=False)
+            content = df.to_string(index=False, na_rep="")
             # 创建Document对象
             doc = Document(
                 page_content=content,
@@ -74,4 +76,43 @@ def excel_loader(filepath: str)-> list[Document]:
             documents.append(doc)
     except Exception as e:
         logger.error(f"[Excel加载]文件{filepath}加载失败,错误信息:{str(e)}")
+    return documents
+
+
+def docx_loader(filepath: str) -> list[Document]:
+    """加载docx文件（提取纯文本）并返回Document文档列表。"""
+    try:
+        import mammoth
+        with open(filepath, "rb") as f:
+            content = mammoth.extract_raw_text(f).value
+        if content.strip():
+            return [Document(page_content=content, metadata={"source": filepath})]
+    except Exception as e:
+        logger.error(f"[Docx加载]文件{filepath}加载失败,错误信息:{str(e)}")
+    return []
+
+
+def pptx_loader(filepath: str) -> list[Document]:
+    """加载pptx文件（逐页提取文本框文字）并返回Document文档列表。"""
+    documents = []
+    try:
+        from pptx import Presentation
+        prs = Presentation(filepath)
+        for idx, slide in enumerate(prs.slides, 1):
+            texts = []
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    t = shape.text_frame.text.strip()
+                    if t:
+                        texts.append(t)
+                if shape.has_table:
+                    for row in shape.table.rows:
+                        texts.append(" ".join(cell.text.strip() for cell in row.cells))
+            if texts:
+                documents.append(Document(
+                    page_content="\n".join(texts),
+                    metadata={"source": filepath, "slide": idx},
+                ))
+    except Exception as e:
+        logger.error(f"[Pptx加载]文件{filepath}加载失败,错误信息:{str(e)}")
     return documents

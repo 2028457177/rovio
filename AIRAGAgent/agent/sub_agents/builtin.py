@@ -297,7 +297,7 @@ def register_all_subagents():
 
     registry.register(SubAgent(
         name="knowledge",
-        description="知识库检索。从办公效率专业知识库检索软件操作指南、效率提升方法、文档处理技巧等专业资料。",
+        description="知识库检索。从《房屋建筑学》课程知识库检索课程知识点、问题图谱、各建筑设计规范（民用/住宅/防火/养老/医院等）等专业资料。",
         tools=[rag_summarize],
         system_prompt=KNOWLEDGE_PROMPT,
         category="domain",
@@ -313,7 +313,7 @@ def register_all_subagents():
 
     registry.register(SubAgent(
         name="search",
-        description="联网搜索。搜索互联网获取实时资讯、最新信息、外部知识。",
+        description="联网搜索（关键词搜索的首选）。通过 Tavily 搜索 API 一次调用返回整理好的结果与答案摘要，速度快、稳定。任何\"搜索/查一下/联网检索/最新规范\"类需求优先用它，不要用网页抓取代替搜索。",
         tools=[search],
         system_prompt=SEARCH_PROMPT,
         category="domain",
@@ -332,7 +332,7 @@ def register_all_subagents():
 
     registry.register(SubAgent(
         name="browser",
-        description="网页抓取。抓取网页内容、提取链接、智能提取正文、真实浏览器渲染抓取（支持 JS 动态渲染页面、可对抗反爬拦截）。适合从 URL 获取信息。",
+        description="网页抓取。抓取【已知 URL】的网页内容、提取链接、智能提取正文、真实浏览器渲染抓取（支持 JS 动态渲染页面、可对抗反爬拦截）。仅当需要读取某个具体页面的原文时使用；关键词搜索请交给 search 子代理，不要用本代理自建搜索。",
         tools=BROWSER_TOOLS,
         system_prompt=BROWSER_PROMPT,
         category="builtin",

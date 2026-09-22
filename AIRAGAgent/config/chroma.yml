@@ -5,7 +5,7 @@ k : 3
 hit_score_threshold : 0.5
 data_path : data
 md5_hex_store : md5.txt
-allow_knowledge_file_type : ["pdf", "txt","xls","xlsx"]
+allow_knowledge_file_type : ["pdf", "txt", "xls", "xlsx", "docx", "pptx"]
 
 # ---- 知识库嵌入提供者（kb_store 集合专用，全部为在线服务） ----
 # dashscope：远程 DashScope 嵌入，需在 rag.yml 配置有效的 embedding_api_key

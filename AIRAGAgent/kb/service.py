@@ -130,7 +130,9 @@ def allowed_file_types() -> tuple:
 
 def _load_file_documents(abs_path: str) -> list[Document]:
     """按扩展名加载文件为 Document 列表"""
-    from AIRAGAgent.utils.file_handler import pdf_loader, txt_loader, excel_loader
+    from AIRAGAgent.utils.file_handler import (
+        pdf_loader, txt_loader, excel_loader, docx_loader, pptx_loader,
+    )
     lower = abs_path.lower()
     if lower.endswith(".txt"):
         return txt_loader(abs_path)
@@ -138,6 +140,10 @@ def _load_file_documents(abs_path: str) -> list[Document]:
         return pdf_loader(abs_path)
     if lower.endswith((".xls", ".xlsx")):
         return excel_loader(abs_path)
+    if lower.endswith(".docx"):
+        return docx_loader(abs_path)
+    if lower.endswith(".pptx"):
+        return pptx_loader(abs_path)
     return []
 
 

@@ -262,8 +262,10 @@ export function useChat() {
         },
         (_delta, fullOutput) => {
           pending.isThinking = false
-          pending.streamingContent = fullOutput
-          assistantMsg.content = fullOutput
+          // 已收到 options_panel 后，后续 output（如内嵌图片 markdown）仍含 ```options 块，需剔除
+          const text = assistantMsg.options ? stripOptionsBlock(fullOutput) : fullOutput
+          pending.streamingContent = text
+          assistantMsg.content = text
         },
         () => {
           // thinking_end
@@ -289,7 +291,7 @@ export function useChat() {
           if (onError) try { onError(typeof err === 'string' ? err : (err?.message || String(err))) } catch {}
         },
         (finalContent) => {
-          assistantMsg.content = finalContent
+          assistantMsg.content = assistantMsg.options ? stripOptionsBlock(finalContent) : finalContent
           assistantMsg.streaming = false
           const finalConv = getOrCreateConversation(requestSessionId)
           updateTitleFromMessages(finalConv)
@@ -376,6 +378,14 @@ export function useChat() {
               preview_url: event.preview_url || '',
               download_url: event.download_url || ''
             })
+          } else if (t === 'options_panel') {
+            // 可交互选项面板：最终回复末尾 ```options 块提取而来。
+            // 流式期间块可能已混入正文，这里从已累积内容中剔除
+            if (Array.isArray(event.options) && event.options.length) {
+              assistantMsg.options = event.options
+              assistantMsg.content = stripOptionsBlock(assistantMsg.content)
+              pending.streamingContent = assistantMsg.content
+            }
           }
         },
         // 联网搜索开关：false 时后端 Planner 不选 search 子代理
@@ -801,7 +811,10 @@ export function useChat() {
           // 互动提问面板持久化：恢复 question（含 answered/selected 状态）
           question: m.question || null,
           // 文档预览卡片持久化：恢复 embeds（Word/Excel/PPT/PDF 内嵌预览）
-          embeds: Array.isArray(m.embeds) ? m.embeds : []
+          embeds: Array.isArray(m.embeds) ? m.embeds : [],
+          // 可交互选项面板持久化：恢复 options（含选中态）
+          options: Array.isArray(m.options) ? m.options : null,
+          optionsSelected: m.optionsSelected || ''
         }))
       }))
 
@@ -919,6 +932,14 @@ function formatTime() {
   const hours = String(now.getHours()).padStart(2, '0')
   const minutes = String(now.getMinutes()).padStart(2, '0')
   return `${hours}:${minutes}`
+}
+
+// 最终回复末尾的 ```options 选项块（后端会单独发 options_panel 事件），
+// 流式期间可能已混入正文，收到事件后从显示文本中剔除（块可能不处于末尾：后续还可能追加图片 markdown）
+const OPTIONS_BLOCK_RE = /\n*```options[^\S\n]*\n[\s\S]*?```\s*/g
+
+function stripOptionsBlock(text) {
+  return (text || '').replace(OPTIONS_BLOCK_RE, '\n').replace(/\n{3,}/g, '\n\n').trimEnd()
 }
 
 function sanitizeFilename(name) {

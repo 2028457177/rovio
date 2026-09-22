@@ -84,6 +84,28 @@ def _human_delay(min_s: float = 1.0, max_s: float = 3.0) -> None:
     """模拟人类访问节奏，随机停顿，避免高频请求触发限流。"""
     time.sleep(random.uniform(min_s, max_s))
 
+
+# 主机级快速失败：某主机连接不可达/连接超时后，TTL 内对该主机直接快速报错，
+# 避免对不可达主机（如国内网络环境下的 duckduckgo）每次请求白烧几十秒重试
+_DOWN_HOSTS: Dict[str, float] = {}
+_DOWN_TTL = 600  # 秒
+
+
+def _check_host_available(url: str) -> None:
+    """主机在熔断期内则抛出快速失败异常。"""
+    host = re.sub(r"^https?://", "", url).split("/")[0]
+    down_at = _DOWN_HOSTS.get(host, 0)
+    if time.time() - down_at < _DOWN_TTL:
+        raise requests.exceptions.ConnectionError(
+            f"主机 {host} 此前连接失败，{_DOWN_TTL//60} 分钟内快速失败（熔断中）"
+        )
+
+
+def _mark_host_down(url: str) -> None:
+    """把连接失败的主机记入熔断表。"""
+    host = re.sub(r"^https?://", "", url).split("/")[0]
+    _DOWN_HOSTS[host] = time.time()
+
 # 需要剔除的"非正文"标签
 _STRIP_TAGS = ["script", "style", "nav", "footer", "header", "aside", "form", "noscript"]
 
@@ -92,10 +114,16 @@ def _fetch_html(url: str, timeout: int = 15, referer: str = "") -> str:
     """获取 URL 的 HTML 文本（带随机延迟 + Session 保持 Cookie + 重试）。
 
     referer 可选：部分站点要求目标页带 Referer 才放行。
+    主机连接失败会记入熔断表，TTL 内再次访问同一主机直接快速失败。
     """
+    _check_host_available(url)
     _human_delay()  # 模拟人类访问节奏
     headers = {"Referer": referer} if referer else {}
-    resp = _session.get(url, headers=headers, timeout=timeout)
+    try:
+        resp = _session.get(url, headers=headers, timeout=timeout)
+    except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout):
+        _mark_host_down(url)
+        raise
     resp.raise_for_status()
     # 优先用响应头声明的编码；requests 在无 charset 时默认 ISO-8859-1，需 fallback
     if resp.encoding is None or resp.encoding.lower() == "iso-8859-1":
@@ -274,11 +302,28 @@ def _launch_stealth_browser(headless: bool = True):
     context.add_init_script(_STEALTH_JS)
     return p, browser, context
 
+def _chromium_exe_under(base: Path) -> bool:
+    """判断指定目录下是否存在完整的 chromium 可执行文件（兼容新旧目录命名）。"""
+    if not base.exists():
+        return False
+    candidates = (
+        ("chrome-win64/chrome.exe", "chrome.exe") if sys.platform == "win32"
+        else ("chrome-linux/chrome", "chrome-linux64/chrome")
+    )
+    for cd in base.glob("chromium-*"):
+        for rel in candidates:
+            if (cd / rel).exists():
+                return True
+    return False
+
+
 def _ensure_chromium() -> str:
     """检测 chromium 浏览器是否已安装，未装时返回提示，已装返回空字符串。
 
-    检测策略：优先查 PLAYWRIGHT_BROWSERS_PATH 下的 chromium-* 目录，
-    找不到则尝试启动浏览器（更慢但更可靠）。
+    检测策略：优先查 PLAYWRIGHT_BROWSERS_PATH 下的 chromium-* 目录；
+    找不到再查默认缓存目录（~/.cache/ms-playwright）——找到则把
+    PLAYWRIGHT_BROWSERS_PATH 改指过去，保证后续 launch 也能找到；
+    都没有才尝试启动浏览器确认（更慢但更可靠）。
     """
     if not _HAS_PLAYWRIGHT:
         return (
@@ -286,34 +331,19 @@ def _ensure_chromium() -> str:
             "然后调用 run_shell_command('playwright install chromium') 下载 chromium 浏览器（约 150MB，已配国内镜像）。"
         )
 
-    # 1. 优先查 PLAYWRIGHT_BROWSERS_PATH 下的 chromium-* 目录
+    # 1. PLAYWRIGHT_BROWSERS_PATH 指向的目录
     browsers_path = os.environ.get("PLAYWRIGHT_BROWSERS_PATH", "")
-    if browsers_path:
-        bp = Path(browsers_path)
-        if bp.exists():
-            # 找 chromium-XXX 目录
-            chrom_dirs = list(bp.glob("chromium-*"))
-            if chrom_dirs:
-                # 找到 chromium 目录，再确认 chrome.exe / chrome 存在
-                for cd in chrom_dirs:
-                    if sys.platform == "win32":
-                        exe = cd / "chrome-win64" / "chrome.exe"
-                    else:
-                        exe = cd / "chrome-linux" / "chrome"
-                    if exe.exists():
-                        return ""  # 已就位
-                # 有目录但没 exe，说明下载不完整
-                return (
-                    "[chromium 下载不完整] 找到 chromium 目录但缺少可执行文件。"
-                    "请重新调用 run_shell_command('playwright install chromium') 下载。"
-                )
-        # PLAYWRIGHT_BROWSERS_PATH 目录不存在或无 chromium-XXX
-        return (
-            "[chromium 未下载] playwright 已装但 chromium 浏览器未下载。"
-            "请调用 run_shell_command('playwright install chromium') 下载（约 150MB，已配国内镜像加速）。"
-        )
+    if browsers_path and _chromium_exe_under(Path(browsers_path)):
+        return ""  # 已就位
 
-    # 2. 没设 PLAYWRIGHT_BROWSERS_PATH，回退到启动检测
+    # 2. 默认缓存目录（playwright install 的默认位置，服务器上常见）
+    default_cache = Path.home() / ".cache" / "ms-playwright"
+    if not sys.platform == "win32" and _chromium_exe_under(default_cache):
+        # 把环境变量改指默认目录，否则后续 launch 仍会去错误位置找
+        os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(default_cache)
+        return ""
+
+    # 3. 启动检测兜底
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:

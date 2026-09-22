@@ -73,6 +73,16 @@
             @answer="(text) => emit('ask-answer', { message, answer: text })"
           />
 
+          <!-- 可交互选项面板（最终回复末尾 ```options 块）：点击后作为用户消息发送 -->
+          <OptionsPanel
+            v-if="message.role === 'assistant' && message.options && message.options.length"
+            :options="message.options"
+            :message-id="message.id"
+            :streaming="streaming"
+            :selected="message.optionsSelected || ''"
+            @select="(opt) => { message.optionsSelected = opt.value }"
+          />
+
           <!-- 文档预览条目（Word/Excel/PPT/PDF）：点击展开内联预览，可放大/下载 -->
           <DocEmbed
             v-for="(e, ei) in (message.embeds || [])"
@@ -199,6 +209,7 @@ import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { renderMarkdown } from '@/utils/markdown.js'
 import PlanPanel from '@/components/PlanPanel.vue'
 import AskPanel from '@/components/AskPanel.vue'
+import OptionsPanel from '@/components/OptionsPanel.vue'
 import DocEmbed from '@/components/DocEmbed.vue'
 
 const props = defineProps({
