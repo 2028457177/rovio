@@ -31,6 +31,7 @@ from AIRAGAgent.agent.tools.codexec_tools import CODEXEC_TOOLS
 from AIRAGAgent.agent.tools.browser_tools import BROWSER_TOOLS
 from AIRAGAgent.agent.tools.artifact_tools import ARTIFACT_TOOLS, create_artifact
 from AIRAGAgent.agent.tools.wordgen_tools import WORDGEN_TOOLS
+from AIRAGAgent.agent.tools.imagegen_tools import IMAGEGEN_TOOLS
 
 
 # ═══════════════════════════════════════════════
@@ -236,6 +237,25 @@ ARTIFACT_PROMPT = """你负责管理 Artifact（一等公民产物）。
 产物会持久化，跨会话可引用，前端有专门面板展示。生成的报告、脚本、整理的数据都应该注册为 artifact。"""
 
 
+IMAGEGEN_PROMPT = """你现在帮用户画图（AI 文生图，底层是即梦 doubao-seedream 模型）。
+
+- generate_image(prompt, size, filename)：按文字描述生成一张图片，自动保存并直接显示在对话里。
+
+工作流：
+1. 把用户需求转成一段具体的画面描述（英文效果通常更好，中文也可以）：
+   主体 + 风格 + 色调 + 构图 + 细节，一句话到三句话。
+   例：用户说"给我画只猫" → prompt 用 "水彩风格的橙色小猫，坐在阳光明媚的草地上，暖色调，居中构图，细节丰富"。
+2. 调 generate_image(prompt)，需要横图/竖图就传 size（如 1280x720 / 720x1280），默认 1024x1024。
+3. 返回 "[生图成功]" 就完成了，简短告诉用户画了什么即可，不要重复描述图片内容。
+4. 用户要画多张 → 每张调一次 generate_image（换不同的 prompt/seed 思路）。
+
+注意：
+1. 用户没说清楚画什么时，先按合理理解直接画，别反复追问；实在无法理解再问。
+2. 数据图表（折线图、柱状图、饼图、流程图）不是你的活，那是 codexec 用 matplotlib 画的。
+3. 生图失败（超时/限流）时如实告诉用户失败原因，建议稍后重试，不要假装画好了。
+4. 不要调用其他工具，你就干画图这一件事。"""
+
+
 # ═══════════════════════════════════════════════
 # 注册函数
 # ═══════════════════════════════════════════════
@@ -331,6 +351,16 @@ def register_all_subagents():
         max_tool_calls=12,
     ))
 
+    registry.register(SubAgent(
+        name="imagegen",
+        description="AI 文生图。用即梦（doubao-seedream）模型按文字描述生成图片：插画、海报、logo、头像、表情包、概念图、文章配图等创作类图片，生成后直接显示在对话里。数据图表（折线图/柱状图/饼图）请改用 codexec。",
+        tools=IMAGEGEN_TOOLS,
+        system_prompt=IMAGEGEN_PROMPT,
+        category="builtin",
+        # 画一张图调一次工具；多张图 4-5 次，出错重试 1-2 次，8 次足够
+        max_tool_calls=8,
+    ))
+
     # ── 产物 SubAgent ──
     # 注：记忆（memory）已改为向量检索 + 自动抽取，不再作为 SubAgent 暴露
 
@@ -341,6 +371,14 @@ def register_all_subagents():
         system_prompt=ARTIFACT_PROMPT,
         category="artifact",
     ))
+
+    # ── 互动提问能力：所有 SubAgent 都可调 ask_student（信息不足时向学生发选项面板）──
+    # 是否/何时提问由各 SubAgent 的提示词控制（工具只在被调用时生效）
+    from AIRAGAgent.agent.tools.ask_tools import ask_student
+    for agent in registry.all().values():
+        tool_names = [getattr(t, "name", "") for t in agent.tools]
+        if "ask_student" not in tool_names:
+            agent.tools.append(ask_student)
 
     logger.info(f"[SubAgents] 共注册 {len(registry.all())} 个 SubAgent")
     return registry

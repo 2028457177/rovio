@@ -187,11 +187,18 @@ function splitTableRow(line) {
 }
 
 /**
- * 行内格式：加粗、斜体、删除线、行内代码、链接、行内公式
+ * 行内格式：图片、加粗、斜体、删除线、行内代码、链接、行内公式
  */
 function inlineFormat(text) {
   if (!text) return ''
   let s = text
+  // 图片 ![alt](url) —— 必须放在链接规则之前，否则 [alt](url) 会先被当链接渲染
+  // 支持 http(s) 绝对地址和 / 开头的站内相对地址（如 /api/file/preview?path=...）
+  s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, (_, alt, src) => {
+    const safeAlt = alt.replace(/"/g, '&quot;')
+    const safeSrc = src.replace(/"/g, '%22')
+    return `<img src="${safeSrc}" alt="${safeAlt}" class="md-img" loading="lazy" />`
+  })
   // 行内公式 $...$
   s = s.replace(/\$([^\$\n]+?)\$/g, (_, expr) => `<span class="math-inline">${renderMath(expr)}</span>`)
   // 加粗 **xxx**

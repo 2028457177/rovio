@@ -101,10 +101,11 @@ export async function sendChatMessage(message, sessionId, latitude, longitude, o
               onMessageIds && onMessageIds(parsed)
             }
 
-            // DeepAgent 事件透传：plan_created / step_started / step_output / plan_completed 等
+            // DeepAgent 事件透传：plan_created / step_* / ask_user / file_embed 等
             // 调用方未传 onEvent 时静默忽略，保证旧调用方零改动兼容
             if (onEvent && parsed.type && (
-              parsed.type.startsWith('plan_') || parsed.type.startsWith('step_')
+              parsed.type.startsWith('plan_') || parsed.type.startsWith('step_') ||
+              parsed.type === 'ask_user' || parsed.type === 'file_embed'
             )) {
               onEvent(parsed)
             }
@@ -137,6 +138,23 @@ export async function sendChatMessage(message, sessionId, latitude, longitude, o
 
 export function generateSessionId() {
   return 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9)
+}
+
+/**
+ * 回答互动提问（ask_student 发出的选项面板）。
+ * 流式对话仍在进行时，后端会在同一轮内拿到答案继续执行。
+ */
+export async function submitAskAnswer(questionId, answer) {
+  const response = await fetch(`${API_BASE}/chat/answer`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ question_id: questionId, answer })
+  })
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err.error || `提交回答失败: ${response.status}`)
+  }
+  return response.json()
 }
 
 export async function loadConversationsApi() {

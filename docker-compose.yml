@@ -20,6 +20,9 @@ x-common-env: &common-env
   JWT_SECRET_KEY: ${JWT_SECRET_KEY:-lc-course-secret-key-2025}
   DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
   DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+  IMAGEGEN_API_KEY: ${IMAGEGEN_API_KEY:-}
+  IMAGEGEN_API_BASE: ${IMAGEGEN_API_BASE:-https://ark.cn-beijing.volces.com/api/v3}
+  IMAGEGEN_MODEL: ${IMAGEGEN_MODEL:-doubao-seedream-5-0-pro-260628}
   DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
   TAVILY_API_KEY: ${TAVILY_API_KEY:-}
   GAODE_API_KEY: ${GAODE_API_KEY:-}

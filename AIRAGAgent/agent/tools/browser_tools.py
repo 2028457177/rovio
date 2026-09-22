@@ -411,6 +411,9 @@ def screenshot_url(url: str, full_page: bool = False, width: int = 1280, height:
             p.stop()
     size_kb = save_path.stat().st_size // 1024
     logger.info(f"[browser] screenshot_url 成功: {save_path} ({size_kb} KB)")
+    # 登记进计划图片清单 → 计划收尾时内嵌进最终回复（前端直接看到截图）
+    from AIRAGAgent.agent.tools.artifact_tools import register_plan_image
+    register_plan_image(save_path)
     return f"[截图成功] 已保存到 {save_path}（{size_kb} KB，{width}x{height}）"
 
 

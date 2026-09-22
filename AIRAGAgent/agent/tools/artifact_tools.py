@@ -24,6 +24,24 @@ current_plan_id_var: contextvars.ContextVar[str] = contextvars.ContextVar('curre
 current_session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar('current_session_id', default="")
 current_step_idx_var: contextvars.ContextVar[Optional[int]] = contextvars.ContextVar('current_step_idx', default=None)
 
+# 本次计划产出的图片清单（绝对路径）。Orchestrator 在计划开始前 set([])，
+# generate_image / screenshot_url 等工具 append，收尾时统一内嵌进最终回复。
+# 注意：只 append 共享的 list、不重新 set，保证并行子线程的 context 副本看到同一列表。
+plan_images_var: contextvars.ContextVar[Optional[list]] = contextvars.ContextVar('plan_images', default=None)
+
+
+def register_plan_image(abs_path) -> None:
+    """把本次计划产出的一张图片登记进清单（计划收尾时内嵌到最终回复）。
+
+    abs_path 为文件绝对路径；无计划上下文时静默忽略。
+    """
+    try:
+        imgs = plan_images_var.get()
+        if imgs is not None and abs_path:
+            imgs.append(str(abs_path))
+    except Exception:
+        pass
+
 ARTIFACT_DIR = UPLOAD_DIR / "artifacts"
 ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
 

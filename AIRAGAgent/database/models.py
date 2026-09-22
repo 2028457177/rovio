@@ -24,7 +24,7 @@ def save_conversation_full(user_id: int, conversation_id: str, title: str, messa
             """,
             (conversation_id, user_id, title)
         )
-        # 补写每条 assistant 消息的 extra_json（plan/steps）
+        # 补写每条 assistant 消息的 extra_json（plan/steps/互动提问面板/文档预览卡片）
         # 用 dbId（后端真实 id）定位；前端没 dbId 的消息跳过
         for m in (messages or []):
             db_id = m.get("dbId")
@@ -32,7 +32,9 @@ def save_conversation_full(user_id: int, conversation_id: str, title: str, messa
                 continue
             plan = m.get("plan")
             steps = m.get("steps")
-            if not plan and not steps:
+            question = m.get("question")
+            embeds = m.get("embeds")
+            if not plan and not steps and not question and not embeds:
                 continue
             extra = {}
             if plan:
@@ -40,6 +42,12 @@ def save_conversation_full(user_id: int, conversation_id: str, title: str, messa
             if steps:
                 # steps 是 {idx: {...}} 的对象，转存
                 extra["steps"] = steps
+            if question:
+                # 互动提问面板（ask_student）：含 answered/selected 状态，重载后继续展示
+                extra["question"] = question
+            if embeds:
+                # 文档预览卡片（Word/Excel/PPT/PDF 内嵌）
+                extra["embeds"] = embeds
             try:
                 cursor.execute(
                     "UPDATE messages SET extra_json = %s WHERE id = %s AND conversation_id = %s",
@@ -102,6 +110,10 @@ def get_conversations(user_id: int) -> list:
                                 entry["plan"] = extra["plan"]
                             if extra.get("steps"):
                                 entry["steps"] = extra["steps"]
+                            if extra.get("question"):
+                                entry["question"] = extra["question"]
+                            if extra.get("embeds"):
+                                entry["embeds"] = extra["embeds"]
                     except Exception:
                         pass
                 conv["messages"].append(entry)
@@ -1076,6 +1088,10 @@ def get_user_conversations_admin(target_user_id: int) -> list:
                                 entry["plan"] = extra["plan"]
                             if extra.get("steps"):
                                 entry["steps"] = extra["steps"]
+                            if extra.get("question"):
+                                entry["question"] = extra["question"]
+                            if extra.get("embeds"):
+                                entry["embeds"] = extra["embeds"]
                     except Exception:
                         pass
                 conv["messages"].append(entry)

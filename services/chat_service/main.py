@@ -276,6 +276,26 @@ async def branch_conversation(conversation_id: str, req: BranchRequest,
 
 # ==================== 消息反馈 ====================
 
+class AskAnswerRequest(BaseModel):
+    """学生回答互动提问的请求体。"""
+    question_id: str
+    answer: str
+
+
+@app.post("/api/chat/answer")
+async def submit_ask_answer(req: AskAnswerRequest, user: dict = Depends(get_current_user)):
+    """学生回答互动提问（ask_student / Reflector ask_user 发出的选项面板）。
+
+    答案写入 ask_tools 的答案总线，正在等待的流式对话（SSE 未断开）会在同一轮内
+    拿到答案继续执行；若对应流已结束/超时，这里只返回 ok，前端会走"作为新消息发送"的回退。
+    """
+    from AIRAGAgent.agent.tools.ask_tools import submit_answer
+    ok, msg = submit_answer(req.question_id, user["id"], req.answer)
+    if not ok:
+        return JSONResponse(status_code=404, content={"error": msg})
+    return JSONResponse(content={"status": "ok"})
+
+
 @app.post("/api/feedback")
 async def save_feedback(req: FeedbackRequest, user: dict = Depends(get_current_user)):
     """保存用户对某条消息的点赞/点踩反馈。"""

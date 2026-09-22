@@ -216,7 +216,7 @@ async def download_workspace_file(path: str = Query(..., description="相对当�
 
 @app.get("/api/file/preview")
 async def preview_workspace_file(path: str = Query(..., description="相对当前用户工作区的文件路径，inline 预览"), user: dict = Depends(get_current_user)):
-    """inline 方式返回当前登录用户工作区文件，让浏览器直接预览（图片/文本）。"""
+    """inline 方式返回当前登录用户工作区文件，让浏览器直接预览（图片/文本/PDF）。"""
     target = _resolve_workspace_path(path, user["id"])
     if target is None:
         return JSONResponse(status_code=404, content={"error": "文件不存在或路径非法"})
@@ -226,6 +226,8 @@ async def preview_workspace_file(path: str = Query(..., description="相对当�
     ext = target.suffix.lower()
     if ext in _IMAGE_EXTS:
         media_type = f"image/{ext[1:]}" if ext != ".jpg" else "image/jpeg"
+    elif ext == ".pdf":
+        media_type = "application/pdf"
     elif ext in _TEXT_EXTS:
         media_type = "text/plain; charset=utf-8"
     else:
@@ -237,6 +239,143 @@ async def preview_workspace_file(path: str = Query(..., description="相对当�
         media_type=media_type,
         content_disposition_type="inline",
     )
+
+
+# ─────────────────────────────────────────────────────────
+# 文档在线预览：docx / xlsx / pptx → 结构化 JSON，聊天内嵌 DocEmbed 卡片渲染
+# ─────────────────────────────────────────────────────────
+
+# 可转换预览的文档扩展名
+_DOC_PREVIEW_EXTS = {".docx", ".xlsx", ".xls", ".pptx"}
+# 防滥用上限
+_XLSX_MAX_SHEETS = 20
+_XLSX_MAX_ROWS = 300
+_XLSX_MAX_COLS = 40
+_PPTX_MAX_SLIDES = 40
+_PPTX_MAX_IMAGES = 12
+_PPTX_MAX_IMG_BYTES = 400 * 1024
+_DOC_HTML_MAX = 2 * 1024 * 1024
+
+
+def _sanitize_html(html: str) -> str:
+    """清理转换出的 HTML：去 script/style/事件属性/js 协议（服务端自产内容，双保险）。"""
+    import re
+    html = re.sub(r"<\s*(script|style|iframe|object|embed|link)[^>]*>.*?<\s*/\s*\1\s*>",
+                  "", html, flags=re.I | re.S)
+    html = re.sub(r"<\s*(script|style|iframe|object|embed|link)[^>]*/?\s*>", "", html, flags=re.I)
+    html = re.sub(r'\son\w+\s*=\s*"[^"]*"', "", html, flags=re.I)
+    html = re.sub(r"\son\w+\s*=\s*'[^']*'", "", html, flags=re.I)
+    html = re.sub(r'(href|src)\s*=\s*"(?!https?:|data:image/|/api/|#)[^"]*"',
+                  r'\1="#"', html, flags=re.I)
+    return html
+
+
+def _docx_payload(path: Path) -> dict:
+    """docx → HTML（mammoth：标题/段落/列表/表格/图片 base64 内联）。"""
+    import mammoth
+    with open(path, "rb") as f:
+        result = mammoth.convert_to_html(f)
+    html = _sanitize_html(result.value or "")
+    if len(html) > _DOC_HTML_MAX:
+        html = html[:_DOC_HTML_MAX] + "<p>…（内容过长，已截断，请下载查看全文）</p>"
+    return {"kind": "docx", "html": html}
+
+
+def _xlsx_payload(path: Path) -> dict:
+    """xlsx → 各 sheet 的二维数据（前端渲染表格，单元格按原始值返回避免注入）。"""
+    from openpyxl import load_workbook
+    wb = load_workbook(path, data_only=True, read_only=True)
+    sheets = []
+    for ws in wb.worksheets[:_XLSX_MAX_SHEETS]:
+        rows = []
+        truncated = False
+        for i, row in enumerate(ws.iter_rows(max_row=_XLSX_MAX_ROWS, max_col=_XLSX_MAX_COLS, values_only=True)):
+            rows.append(["" if v is None else str(v) for v in row])
+        if ws.max_row and ws.max_row > _XLSX_MAX_ROWS:
+            truncated = True
+        sheets.append({"name": ws.title, "rows": rows, "truncated": truncated})
+    wb.close()
+    if not sheets:
+        raise ValueError("工作簿没有任何工作表")
+    return {"kind": "xlsx", "sheets": sheets}
+
+
+def _pptx_payload(path: Path) -> dict:
+    """pptx → 逐页结构：标题 + 文本块 + 表格（二维数组）+ 图片（base64）。"""
+    from pptx import Presentation
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+    import base64
+
+    prs = Presentation(str(path))
+    slides = []
+    img_budget = _PPTX_MAX_IMAGES
+    all_slides = list(prs.slides)  # python-pptx 1.x 的 Slides 不支持切片
+    for si, slide in enumerate(all_slides[:_PPTX_MAX_SLIDES]):
+        title = ""
+        blocks = []
+        # 标题占位符单独提取
+        try:
+            if slide.shapes.title is not None and slide.shapes.title.text.strip():
+                title = slide.shapes.title.text.strip()
+        except Exception:
+            pass
+        for shape in slide.shapes:
+            try:
+                if shape.has_text_frame:
+                    text = "\n".join(p.text for p in shape.text_frame.paragraphs if p.text.strip())
+                    if text.strip() and text.strip() != title:
+                        blocks.append({"type": "text", "text": text.strip()[:2000]})
+                if getattr(shape, "has_table", False) and shape.has_table:
+                    tbl = shape.table
+                    rows = [[cell.text for cell in r.cells] for r in tbl.rows]
+                    blocks.append({"type": "table", "rows": rows[:_XLSX_MAX_ROWS]})
+                if shape.shape_type == MSO_SHAPE_TYPE.PICTURE and img_budget > 0:
+                    img = shape.image
+                    if len(img.blob) <= _PPTX_MAX_IMG_BYTES:
+                        b64 = base64.b64encode(img.blob).decode()
+                        blocks.append({
+                            "type": "image",
+                            "src": f"data:{img.content_type};base64,{b64}",
+                        })
+                        img_budget -= 1
+            except Exception:
+                continue
+        slides.append({"index": si + 1, "title": title, "blocks": blocks})
+    return {"kind": "pptx", "slides": slides, "total": len(prs.slides._sldIdLst)}
+
+
+@app.get("/api/file/doc_preview")
+async def doc_preview(path: str = Query(..., description="相对当前用户工作区的文档路径"), user: dict = Depends(get_current_user)):
+    """文档结构化预览：docx/xlsx/pptx → JSON（聊天内嵌 DocEmbed 卡片用）。
+
+    返回 {"kind": "docx", "html": ...} / {"kind": "xlsx", "sheets": [...]} / {"kind": "pptx", "slides": [...]}
+    """
+    target = _resolve_workspace_path(path, user["id"])
+    if target is None:
+        return JSONResponse(status_code=404, content={"error": "文件不存在或路径非法"})
+    if not target.is_file():
+        return JSONResponse(status_code=400, content={"error": "目标路径不是文件"})
+
+    ext = target.suffix.lower()
+    if ext not in _DOC_PREVIEW_EXTS:
+        return JSONResponse(status_code=400, content={"error": f"不支持预览的类型：{ext}"})
+    try:
+        if ext == ".docx":
+            payload = _docx_payload(target)
+        elif ext in (".xlsx", ".xls"):
+            if ext == ".xls":
+                return JSONResponse(status_code=400, content={"error": "暂不支持 .xls，请转为 .xlsx"})
+            payload = _xlsx_payload(target)
+        else:
+            payload = _pptx_payload(target)
+    except ValueError as e:
+        return JSONResponse(status_code=422, content={"error": str(e)})
+    except Exception as e:
+        logger.error(f"[file_service] 文档预览转换失败 {target.name}: {type(e).__name__}: {e}")
+        return JSONResponse(status_code=500, content={"error": f"转换失败：{type(e).__name__}"})
+
+    payload["title"] = target.name
+    return JSONResponse(content=payload)
 
 
 if __name__ == "__main__":

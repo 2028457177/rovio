@@ -8,7 +8,8 @@ import {
   saveMessageFeedbackApi,
   updateConversationMetaApi,
   searchConversationsApi,
-  branchConversationApi
+  branchConversationApi,
+  submitAskAnswer
 } from '@/api/chat.js'
 
 // ==================== 模块级单例状态 ====================
@@ -354,6 +355,27 @@ export function useChat() {
             if (!assistantMsg.steps[idx]) assistantMsg.steps[idx] = {}
             assistantMsg.steps[idx].status = 'failed'
             assistantMsg.steps[idx].error = event.error || ''
+          } else if (t === 'ask_user') {
+            // 互动提问面板：挂在 assistant 消息上渲染，等待学生选择
+            assistantMsg.question = {
+              question_id: event.question_id || '',
+              question: event.question || '',
+              options: Array.isArray(event.options) ? event.options : [],
+              header: event.header || '补充信息',
+              multi_select: !!event.multi_select,
+              answered: false,
+              selected: ''
+            }
+          } else if (t === 'file_embed') {
+            // 文档预览卡片：Word/Excel/PPT/PDF 内嵌在消息里，AI 工作区只做存储
+            if (!Array.isArray(assistantMsg.embeds)) assistantMsg.embeds = []
+            assistantMsg.embeds.push({
+              kind: event.kind || 'docx',
+              title: event.title || '文档',
+              path: event.path || '',
+              preview_url: event.preview_url || '',
+              download_url: event.download_url || ''
+            })
           }
         },
         // 联网搜索开关：false 时后端 Planner 不选 search 子代理
@@ -575,6 +597,39 @@ export function useChat() {
     saveConversationApi(conv).catch(() => {})
   }
 
+  /**
+   * 回答互动提问（ask_student 选项面板）。
+   * - 流式对话仍在进行：把答案提交给后端（/api/chat/answer），同一轮内继续执行
+   * - 流已结束（历史会话/超时）：作为新消息发送，把问题上下文带上让模型能接上
+   */
+  async function answerQuestion(message, answer) {
+    const q = message.question
+    if (!q || q.answered) return
+    q.answered = true
+    q.selected = answer
+
+    const conv = conversations.value.find(c => c.messages.some(m => m.id === message.id))
+    const convId = conv ? conv.id : currentConversationId.value
+    const streaming = convId ? pendingStreams.value.has(convId) : false
+
+    if (streaming && q.question_id) {
+      try {
+        await submitAskAnswer(q.question_id, answer)
+        return
+      } catch {
+        // 提交失败（问题过期等）→ 回退为普通消息
+      }
+    }
+    // 回退：作为普通用户消息发送，附上问题原文保证模型有上下文
+    const fallbackText = `（关于你刚才的问题「${q.question}」，我的回答是：${answer}）`
+    if (convId === currentConversationId.value) {
+      sendMessage(fallbackText)
+    } else if (conv) {
+      switchToConversation(conv.id)
+      sendMessage(fallbackText)
+    }
+  }
+
   function renameConversation(conversationId, newTitle) {
     const conv = conversations.value.find(c => c.id === conversationId)
     if (!conv) return
@@ -742,7 +797,11 @@ export function useChat() {
           feedback: m.feedback || '',
           // DeepAgent plan 持久化：从后端加载时恢复 plan/steps 字段
           plan: m.plan || null,
-          steps: m.steps || {}
+          steps: m.steps || {},
+          // 互动提问面板持久化：恢复 question（含 answered/selected 状态）
+          question: m.question || null,
+          // 文档预览卡片持久化：恢复 embeds（Word/Excel/PPT/PDF 内嵌预览）
+          embeds: Array.isArray(m.embeds) ? m.embeds : []
         }))
       }))
 
@@ -814,6 +873,7 @@ export function useChat() {
     editAndResend,
     branchFromMessage,
     setMessageFeedback,
+    answerQuestion,
     newChat,
     loadConversations,
     switchToConversation,

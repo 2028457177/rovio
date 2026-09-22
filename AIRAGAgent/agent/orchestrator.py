@@ -30,9 +30,12 @@ from __future__ import annotations
 
 import json
 import shutil
+import time
+import uuid
 import contextvars
 from pathlib import Path
 from typing import List, Dict, Optional, Generator, Any
+from urllib.parse import quote as urlquote
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from pydantic import BaseModel, Field
@@ -49,8 +52,18 @@ from AIRAGAgent.agent.sub_agent import SubAgentRegistry, SubAgentRunner, run_ste
 from AIRAGAgent.agent.tools.agent_tools import user_id_var, search_enabled_var
 from AIRAGAgent.agent.tools.artifact_tools import (
     current_plan_id_var, current_session_id_var, current_step_idx_var,
+    plan_images_var,
 )
 from AIRAGAgent.utils.paths import get_daily_workspace
+
+# 内嵌展示的图片扩展名（计划收尾时扫描收集）
+_IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+# 单次回复最多内嵌图片数（防止刷屏）
+_MAX_INLINE_IMAGES = 6
+# 内嵌预览卡片的文档扩展名（前端 DocEmbed 组件渲染）
+_DOC_EMBED_EXTS = {".docx", ".xlsx", ".pptx", ".pdf"}
+# 单次回复最多内嵌文档卡片数
+_MAX_INLINE_DOCS = 4
 
 
 # ═══════════════════════════════════════════════
@@ -86,6 +99,11 @@ class Reflection(BaseModel):
     feedback: str = Field(
         default="",
         description="retry/revise 时说明哪里不对、建议怎么改；ask_user 时写要问用户什么；accept 时留空"
+    )
+    options: List[Dict[str, str]] = Field(
+        default_factory=list,
+        description="ask_user 时的候选选项，格式 [{\"label\": \"选项\", \"description\": \"一句话说明\"}]，2-4 个；"
+                    "能给具体选项时必须给；其他 action 留空数组"
     )
 
 
@@ -125,6 +143,8 @@ PLANNER_SYSTEM_PROMPT = """你是 Rovio 的任务规划器。你的活儿是：�
 - 用户问"什么是 RAG" → 1 步，subagent 留空（直接回答）或 knowledge（要查知识库）
 - 用户说"给 XX 网页/网址截图" → 1 步：browser（用 screenshot_url 工具，**不要选 codexec**）
 - 用户说"生成/做一个 Word 文档/报告/调研报告（.docx）" → 末步用 wordgen（**生成 Word 一律选 wordgen，不要选 codexec**）；若需先联网查资料，则拆成 search/browser → wordgen 两步
+- 用户说"画一张图 / 生成图片 / AI 绘画 / 画个 logo / 海报 / 插画 / 头像" → 1 步：imagegen（**创作类图片一律选 imagegen**）；数据图表（折线/柱状/饼图）才走 codexec
+- 用户要"平面图 / 户型图 / 建筑图纸 / 示意图"这类成图 → imagegen（**不要派 codexec 写 matplotlib 画**，复杂几何推理既慢又容易失败）
 - 用户说"截个屏"（指本机屏幕） → 1 步：desktop（用 screenshot 工具）
 - 用户说"给本地某文件截图" → 1 步：desktop（用 screenshot 工具）
 """
@@ -146,6 +166,8 @@ REFLECTOR_SYSTEM_PROMPT = """你是 Rovio 的执行审查员。每一步执行�
 - 大多数情况应该是 accept，只有真的有问题才 retry/revise
 - retry 最多 1 次，第 2 次不管怎样都 accept
 - 不要因为"结果可以更好"就 retry，只关心"是否满足需求"
+- 你评估的只是**本步骤**是否完成它自己的任务；后续步骤还没执行、或本步骤没覆盖计划里的其他目标，
+  都不算本步骤的问题，不要因此 revise（整计划会按步骤推进，各步各司其职）
 """
 
 FINALIZER_SYSTEM_PROMPT = """你是 Rovio。前面的步骤已经执行完毕，现在你需要基于执行结果给用户一个完整、自然的回答。
@@ -156,6 +178,8 @@ FINALIZER_SYSTEM_PROMPT = """你是 Rovio。前面的步骤已经执行完毕，
 3. 不要重复"根据步骤1...步骤2..."这种元叙述，直接给答案
 4. 如果有失败/未完成的步骤，老实告诉用户哪里没搞定
 5. 简洁为主，能列点就列点，不要写大段文字
+6. 步骤中生成了图片或文档（工具返回过"已生成/已保存/截图成功"等路径）时，告诉用户"已附在回复下方，可直接预览"即可，
+   不要让用户去「AI 工作区」翻找文件，也不要自己编造链接（系统会自动把图片和 Word/Excel/PPT 预览卡片附在回复末尾）
 """
 
 # ── 结构化输出指令（纯文本 JSON，兼容 DeepSeek thinking 模式，不用 function calling）──
@@ -170,7 +194,8 @@ REFLECTOR_JSON_INSTRUCTION = """
 
 ## 输出格式
 严格输出如下 JSON（只输出 JSON 本身，不要 markdown 代码块、不要解释）：
-{"action": "accept或retry或revise或ask_user", "feedback": "反馈说明"}
+{"action": "accept或retry或revise或ask_user", "feedback": "反馈说明", "options": []}
+ask_user 且能给出具体候选时，options 填 [{"label": "选项文案", "description": "一句话说明"}]（2-4 个），否则留空数组。
 """
 
 
@@ -591,6 +616,23 @@ class Orchestrator:
                     if text:
                         output_parts.append(text)
                         yield {"type": out_type, "step_idx": step.step_idx, "content": text}
+
+                # thinking 模型烧爆预算兜底：推理吃光 max_tokens 时正文为空（finish=length）。
+                # 关闭 thinking 重试一次——开放性长文生成（方案/报告/作文）不再依赖推理预算
+                if not output_parts:
+                    yield {"type": think_type, "step_idx": step.step_idx,
+                           "content": "\n推理占满了输出预算，切换为直答模式重试…\n"}
+                    try:
+                        direct_llm = llm.bind(extra_body={"thinking": {"type": "disabled"}})
+                    except Exception:
+                        direct_llm = llm
+                    for chunk in direct_llm.stream(
+                        [SystemMessage(content=identity)] + history_msgs + [HumanMessage(content=user_content)]
+                    ):
+                        text = getattr(chunk, "content", "") or ""
+                        if text:
+                            output_parts.append(text)
+                            yield {"type": out_type, "step_idx": step.step_idx, "content": text}
             else:
                 # 委派 SubAgent
                 sub = self.registry.get(subagent_name)
@@ -602,19 +644,75 @@ class Orchestrator:
                     current_session_id_var.reset(token_session)
                     current_step_idx_var.reset(token_step)
                     return ""
-                runner = SubAgentRunner(sub, llm=llm)
-                for chunk in runner.execute_stream(task_desc, chat_history):
-                    if not isinstance(chunk, dict):
-                        continue
-                    ctype = chunk.get("type")
-                    content = chunk.get("content", "")
-                    if ctype == "output":
-                        output_parts.append(content)
-                        yield {"type": "step_output", "step_idx": step.step_idx, "content": content}
-                    elif ctype in ("thinking", "thinking_end"):
-                        yield {"type": "step_thinking", "step_idx": step.step_idx, "content": content}
+                # ask_student 中断循环：学生补充信息后重跑本步骤（最多 3 轮，防反复追问）
+                ask_rounds = 0
+                while True:
+                    runner = SubAgentRunner(sub, llm=llm)
+                    ask_event = None
+                    for chunk in runner.execute_stream(task_desc, chat_history):
+                        if not isinstance(chunk, dict):
+                            continue
+                        ctype = chunk.get("type")
+                        content = chunk.get("content", "")
+                        if ctype == "output":
+                            output_parts.append(content)
+                            yield {"type": "step_output", "step_idx": step.step_idx, "content": content}
+                        elif ctype in ("thinking", "thinking_end"):
+                            yield {"type": "step_thinking", "step_idx": step.step_idx, "content": content}
+                        elif ctype == "ask_user":
+                            ask_event = chunk
+                    if ask_event is None:
+                        break
+                    ask_rounds += 1
+                    if ask_rounds > 3:
+                        break
+                    yield {"type": "step_thinking", "step_idx": step.step_idx,
+                           "content": f"\n已向学生发出互动提问（{ask_event.get('header') or '补充信息'}），等待选择…\n"}
+                    answer = yield from self._wait_student_answer(plan, ask_event)
+                    if answer is None:
+                        yield {"type": "step_thinking", "step_idx": step.step_idx,
+                               "content": "\n等待学生回答超时，本步骤按现有信息收尾\n"}
+                        output_parts.append(
+                            f"（已向学生提问“{str(ask_event.get('question', ''))[:80]}”，等待回答超时未获得补充）")
+                        break
+                    task_desc += (
+                        f"\n\n## 学生补充的信息（已确认，直接采用）\n{answer}\n"
+                        f"请基于以上补充信息继续完成本步骤任务，不要重复提问。"
+                    )
+
+                # thinking 烧爆预算兜底（子代理路径）：agent 推理吃光 max_tokens、正文/工具结论为空时，
+                # 关闭 thinking 重建 agent 重跑一次（与直接回答路径同策略）
+                if not output_parts:
+                    yield {"type": "step_thinking", "step_idx": step.step_idx,
+                           "content": "\n子代理推理占满输出预算未产出结果，切换直答模式重试…\n"}
+                    try:
+                        direct_llm = llm.bind(extra_body={"thinking": {"type": "disabled"}})
+                    except Exception:
+                        direct_llm = llm
+                    retry_runner = SubAgentRunner(sub, llm=direct_llm)
+                    for chunk in retry_runner.execute_stream(task_desc, chat_history):
+                        if not isinstance(chunk, dict):
+                            continue
+                        ctype = chunk.get("type")
+                        content = chunk.get("content", "")
+                        if ctype == "output":
+                            output_parts.append(content)
+                            yield {"type": "step_output", "step_idx": step.step_idx, "content": content}
+                        elif ctype in ("thinking", "thinking_end"):
+                            yield {"type": "step_thinking", "step_idx": step.step_idx, "content": content}
 
             result_text = "".join(output_parts)
+            if not result_text.strip():
+                # 两轮（正常 + 关 thinking 重试）都无正文：如实标记失败，让重试/汇总机制接住，
+                # 不再以"completed + 空结果"假完成（下游步骤会拿不到数据、汇总只能编造）
+                err = "模型未产出任何正文（推理占满输出预算）"
+                update_step_status(plan.id, step.step_idx, StepStatus.FAILED.value, error_msg=err)
+                step.status = StepStatus.FAILED.value
+                yield {"type": "step_failed", "step_idx": step.step_idx, "error": err}
+                current_plan_id_var.reset(token_plan)
+                current_session_id_var.reset(token_session)
+                current_step_idx_var.reset(token_step)
+                return ""
             update_step_status(plan.id, step.step_idx, StepStatus.COMPLETED.value, result=result_text[:65000])
             step.status = StepStatus.COMPLETED.value
             step.result = result_text
@@ -668,6 +766,11 @@ class Orchestrator:
                 step = plan.get_step(idx)
                 if step is None:
                     continue
+                if r["success"] and not (r["result"] or "").strip():
+                    # 空结果视为失败：下方"并行失败→串行重试"会接管，
+                    # 串行路径带 thinking 关闭兜底，避免空结果被当成功传给下游
+                    r["success"] = False
+                    r["result"] = "子代理未产出任何结果（推理占满输出预算）"
                 if r["success"]:
                     update_step_status(plan.id, idx, StepStatus.COMPLETED.value, result=r["result"][:65000])
                     step.status = StepStatus.COMPLETED.value
@@ -699,7 +802,7 @@ class Orchestrator:
         codexec 子进程 cwd 即该目录，可直接相对路径读取）。"""
         return self._plan_dir(plan) / "plan_results"
 
-    def _promote_plan_outputs(self, plan: Plan) -> None:
+    def _promote_plan_outputs(self, plan: Plan) -> tuple:
         """计划完成后整理工作区：只给用户留最终文件。
 
         1. 删除中间步骤结果 plan_results/（完整数据已持久化到 DB，无需保留）；
@@ -707,17 +810,22 @@ class Orchestrator:
            （去掉 tasks/<plan_id>/ 容器嵌套，同名冲突加 plan 短后缀）；
         3. 清理空掉的 tasks 目录。
         这样前端「AI 工作区」里只展示最终成品，不再看到 plan_results/step_*.md 之类的中间产物。
+
+        返回 (图片文件列表, 文档文件列表)（均位于用户工作区，供收尾内嵌进最终回复）。
         """
+        image_paths: List[Path] = []
+        doc_paths: List[Path] = []
         try:
             plan_dir = self._plan_dir(plan)
             if not plan_dir.exists():
-                return
+                return image_paths, doc_paths
             daily = get_daily_workspace(plan.user_id)
             # 1) 删除中间步骤结果
             pr = plan_dir / "plan_results"
             if pr.exists():
                 shutil.rmtree(pr, ignore_errors=True)
             # 2) 提升最终交付文件到当天工作区根目录
+            moved_dests: List[Path] = []
             for item in sorted(plan_dir.iterdir(), key=lambda p: p.name):
                 dest = daily / item.name
                 if dest.exists():
@@ -726,15 +834,71 @@ class Orchestrator:
                     else:
                         dest = daily / f"{item.stem}_{plan.id[:6]}{item.suffix}"
                 shutil.move(str(item), str(dest))
+                moved_dests.append(dest)
             # 3) 清理空的任务容器目录
             for d in (plan_dir, plan_dir.parent):
                 try:
                     d.rmdir()
                 except OSError:
                     pass
-            logger.info(f"[Workspace] 计划 {plan.id} 已整理工作区：清除中间产物，最终文件提升到当天目录")
+            # 收集提升后的内嵌文件（含子目录里的，如 codexec 的 任务名/报告.docx）
+            for dest in moved_dests:
+                if not dest.exists():
+                    continue
+                if dest.is_file():
+                    files = [dest]
+                else:
+                    files = [p for p in dest.rglob("*") if p.is_file()]
+                for p in files:
+                    ext = p.suffix.lower()
+                    if ext in _IMAGE_EXTS:
+                        image_paths.append(p)
+                    elif ext in _DOC_EMBED_EXTS:
+                        doc_paths.append(p)
+            logger.info(f"[Workspace] 计划 {plan.id} 已整理工作区：清除中间产物，最终文件提升到当天目录，"
+                        f"收集到 {len(image_paths)} 张图片 / {len(doc_paths)} 个文档")
         except Exception as e:
             logger.warning(f"[Workspace] 计划 {plan.id} 工作区整理失败: {e}")
+        return image_paths, doc_paths
+
+    def _collect_inline_images(self, plan: Plan, promoted: List[Path]) -> List[Path]:
+        """汇总本次计划应内嵌进最终回复的图片：计划目录产物（已提升）+ 工具显式登记（截图等）。
+
+        去重（generate_image 既落计划目录又登记过）、过滤已不存在的文件，按序截断到上限。
+        """
+        registered = [Path(p) for p in (plan_images_var.get() or []) if p]
+        seen = set()
+        images: List[Path] = []
+        for p in promoted + registered:
+            try:
+                key = str(p.resolve())
+            except OSError:
+                key = str(p)
+            if key in seen or not p.is_file():
+                continue
+            if p.suffix.lower() not in _IMAGE_EXTS:
+                continue
+            seen.add(key)
+            images.append(p)
+        return images[:_MAX_INLINE_IMAGES]
+
+    def _images_markdown(self, user_id: int, images: List[Path]) -> str:
+        """把图片列表转成内嵌 markdown（指向 file_service 的 inline 预览接口）。
+
+        前端 <img> 通过登录 Cookie 鉴权，路径为相对 workspace/{user_id}/ 的子路径。
+        """
+        try:
+            ws_root = get_daily_workspace(user_id).parent.resolve()
+        except Exception:
+            return ""
+        parts = []
+        for p in images:
+            try:
+                rel = p.resolve().relative_to(ws_root)
+            except (ValueError, OSError):
+                continue
+            parts.append(f"\n![{p.stem}](/api/file/preview?path={urlquote(str(rel))})\n")
+        return "\n".join(parts)
 
     def _save_step_result(self, plan: Plan, step: PlanStep) -> str:
         """把步骤结果落盘到 plan_results/<plan_id>/step_<idx>.md，返回相对路径（失败返回空串）。
@@ -796,6 +960,45 @@ class Orchestrator:
             elif role == "assistant":
                 msgs.append(AIMessage(content=content))
         return msgs
+
+    # ────────────────────────────────────────
+    # 互动提问：发面板 → 等学生作答
+    # ────────────────────────────────────────
+
+    def _wait_student_answer(self, plan: Plan, ask_event: dict) -> Generator[dict, None, Optional[str]]:
+        """把 ask_user 事件推给前端并阻塞等待学生作答（答案总线轮询 + SSE 心跳保活）。
+
+        通过 `answer = yield from self._wait_student_answer(plan, event)` 调用：
+        期间对外 yield ask_user 事件与 ping 心跳；返回答案文本，超时返回 None。
+        """
+        from AIRAGAgent.agent.tools.ask_tools import (
+            publish_question, poll_answer_once, ASK_ANSWER_TIMEOUT,
+        )
+        qid = ask_event.get("question_id") or f"q_{uuid.uuid4().hex[:12]}"
+        event = dict(ask_event)
+        event.setdefault("type", "ask_user")
+        event["question_id"] = qid
+        event["timeout_seconds"] = ASK_ANSWER_TIMEOUT
+        try:
+            publish_question(qid, plan.user_id, event)
+        except Exception as e:
+            logger.warning(f"[ask_student] 问题登记失败（继续等待）: {e}")
+        logger.info(f"[ask_student] 发出互动提问 qid={qid}: {str(event.get('question', ''))[:60]!r}")
+        yield event
+
+        deadline = time.time() + ASK_ANSWER_TIMEOUT
+        last_ping = time.time()
+        while time.time() < deadline:
+            answer = poll_answer_once(qid)
+            if answer is not None:
+                logger.info(f"[ask_student] 学生已作答 qid={qid}: {answer[:50]!r}")
+                return answer
+            # SSE 保活：等待期间周期性发 ping，避免 nginx 等代理掐断空闲连接
+            if time.time() - last_ping >= 8:
+                yield {"type": "ping", "ts": int(time.time() * 1000)}
+                last_ping = time.time()
+        logger.info(f"[ask_student] 等待学生作答超时 qid={qid} ({ASK_ANSWER_TIMEOUT}s)")
+        return None
 
     # ────────────────────────────────────────
     # Reflector
@@ -874,6 +1077,7 @@ class Orchestrator:
         """汇总所有步骤结果，流式产出最终回答。"""
         # 如果只有 1 步且 subagent 为空（直接回答），step.result 已经是最终答案，不再二次处理
         if len(plan.steps) == 1 and not plan.steps[0].subagent and plan.steps[0].result:
+            plan.status = PlanStatus.COMPLETED.value
             update_plan_status(plan.id, PlanStatus.COMPLETED.value, final_answer=plan.steps[0].result)
             # output 已在 _execute_step 中流式推送过，这里不重复推
             return plan.steps[0].result
@@ -886,6 +1090,7 @@ class Orchestrator:
         if not all_success and not any(s.status == StepStatus.COMPLETED.value for s in plan.steps):
             # 全失败
             fail_msg = "所有步骤都执行失败了，请稍后重试或换个问法。"
+            plan.status = PlanStatus.FAILED.value
             update_plan_status(plan.id, PlanStatus.FAILED.value, final_answer=fail_msg)
             yield {"type": "output", "content": fail_msg}
             return fail_msg
@@ -926,6 +1131,22 @@ class Orchestrator:
                 if text:
                     output_parts.append(text)
                     yield {"type": "output", "content": text}
+
+            # thinking 烧爆预算兜底：正文为空时关闭 thinking 重试一次（与 _execute_step 同策略）
+            if not output_parts:
+                yield {"type": "thinking", "content": "\n推理占满了输出预算，切换为直答模式重试…\n"}
+                try:
+                    direct_llm = self._llm_for(plan.user_id).bind(extra_body={"thinking": {"type": "disabled"}})
+                except Exception:
+                    direct_llm = self._llm_for(plan.user_id)
+                for chunk in direct_llm.stream([
+                    SystemMessage(content=system),
+                    HumanMessage(content=user_msg),
+                ]):
+                    text = getattr(chunk, "content", "") or ""
+                    if text:
+                        output_parts.append(text)
+                        yield {"type": "output", "content": text}
         except Exception as e:
             logger.error(f"[Finalizer] 流式失败，回退到一次性输出: {e}")
             # 回退：直接拼接各步结果
@@ -936,6 +1157,8 @@ class Orchestrator:
             yield {"type": "output", "content": fallback}
 
         final_text = "".join(output_parts)
+        # 同步内存状态（execute_stream 收尾依赖 plan.status 判断是否整理工作区/内嵌图片）
+        plan.status = PlanStatus.COMPLETED.value
         update_plan_status(plan.id, PlanStatus.COMPLETED.value, final_answer=final_text[:65000])
         return final_text
 
@@ -975,6 +1198,10 @@ class Orchestrator:
         yield {"type": "thinking_end"}
         yield {"type": "plan_created", "plan": plan.to_dict()}
 
+        # 初始化本次计划的图片登记清单：generate_image / screenshot_url 往里 append，
+        # 收尾时统一内嵌进最终回复。并行子线程的 context 副本共享同一个 list 对象。
+        token_plan_images = plan_images_var.set([])
+
         # ── 2. 执行 + 反思 ──
         revision_count = 0
         try:
@@ -1010,9 +1237,31 @@ class Orchestrator:
                             if new_spec is not None:
                                 continue  # 重新进入 while 循环
                         elif ref.action == "ask_user":
-                            yield {"type": "ask_user", "question": ref.feedback}
+                            # 结构化互动提问：有选项出选项面板，无选项出自由输入框；
+                            # 等到学生作答 → 把补充信息当修订反馈重新规划
+                            ask_event = {
+                                "type": "ask_user",
+                                "question_id": f"q_{uuid.uuid4().hex[:12]}",
+                                "question": ref.feedback or "请补充更多信息",
+                                "options": [o for o in (ref.options or [])
+                                            if isinstance(o, dict) and o.get("label")][:4],
+                                "header": "补充信息",
+                                "multi_select": False,
+                            }
+                            answer = yield from self._wait_student_answer(plan, ask_event)
+                            if answer and revision_count < self.MAX_REVISIONS:
+                                revision_count += 1
+                                new_spec = yield from self._revise_plan(
+                                    plan, query, chat_history,
+                                    f"学生补充了关键信息：{answer}\n请基于此信息修订计划，完成学生需求。")
+                                if new_spec is not None:
+                                    continue  # 带着补充信息重新执行
+                            # 超时未作答（或修订额度用尽）：结束本轮，问题以可见文本落下
+                            ask_text = ref.feedback or "需要补充信息"
+                            yield {"type": "output", "content": f"我需要再确认一下：{ask_text}\n（可以直接回复我补充细节）"}
                             update_plan_status(plan.id, PlanStatus.COMPLETED.value,
-                                               final_answer=f"需要用户补充信息：{ref.feedback}")
+                                               final_answer=f"需要用户补充信息：{ask_text}")
+                            plan_images_var.reset(token_plan_images)
                             return
                 else:
                     # 并行执行
@@ -1029,13 +1278,53 @@ class Orchestrator:
             yield {"type": "thinking", "content": f"\n执行过程出错：{e}\n"}
             update_plan_status(plan.id, PlanStatus.FAILED.value, final_answer=f"执行出错：{e}")
             yield {"type": "output", "content": f"抱歉，执行过程中遇到问题：{e}"}
+            plan_images_var.reset(token_plan_images)
             return
 
         # ── 3. 汇总最终答案 ──
         final_text = yield from self._finalize(plan, query, chat_history)
         # 计划正常完成后整理工作区：清除 plan_results 中间产物，只留最终交付文件
         if plan.status == PlanStatus.COMPLETED.value:
-            self._promote_plan_outputs(plan)
+            promoted_images, promoted_docs = self._promote_plan_outputs(plan)
+            # 本次计划产出的图片（文生图/代码画图/截图）以内嵌图片形式追加到最终回复，
+            # 前端直接渲染成图，用户不用去「AI 工作区」翻找
+            inline_images = self._collect_inline_images(plan, promoted_images)
+            if inline_images:
+                img_md = self._images_markdown(plan.user_id, inline_images)
+                if img_md:
+                    yield {"type": "output", "content": "\n" + img_md}
+                    final_text = (final_text or "") + "\n" + img_md
+            # 文档产物（Word/Excel/PPT/PDF）：发 file_embed 事件 → 前端 DocEmbed 预览卡片，
+            # 文本里附下载链接；用户在聊天里直接预览，无需打开 AI 工作区
+            docs = [p for p in promoted_docs if p.is_file() and p.suffix.lower() in _DOC_EMBED_EXTS][:_MAX_INLINE_DOCS]
+            if docs:
+                ws_root = get_daily_workspace(plan.user_id).parent
+                doc_lines = []
+                for p in docs:
+                    try:
+                        rel = urlquote(str(p.resolve().relative_to(ws_root)))
+                    except (ValueError, OSError):
+                        continue
+                    ext = p.suffix.lower()
+                    preview_url = (f"/api/file/preview?path={rel}" if ext == ".pdf"
+                                   else f"/api/file/doc_preview?path={rel}")
+                    yield {
+                        "type": "file_embed",
+                        "kind": ext.lstrip("."),
+                        "title": p.name,
+                        "path": rel,
+                        "preview_url": preview_url,
+                        "download_url": f"/api/file/download?path={rel}",
+                    }
+                    doc_lines.append(f"\n📄 [{p.name}](/api/file/download?path={rel})\n")
+                if doc_lines:
+                    docs_md = "\n".join(doc_lines)
+                    yield {"type": "output", "content": "\n" + docs_md}
+                    final_text = (final_text or "") + "\n" + docs_md
+            if inline_images or docs:
+                update_plan_status(plan.id, PlanStatus.COMPLETED.value,
+                                   final_answer=(final_text or "")[:65000])
+        plan_images_var.reset(token_plan_images)
         yield {"type": "plan_completed", "plan": plan.to_dict()}
         logger.info(f"[Orchestrator] plan {plan.id} 完成，final_answer 长度={len(final_text)}")
 

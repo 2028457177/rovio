@@ -259,6 +259,7 @@
               @stop="onMessageStop"
               @feedback="onMessageFeedback"
               @branch="onMessageBranch"
+              @ask-answer="onAskAnswer"
             />
           </TransitionGroup>
         </div>
@@ -553,6 +554,7 @@ const {
   editAndResend,
   branchFromMessage,
   setMessageFeedback,
+  answerQuestion,
   newChat,
   loadConversations,
   switchToConversation,
@@ -814,6 +816,11 @@ function onExport(id, format = 'markdown') {
 // 消息事件
 function onMessageCopy() {
   // 已由 bubble 内部处理 toast
+}
+
+// 互动提问面板作答（流中 → 同轮续跑；流已断 → 作为新消息发送）
+function onAskAnswer({ message, answer }) {
+  answerQuestion(message, answer)
 }
 
 function onMessageRegenerate(message) {

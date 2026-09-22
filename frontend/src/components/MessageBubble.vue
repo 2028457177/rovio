@@ -66,6 +66,20 @@
             ></div>
           </div>
 
+          <!-- 互动提问面板（ask_student）：学生选择后本轮继续执行 -->
+          <AskPanel
+            v-if="message.question"
+            :question="message.question"
+            @answer="(text) => emit('ask-answer', { message, answer: text })"
+          />
+
+          <!-- 文档预览卡片（Word/Excel/PPT/PDF）：聊天内直接预览 -->
+          <DocEmbed
+            v-for="(e, ei) in (message.embeds || [])"
+            :key="(e.path || '') + ei"
+            :embed="e"
+          />
+
           <!-- 消息操作栏 -->
           <div v-if="!streaming && message.content" class="message-meta">
             <span class="message-time">{{ message.time }}</span>
@@ -170,6 +184,12 @@
         </template>
       </div>
     </div>
+
+    <!-- 图片灯箱：点击消息里的内嵌图片放大查看 -->
+    <div v-if="lightboxSrc" class="img-lightbox" @click="lightboxSrc = ''">
+      <img :src="lightboxSrc" class="lightbox-img" @click.stop alt="预览大图" />
+      <button class="lightbox-close" type="button" @click="lightboxSrc = ''" title="关闭">✕</button>
+    </div>
   </div>
 </template>
 
@@ -177,6 +197,8 @@
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { renderMarkdown } from '@/utils/markdown.js'
 import PlanPanel from '@/components/PlanPanel.vue'
+import AskPanel from '@/components/AskPanel.vue'
+import DocEmbed from '@/components/DocEmbed.vue'
 
 const props = defineProps({
   message: { type: Object, required: true },
@@ -187,7 +209,7 @@ const props = defineProps({
   canBranch: { type: Boolean, default: true }
 })
 
-const emit = defineEmits(['copy', 'regenerate', 'edit', 'stop', 'feedback', 'branch'])
+const emit = defineEmits(['copy', 'regenerate', 'edit', 'stop', 'feedback', 'branch', 'ask-answer'])
 
 const copied = ref(false)
 const feedback = ref(props.message.feedback || '') // 'like' | 'dislike' | ''
@@ -213,7 +235,25 @@ const editTextareaRef = ref(null)
 
 const renderedHtml = computed(() => renderMarkdown(props.message.content))
 
+// 内嵌图片灯箱
+const lightboxSrc = ref('')
+
+function onLightboxKeydown(e) {
+  if (e.key === 'Escape') lightboxSrc.value = ''
+}
+
+watch(lightboxSrc, (v) => {
+  if (v) document.addEventListener('keydown', onLightboxKeydown)
+  else document.removeEventListener('keydown', onLightboxKeydown)
+})
+
 function onContentClick(e) {
+  // 图片放大（事件委托）
+  const img = e.target.closest('img.md-img')
+  if (img) {
+    lightboxSrc.value = img.src
+    return
+  }
   // 代码块复制按钮（事件委托）
   const btn = e.target.closest('.code-copy-btn')
   if (btn) {
@@ -316,6 +356,7 @@ function onFeedback(type) {
 onUnmounted(() => {
   clearTimeout(copyTimer)
   clearTimeout(feedbackTimer)
+  document.removeEventListener('keydown', onLightboxKeydown)
 })
 </script>
 
@@ -746,6 +787,80 @@ onUnmounted(() => {
 .message-text :deep(a:hover) {
   color: var(--accent-hover);
   border-bottom-color: var(--accent-hover);
+}
+
+/* 内嵌图片（AI 生成的图 / 截图 / 图表） */
+.message-text :deep(img.md-img) {
+  display: block;
+  max-width: min(440px, 100%);
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 18px var(--shadow-sm);
+  margin: 10px 0 6px;
+  cursor: zoom-in;
+  background: var(--panel);
+  transition: transform var(--spring-fast), box-shadow var(--transition);
+}
+
+.message-text :deep(img.md-img:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px var(--shadow-sm);
+}
+
+/* 图片灯箱（全屏放大） */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  cursor: zoom-out;
+  animation: lightbox-in 0.22s ease both;
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lightbox-img {
+  max-width: min(92vw, 1400px);
+  max-height: 88vh;
+  border-radius: 10px;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55);
+  cursor: default;
+  animation: lightbox-img-in 0.28s var(--ease-out-expo) both;
+}
+
+@keyframes lightbox-img-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--spring-fast);
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: rotate(90deg);
 }
 
 .message-text :deep(blockquote) {

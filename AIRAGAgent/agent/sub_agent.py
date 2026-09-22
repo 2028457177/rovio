@@ -23,6 +23,7 @@ from AIRAGAgent.model.factory import chat_model
 from AIRAGAgent.utils.logger_handler import logger
 from AIRAGAgent.utils.prompt_loader import load_identity_prompts
 from AIRAGAgent.agent.tools.middleware import skill_aware_monitor, log_before_model, smart_prompt_switch
+from AIRAGAgent.agent.tools.ask_tools import AskStudentInterrupt
 
 
 # ═══════════════════════════════════════════════
@@ -154,41 +155,55 @@ class SubAgentRunner:
                 config={"recursion_limit": 50},
             )
 
-        for msg, _meta in stream:
-            if isinstance(msg, AIMessageChunk):
-                has_tool_calls = bool(getattr(msg, 'tool_calls', None))
-                if has_tool_calls:
-                    any_tools_called = True
-                    for tc in msg.tool_calls:
-                        tc_id = tc.get("id", "")
-                        tc_name = tc.get("name", "")
-                        if tc_id and tc_name and tc_id not in seen_tool_ids:
-                            seen_tool_ids.add(tc_id)
-                            has_entered_tool_phase = True
-                            yield {"type": "thinking", "content": f"\n[{self.sub_agent.name}] 调用工具: {tc_name}\n"}
+        # ask_student 工具会抛 AskStudentInterrupt 中断 agent 循环：
+        # 捕获后以 ask_user 事件结束本次运行，由上层（Orchestrator）发面板并等待学生作答
+        try:
+            for msg, _meta in stream:
+                if isinstance(msg, AIMessageChunk):
+                    has_tool_calls = bool(getattr(msg, 'tool_calls', None))
+                    if has_tool_calls:
+                        any_tools_called = True
+                        for tc in msg.tool_calls:
+                            tc_id = tc.get("id", "")
+                            tc_name = tc.get("name", "")
+                            if tc_id and tc_name and tc_id not in seen_tool_ids:
+                                seen_tool_ids.add(tc_id)
+                                has_entered_tool_phase = True
+                                yield {"type": "thinking", "content": f"\n[{self.sub_agent.name}] 调用工具: {tc_name}\n"}
 
-                output_text = msg.content or ""
-                reasoning = (getattr(msg, 'additional_kwargs', None) or {}).get('reasoning_content', '')
+                    output_text = msg.content or ""
+                    reasoning = (getattr(msg, 'additional_kwargs', None) or {}).get('reasoning_content', '')
 
-                if reasoning and not output_text:
-                    yield {"type": "thinking", "content": reasoning}
-                else:
-                    if not output_text and reasoning:
-                        output_text = reasoning
+                    if reasoning and not output_text:
+                        yield {"type": "thinking", "content": reasoning}
+                    else:
+                        if not output_text and reasoning:
+                            output_text = reasoning
 
-                if output_text:
-                    if has_entered_tool_phase:
-                        yield {"type": "thinking_end", "content": ""}
-                        has_entered_tool_phase = False
-                    has_user_output = True
-                    yield {"type": "output", "content": output_text}
+                    if output_text:
+                        if has_entered_tool_phase:
+                            yield {"type": "thinking_end", "content": ""}
+                            has_entered_tool_phase = False
+                        has_user_output = True
+                        yield {"type": "output", "content": output_text}
 
-            elif isinstance(msg, ToolMessage):
-                tool_name = getattr(msg, 'name', '未知工具')
-                last_tool_results[tool_name] = str(msg.content)
-                if tool_name not in reported_tool_results:
-                    reported_tool_results.add(tool_name)
-                    yield {"type": "thinking", "content": f"\n[{self.sub_agent.name}] 工具 [{tool_name}] 完成\n"}
+                elif isinstance(msg, ToolMessage):
+                    tool_name = getattr(msg, 'name', '未知工具')
+                    last_tool_results[tool_name] = str(msg.content)
+                    if tool_name not in reported_tool_results:
+                        reported_tool_results.add(tool_name)
+                        yield {"type": "thinking", "content": f"\n[{self.sub_agent.name}] 工具 [{tool_name}] 完成\n"}
+        except AskStudentInterrupt as ask:
+            logger.info(f"[{self.sub_agent.name}] ask_student 中断: {ask.question[:60]}")
+            yield {
+                "type": "ask_user",
+                "question_id": ask.question_id,
+                "question": ask.question,
+                "options": ask.options,
+                "header": ask.header,
+                "multi_select": ask.multi_select,
+            }
+            return
 
         # 兜底：调用了工具但没有面向用户的输出
         if any_tools_called and not has_user_output and last_tool_results:
@@ -321,6 +336,7 @@ def run_steps_parallel(
         runner = SubAgentRunner(sub, llm=llm)
         thinking_chunks = []
         output_parts = []
+        ask_seen = []
         try:
             def _inner():
                 """在独立的 context 副本中流式消费 SubAgent 输出并分类收集。"""
@@ -328,11 +344,21 @@ def run_steps_parallel(
                     if isinstance(chunk, dict):
                         if chunk.get("type") == "output":
                             output_parts.append(chunk.get("content", ""))
+                        elif chunk.get("type") == "ask_user":
+                            # 并行批次不便发交互面板：标记后按失败返回，
+                            # 触发上层既有的"并行失败→串行重试"路径，串行时再真正发面板等答案
+                            ask_seen.append(chunk)
                         else:
                             thinking_chunks.append(chunk)
             # 每个 worker 用独立的 context 副本运行，避免 "already entered" 错误
             child_ctx = parent_ctx.copy()
             child_ctx.run(_inner)
+            if ask_seen:
+                q = ask_seen[0]
+                logger.info(f"[Parallel] step={idx} subagent={sub_name} 需要学生补充信息，转串行重试")
+                return {"step_idx": idx, "subagent": sub_name,
+                        "result": f"[需要向学生确认：{str(q.get('question', ''))[:120]}——已在串行重试中发起提问]",
+                        "success": False, "thinking": thinking_chunks}
             result = "".join(output_parts)
             logger.info(f"[Parallel] step={idx} subagent={sub_name} 完成，结果长度={len(result)}")
             return {"step_idx": idx, "subagent": sub_name, "result": result,

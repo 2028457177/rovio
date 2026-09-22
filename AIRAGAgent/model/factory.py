@@ -22,7 +22,7 @@ class ChatModelFactory(BaseModelFactory):
         api_key = rag_conf["api_key"]
 
         if "deepseek" in model_name.lower():
-            return ChatDeepSeek(model=model_name, api_key=api_key, max_tokens=4096, temperature=0.7,
+            return ChatDeepSeek(model=model_name, api_key=api_key, max_tokens=8192, temperature=0.7,
                                 request_timeout=240, max_retries=1)
 
         return ChatTongyi(model=model_name, api_key=api_key)
@@ -96,7 +96,7 @@ def get_user_chat_model(user_id: int) -> BaseChatModel:
                 model=model_name,
                 api_key=cfg["api_key"],
                 api_base=base_url,
-                max_tokens=4096,
+                max_tokens=8192,
                 temperature=0.7,
                 request_timeout=240,
                 max_retries=1,
