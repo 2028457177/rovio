@@ -331,7 +331,7 @@ def _replace_in_single_paragraph(paragraph, tag_contents: dict) -> int:
 # 主工具函数
 # ═══════════════════════════════════════════════
 
-@tool(description="自动填写Word文件标签。标签格式为{内容提示|字体|字号}，字体和字号可选，不填则使用默认（宋体小四）。填写后的文件可通过返回的下载链接下载。")
+@tool(description="自动填写Word文件标签。标签格式为{内容提示|字体|字号}，字体和字号可选，不填则使用默认（宋体小四）。填写后的文件会自动保存并随回复直接展示预览，无需用户提供下载链接。")
 def auto_fill_word(template_path: str) -> str:
     """
     接收服务器上已上传的 Word 文件路径，自动查找 {内容提示|字体|字号} 占位标签，
@@ -384,9 +384,23 @@ def auto_fill_word(template_path: str) -> str:
             hf_count += _replace_in_paragraphs(section.header.paragraphs, tag_contents)
             hf_count += _replace_in_paragraphs(section.footer.paragraphs, tag_contents)
 
-        # 6. 保存
+        # 6. 保存到当前计划目录（计划完成后由 orchestrator 提升到用户工作区，
+        #    并以 file_embed 形式随回复内嵌预览）；无计划上下文时回退到当天工作区根目录
         output_filename = f"filled_{uuid.uuid4().hex[:8]}.docx"
-        output_path = UPLOAD_DIR / output_filename
+        out_dir = UPLOAD_DIR
+        uid = _current_user_id()
+        if uid:
+            try:
+                from AIRAGAgent.utils.paths import get_daily_workspace
+                from AIRAGAgent.agent.tools.artifact_tools import current_plan_id_var
+                base = Path(get_daily_workspace(uid))
+                plan_id = current_plan_id_var.get() or ""
+                out_dir = base / "tasks" / plan_id if plan_id else base
+                out_dir.mkdir(parents=True, exist_ok=True)
+            except Exception as e:
+                logger.warning(f"[Word填充] 解析工作区目录失败，回退到 uploads: {e}")
+                out_dir = UPLOAD_DIR
+        output_path = out_dir / output_filename
         doc.save(str(output_path))
 
         # 7. 删除模板文件
@@ -397,11 +411,10 @@ def auto_fill_word(template_path: str) -> str:
             logger.warning(f"[Word填充] 删除模板失败: {e}")
 
         total = para_count + table_count + hf_count
-        download_url = f"/api/download/{output_filename}"
         return (
             f"文件处理完成！共替换了 {total} 个标签（段落 {para_count} / 表格 {table_count}"
-            f"{' / 页眉页脚 ' + str(hf_count) if hf_count else ''}）。\n\n"
-            f"[点击下载已填写的文档]({download_url})"
+            f"{' / 页眉页脚 ' + str(hf_count) if hf_count else ''}）。"
+            f"已填写的文档保存为 {output_filename}，将在最终回复中直接展示预览，无需提供下载链接。"
         )
 
     except Exception as e:

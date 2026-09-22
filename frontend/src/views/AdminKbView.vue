@@ -76,8 +76,8 @@ function goSettings() {
   router.push('/settings')
 }
 
-function onLogout() {
-  logout()
+async function onLogout() {
+  await logout()
   router.push('/login')
 }
 </script>

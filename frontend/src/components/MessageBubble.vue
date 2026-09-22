@@ -73,7 +73,7 @@
             @answer="(text) => emit('ask-answer', { message, answer: text })"
           />
 
-          <!-- 文档预览条目（Word/Excel/PPT/PDF）：点击在左侧大面板打开 -->
+          <!-- 文档预览条目（Word/Excel/PPT/PDF）：点击展开内联预览，可放大/下载 -->
           <DocEmbed
             v-for="(e, ei) in (message.embeds || [])"
             :key="(e.path || '') + ei"

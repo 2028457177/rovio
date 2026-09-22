@@ -241,8 +241,11 @@ services:
       <<: *common-env
       PORT: "8006"
       UPLOAD_DIR: /data/uploads
+      # 与 chat_service 共用同一个工作区卷，/api/file/* 才能读到生成的文件
+      WORKSPACE_DIR: /app/workspace
     volumes:
       - lc-uploads:/data/uploads
+      - lc-workspace:/app/workspace
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8006/api/health || exit 1"]
       interval: 15s

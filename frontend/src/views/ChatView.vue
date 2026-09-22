@@ -649,10 +649,10 @@ function onOpenPlans() {
   planDrawerOpen.value = true
 }
 
-function onSettingsAccountDeleted() {
+async function onSettingsAccountDeleted() {
   settingsDrawerOpen.value = false
   resetChatState()
-  logout()
+  await logout()
   router.push('/login')
 }
 
@@ -724,9 +724,9 @@ function setEditInput(el) {
 // 删除二次确认状态
 const pendingDelete = ref(null)
 
-function onLogout() {
+async function onLogout() {
   resetChatState()
-  logout()
+  await logout()
   router.push('/login')
 }
 

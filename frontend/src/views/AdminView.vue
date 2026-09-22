@@ -288,7 +288,7 @@ async function apiFetch(url) {
   // JWT 存于 HttpOnly Cookie，同源请求自动携带
   const res = await fetch(url)
   if (res.status === 401) {
-    logout()
+    await logout()
     router.push('/login')
     throw new Error('未授权')
   }
@@ -340,8 +340,8 @@ function formatTokens(n) {
   return n
 }
 
-function onLogout() {
-  logout()
+async function onLogout() {
+  await logout()
   router.push('/login')
 }
 function goSettings() { router.push('/settings') }
