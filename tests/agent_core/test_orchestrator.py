@@ -9,7 +9,6 @@
 - _reflect 的纯逻辑分支（空 subagent → accept，失败 → retry/accept）
 """
 import json
-import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -17,8 +16,11 @@ import pytest
 
 from AIRAGAgent.agent.orchestrator import (
     Orchestrator, _extract_json, Reflection, PlanSpec, StepSpec,
+    PLANNER_SYSTEM_PROMPT,
 )
 from AIRAGAgent.agent.plan import Plan, PlanStep, PlanStatus, StepStatus
+from AIRAGAgent.agent.tools.agent_tools import search_enabled_var
+from AIRAGAgent.utils.prompt_loader import load_identity_prompts
 
 
 # ═══════════════════════════════════════════════
@@ -281,3 +283,87 @@ def test_plan_results_dir(orchestrator):
     assert "tasks" in str(d)
     assert "p_dir" in str(d)
     assert "plan_results" in str(d)
+
+
+# ═══════════════════════════════════════════════
+# Planner 提示词：PBL 路由规则回归
+# ═══════════════════════════════════════════════
+
+def test_planner_prompt_has_pbl_rule():
+    """Planner 提示词必须包含 PBL 导学场景的路由规则，防止课程问题被拆成检索步骤。"""
+    assert "PBL 导学场景" in PLANNER_SYSTEM_PROMPT
+    assert "subagent 留空字符串" in PLANNER_SYSTEM_PROMPT
+    assert "严禁一上来就派 knowledge 子代理" in PLANNER_SYSTEM_PROMPT
+    assert "住宅户型/卫生间/暗卫" in PLANNER_SYSTEM_PROMPT
+
+
+def test_plan_pbl_topic_prompt_includes_rule(orchestrator, monkeypatch):
+    """Planner 收到 PBL 课程问题时，应把 PBL 路由规则放进 system prompt。"""
+    monkeypatch.setattr(orchestrator, "_recall_relevant_memory", lambda uid, q: "")
+    monkeypatch.setattr(orchestrator, "_kb_route_hint", lambda q, uid: "")
+    monkeypatch.setattr(orchestrator, "_get_subagent_menu", lambda: "- **knowledge**：查知识库")
+
+    captured_messages = []
+
+    fake_llm = MagicMock()
+    fake_response = MagicMock()
+    fake_response.content = json.dumps({
+        "goal": "分析住宅暗卫平面设计",
+        "steps": [{"description": "直接回答学生", "subagent": "", "depends_on": []}],
+    })
+    fake_llm.invoke.return_value = fake_response
+
+    def _capture_invoke(msgs):
+        captured_messages.extend(msgs)
+        return fake_response
+
+    fake_llm.invoke.side_effect = _capture_invoke
+    monkeypatch.setattr(orchestrator, "_llm_for", lambda uid: fake_llm)
+
+    spec = orchestrator._plan("帮我分析住宅暗卫的平面设计", [], user_id=1)
+
+    assert spec is not None
+    assert spec.steps[0].subagent == ""
+    assert len(captured_messages) == 2
+    system_msg = captured_messages[0].content
+    user_msg = captured_messages[1].content
+    assert "PBL 导学场景" in system_msg
+    assert "暗卫" in user_msg
+
+
+def test_kb_route_hint_miss_prefers_direct_answer(orchestrator, monkeypatch):
+    """知识库未命中时，路由提示应要求优先直接回答，search 只是极少兜底。"""
+    monkeypatch.setattr(orchestrator, "_kb_precheck", lambda q, uid: 0.1)
+    monkeypatch.setattr(orchestrator, "_kb_hit_threshold", lambda: 0.5)
+
+    token = search_enabled_var.set(True)
+    try:
+        hint = orchestrator._kb_route_hint("某建筑规范最新版本号", user_id=1)
+        assert "优先直接回答" in hint
+        assert "search 是极少使用的兜底手段" in hint
+        assert "可用 search 联网搜索兜底" not in hint
+    finally:
+        search_enabled_var.reset(token)
+
+
+def test_kb_route_hint_disabled_no_search(orchestrator, monkeypatch):
+    """联网搜索关闭时，知识库未命中也应禁止 search。"""
+    monkeypatch.setattr(orchestrator, "_kb_precheck", lambda q, uid: 0.1)
+    monkeypatch.setattr(orchestrator, "_kb_hit_threshold", lambda: 0.5)
+
+    token = search_enabled_var.set(False)
+    try:
+        hint = orchestrator._kb_route_hint("某建筑规范最新版本号", user_id=1)
+        assert "不要联网" in hint or "搜索已关闭" in hint
+        assert "search" not in hint.lower()
+    finally:
+        search_enabled_var.reset(token)
+
+
+def test_identity_prompt_forbids_direction_panel():
+    """身份提示词必须禁止课程问题出现方向选择面板，确保只问导学相关问题。"""
+    identity = load_identity_prompts()
+    assert "禁止方向选择面板" in identity
+    assert "你挑一个" in identity
+    assert "重试检索知识库" in identity
+    assert "联网查现行规范" in identity
